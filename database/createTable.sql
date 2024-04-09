@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS post (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     body TEXT,
-    image_path TEXT
+    image_path TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME 
 );
 
 -- Create the 'category' table
