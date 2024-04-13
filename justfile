@@ -3,6 +3,8 @@ build:
 run: build
     ./bin/portfolio
 
+generate:
+	templ generate
 
 
 
