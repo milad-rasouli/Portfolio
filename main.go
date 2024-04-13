@@ -20,15 +20,15 @@ func main() {
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
 	} else {
-
 		logger, err = zap.NewProduction()
 	}
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer logger.Sync()
-
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		Immutable: true,
+	})
 	{
 		logger := logger.Named("http")
 		h := handler.Home{
@@ -39,12 +39,19 @@ func main() {
 			Logger: logger.Named("blog"),
 		}
 
+		a := handler.Auth{
+			Logger: logger.Named("auth"),
+		}
+
 		home := app.Group("/")
 		blog := app.Group("/blog")
+		auth := app.Group("/user")
 
 		h.Register(home)
 		b.Register(blog)
+		a.Register(auth)
 	}
 
+	app.Static("/static", "./frontend/static")
 	app.Listen(":5000")
 }
