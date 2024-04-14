@@ -4,6 +4,7 @@ import (
 
 	// validation "github.com/go-ozzo/ozzo-validation"
 	// "github.com/go-ozzo/ozzo-validation/is"
+
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
@@ -14,8 +15,7 @@ type Auth struct {
 
 func (a *Auth) SignUp(c fiber.Ctx) error {
 	a.Logger.Info("sign up page is called!")
-	return c.JSON("SignUp")
-
+	return c.Render("sign-up", fiber.Map{})
 }
 
 func (a *Auth) SignIn(c fiber.Ctx) error {

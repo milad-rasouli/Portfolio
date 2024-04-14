@@ -6,6 +6,7 @@ import (
 	"github.com/Milad75Rasouli/portfolio/internal/config"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/template/html/v2"
 	"go.uber.org/zap"
 )
 
@@ -13,14 +14,17 @@ func main() {
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
+	engine := html.New("frontend/views/pages/", ".html")
 	var (
 		logger *zap.Logger
 		err    error
 	)
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
+		engine.Reload(true)
 	} else {
 		logger, err = zap.NewProduction()
+		engine.Reload(false)
 	}
 	if err != nil {
 		log.Fatalln(err)
@@ -28,6 +32,7 @@ func main() {
 	defer logger.Sync()
 	app := fiber.New(fiber.Config{
 		Immutable: true,
+		Views:     engine,
 	})
 	{
 		logger := logger.Named("http")
