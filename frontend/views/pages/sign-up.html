@@ -1,66 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sign Up</title>
+    <title>Sign Up Page</title>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .container {
-            max-width: 500px;
-            margin: 50px auto;
-        }
-        .error {
-            color: red;
-        }
+    <style id="theme-style">
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2 class="text-center">Sign Up</h2>
-        <form action="/sign-up" method="post" onsubmit="return checkPassword()">
-            <div class="form-group">
-                <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname" class="form-control">
+    <button id="toggle-theme" class="btn btn-primary position-fixed top-0 start-0 m-2">Toggle Night Mode</button>
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="card w-50">
+            <div class="card-header text-center">
+                <h1>Sign Up</h1>
             </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" class="form-control">
+            <div class="card-body">
+                <form id="signup-form" action="/sign-up" method="post">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" class="form-control" id="fullname" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        <div id="password-strength" class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div id="password-error" class="mt-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" required>
+                        <div id="password-match" class="mt-2"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary float-start">Sign Up</button>
+                    <button type="button" class="btn btn-secondary float-end">Sign Up with Google</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="confirmpassword">Confirm Password:</label>
-                <input type="password" id="confirmpassword" name="confirmpassword" class="form-control">
-            </div>
-            <p id="errorMessage" class="error"></p>
-            <p id="passwordStrength"></p>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
+        </div>
     </div>
-    <script>
-        function checkPassword() {
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirmpassword').value;
-            var passwordStrength = document.getElementById('passwordStrength');
-            var errorMessage = document.getElementById('errorMessage');
-            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
-            var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
 
-            if(password !== confirmPassword) {
-                errorMessage.innerHTML = "Passwords do not match.";
-                return false;
-            } else if(strongRegex.test(password)) {
-                passwordStrength.innerHTML = 'Password strength: Strong';
-            } else if(mediumRegex.test(password)) {
-                passwordStrength.innerHTML = 'Password strength: OK';
-            } else {
-                passwordStrength.innerHTML = 'Password strength: Weak';
-                return false;
-            }
-            return true;
+    <script>
+        var dayMode = {
+            'background-color': '#FFFDD0',
+            'color': '#000000'
+        };
+        var nightMode = {
+            'background-color': '#36454F',
+            'color': '#000000'
+        };
+        var isDayMode = true;
+
+        function setTheme() {
+            var theme = isDayMode ? dayMode : nightMode;
+            var css = Object.keys(theme).map(function(key) {
+                return key + ':' + theme[key];
+            }).join(';');
+            document.getElementById('theme-style').innerHTML = 'body{' + css + '}';
+            document.getElementById('toggle-theme').textContent = isDayMode ? 'Toggle Night Mode' : 'Toggle Day Mode';
         }
-        document.getElementById('password').addEventListener('input', checkPassword);
+
+        document.getElementById('toggle-theme').addEventListener('click', function() {
+            isDayMode = !isDayMode;
+            setTheme();
+            localStorage.setItem('theme', isDayMode ? 'day' : 'night');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            var strength = this.value.length;
+            document.querySelector('#password-strength .progress-bar').style.width = strength * 10 + '%';
+            document.getElementById('password-error').textContent = strength >= 8 ? '' : 'Password must be at least 8 characters.';
+            document.getElementById('password-error').style.color = strength >= 8 ? 'green' : 'red';
+        });
+
+        document.getElementById('confirm-password').addEventListener('input', function() {
+            var match = this.value === document.getElementById('password').value;
+            document.getElementById('password-match').textContent = match ? '' : 'Not Match';
+            document.getElementById('password-match').style.color = match ? 'green' : 'red';
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var password = document.getElementById('password').value;
+            if (password.length < 8) {
+                document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
+                document.getElementById('password-error').style.color = 'red';
+                return;
+            }
+            // Submit form
+            this.submit();
+        });
+
+        window.onload = function() {
+            var theme = localStorage.getItem('theme');
+            if (theme) {
+                isDayMode = theme === 'day';
+                setTheme();
+            }
+        };
     </script>
 </body>
 </html>

@@ -19,8 +19,10 @@ func (a *Auth) SignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) SignIn(c fiber.Ctx) error {
-
-	return c.JSON("SignIn")
+	a.Logger.Info("sign in page is called!")
+	return c.Render("sign-in", fiber.Map{
+		"message": "dummy message!",
+	})
 }
 
 func (a *Auth) Register(g fiber.Router) {

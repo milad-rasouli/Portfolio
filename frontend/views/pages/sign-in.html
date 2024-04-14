@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign In Page</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <style id="theme-style">
+    </style>
+</head>
+<body>
+    <button id="toggle-theme" class="btn btn-primary position-fixed top-0 start-0 m-2">Toggle Night Mode</button>
+    <div id="notification" class="alert alert-info position-fixed top-0 end-0 m-2" style="display: none;"></div>
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="card w-50">
+            <div class="card-header text-center">
+                <h1>Sign In</h1>
+            </div>
+            <div class="card-body">
+                <form id="signin-form" action="/sign-in" method="post">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        <div id="password-error" class="mt-2"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary float-start">Sign In</button>
+                    <button type="button" class="btn btn-secondary float-end">Sign In with Google</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="/user/forget-password">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var dayMode = {
+            'background-color': '#FFFDD0',
+            'color': '#000000'
+        };
+        var nightMode = {
+            'background-color': '#36454F',
+            'color': '#000000'
+        };
+        var isDayMode = true;
+
+        function setTheme() {
+            var theme = isDayMode ? dayMode : nightMode;
+            var css = Object.keys(theme).map(function(key) {
+                return key + ':' + theme[key];
+            }).join(';');
+            document.getElementById('theme-style').innerHTML = 'body{' + css + '}';
+            document.getElementById('toggle-theme').textContent = isDayMode ? 'Toggle Night Mode' : 'Toggle Day Mode';
+        }
+
+        document.getElementById('toggle-theme').addEventListener('click', function() {
+            isDayMode = !isDayMode;
+            setTheme();
+            localStorage.setItem('theme', isDayMode ? 'day' : 'night');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            var strength = this.value.length;
+            document.getElementById('password-error').textContent = strength >= 8 ? '' : 'Password must be at least 8 characters.';
+            document.getElementById('password-error').style.color = strength >= 8 ? 'green' : 'red';
+        });
+
+        document.getElementById('signin-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var password = document.getElementById('password').value;
+            if (password.length < 8) {
+                document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
+                document.getElementById('password-error').style.color = 'red';
+                return;
+            }
+            // Submit form
+            this.submit();
+        });
+
+        window.onload = function() {
+            var theme = localStorage.getItem('theme');
+            if (theme) {
+                isDayMode = theme === 'day';
+                setTheme();
+            }
+            var message = "{{.message}}";
+            if (message) {
+                var notification = document.getElementById('notification');
+                notification.style.display = 'block';
+                notification.textContent = message;
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+        };
+    </script>
+</body>
+</html>
