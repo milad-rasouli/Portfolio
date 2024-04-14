@@ -2,20 +2,53 @@
 <html>
 <head>
     <title>Sign Up</title>
-    <link rel="stylesheet" type="text/css" href="static/css/960_12.col.css">
-    <link rel="stylesheet" type="text/css" href="static/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="static/css/text.css">
-    <script src="static/htmx.js"></script>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Sign Up</h2>
+        <form action="/sign-up" method="post" onsubmit="return checkPassword()">
+            <div class="form-group">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="confirmpassword">Confirm Password:</label>
+                <input type="password" id="confirmpassword" name="confirmpassword" class="form-control">
+            </div>
+            <p id="errorMessage" class="error"></p>
+            <p id="passwordStrength"></p>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+    </div>
     <script>
         function checkPassword() {
             var password = document.getElementById('password').value;
             var confirmPassword = document.getElementById('confirmpassword').value;
             var passwordStrength = document.getElementById('passwordStrength');
+            var errorMessage = document.getElementById('errorMessage');
             var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
             var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
 
             if(password !== confirmPassword) {
-                alert("Passwords do not match.");
+                errorMessage.innerHTML = "Passwords do not match.";
                 return false;
             } else if(strongRegex.test(password)) {
                 passwordStrength.innerHTML = 'Password strength: Strong';
@@ -27,20 +60,7 @@
             }
             return true;
         }
+        document.getElementById('password').addEventListener('input', checkPassword);
     </script>
-</head>
-<body>
-    <form action="/sign-up" method="post" onsubmit="return checkPassword()">
-        <label for="fullname">Full Name:</label><br>
-        <input type="text" id="fullname" name="fullname"><br>
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email"><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br>
-        <label for="confirmpassword">Confirm Password:</label><br>
-        <input type="password" id="confirmpassword" name="confirmpassword"><br>
-        <input type="submit" value="Sign Up">
-    </form>
-    <p id="passwordStrength"></p>
 </body>
 </html>
