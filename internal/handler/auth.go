@@ -25,15 +25,21 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 	return c.JSON(map[string]string{"message": "just a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple error"})
 }
 
-func (a *Auth) SignIn(c fiber.Ctx) error {
+func (a *Auth) GetSignIn(c fiber.Ctx) error {
 	a.Logger.Info("sign in page is called!")
-	return c.Render("sign-in", fiber.Map{
-		"message": "dummy message!",
-	})
+	return c.Render("sign-in", fiber.Map{})
+}
+
+func (a *Auth) PostSignIn(c fiber.Ctx) error {
+	data := c.Body()
+	a.Logger.Info(string(data))
+	return c.JSON(map[string]string{"message": "just a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple error"})
+
 }
 
 func (a *Auth) Register(g fiber.Router) {
 	g.Get("/sign-up", a.GetSignUp)
 	g.Post("/sign-up", a.PostSignUp)
-	g.Get("/sign-in", a.SignIn)
+	g.Get("/sign-in", a.GetSignIn)
+	g.Post("/sign-in", a.PostSignIn)
 }
