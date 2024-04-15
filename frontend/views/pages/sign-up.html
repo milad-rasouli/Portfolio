@@ -3,11 +3,39 @@
 <head>
     <title>Sign Up Page</title>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
-    <style id="theme-style">
+    <style>
+        /* Styles for day and night mode */
+        body.day-mode {
+            background-color: #FFFDD0; /* Light yellow background for day mode */
+            color: #000000; /* Black text for day mode */
+        }
+        body.night-mode {
+            background-color: #36454F; /* Dark background for night mode */
+            color: #000000; /* Light text for night mode */
+        }
+        /* Styles for the notification alert */
+        #notification {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050;
+        }
+        /* Password strength bar colors */
+        .progress-bar-weak {
+            background-color: red;
+        }
+        .progress-bar-medium {
+            background-color: yellow;
+        }
+        .progress-bar-strong {
+            background-color: green;
+        }
     </style>
 </head>
-<body>
-    <button id="toggle-theme" class="btn btn-primary position-fixed top-0 start-0 m-2">Toggle Night Mode</button>
+<body class="day-mode">
+    <button id="toggle-theme" class="btn btn-primary position-fixed top-0 end-0 m-2">Toggle Night Mode</button>
     <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
         <div class="card w-50">
             <div class="card-header text-center">
@@ -17,15 +45,15 @@
                 <form id="signup-form" action="/sign-up" method="post">
                     <div class="form-group">
                         <label for="fullname">Full Name</label>
-                        <input type="text" class="form-control" id="fullname" placeholder="Full Name" required>
+                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Full Name" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                         <div id="password-strength" class="progress mt-2">
                             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -42,65 +70,97 @@
             </div>
         </div>
     </div>
+    <div id="notification" class="alert alert-danger"></div>
 
     <script>
-        var dayMode = {
-            'background-color': '#FFFDD0',
-            'color': '#000000'
-        };
-        var nightMode = {
-            'background-color': '#36454F',
-            'color': '#000000'
-        };
-        var isDayMode = true;
-
-        function setTheme() {
-            var theme = isDayMode ? dayMode : nightMode;
-            var css = Object.keys(theme).map(function(key) {
-                return key + ':' + theme[key];
-            }).join(';');
-            document.getElementById('theme-style').innerHTML = 'body{' + css + '}';
-            document.getElementById('toggle-theme').textContent = isDayMode ? 'Toggle Night Mode' : 'Toggle Day Mode';
+        // Function to toggle day and night mode
+        function toggleTheme() {
+            var body = document.body;
+            if (body.classList.contains('day-mode')) {
+                body.classList.replace('day-mode', 'night-mode');
+                localStorage.setItem('theme', 'night');
+            } else {
+                body.classList.replace('night-mode', 'day-mode');
+                localStorage.setItem('theme', 'day');
+            }
         }
 
-        document.getElementById('toggle-theme').addEventListener('click', function() {
-            isDayMode = !isDayMode;
-            setTheme();
-            localStorage.setItem('theme', isDayMode ? 'day' : 'night');
-        });
+        // Set the theme on initial load
+        window.onload = function() {
+            var storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                document.body.classList.add(storedTheme + '-mode');
+            } else {
+                document.body.classList.add('day-mode');
+            }
+        };
 
+        // Event listener for the theme toggle button
+        document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
+
+        // Password strength logic
         document.getElementById('password').addEventListener('input', function() {
             var strength = this.value.length;
-            document.querySelector('#password-strength .progress-bar').style.width = strength * 10 + '%';
-            document.getElementById('password-error').textContent = strength >= 8 ? '' : 'Password must be at least 8 characters.';
-            document.getElementById('password-error').style.color = strength >= 8 ? 'green' : 'red';
+            var progressBar = document.querySelector('#password-strength .progress-bar');
+            progressBar.style.width = strength * 10 + '%';
+            progressBar.classList.remove('progress-bar-weak', 'progress-bar-medium', 'progress-bar-strong');
+            if (strength < 4) {
+                progressBar.classList.add('progress-bar-weak');
+            } else if (strength >= 4 && strength < 8) {
+                progressBar.classList.add('progress-bar-medium');
+            } else if (strength >= 8) {
+                progressBar.classList.add('progress-bar-strong');
+            }
+            document.getElementById('password-error').textContent = strength >= 6 ? '' : 'Password must be at least 6 characters.';
+            document.getElementById('password-error').style.color = strength >= 6 ? 'green' : 'red';
         });
 
         document.getElementById('confirm-password').addEventListener('input', function() {
             var match = this.value === document.getElementById('password').value;
-            document.getElementById('password-match').textContent = match ? '' : 'Not Match';
+            document.getElementById('password-match').textContent = match ? '' : 'Passwords do not match';
             document.getElementById('password-match').style.color = match ? 'green' : 'red';
         });
 
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
             var password = document.getElementById('password').value;
-            if (password.length < 8) {
-                document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
+            var confirmPassword = document.getElementById('confirm-password').value;
+            if (password.length < 6 || password !== confirmPassword) {
+                document.getElementById('password-error').textContent = 'Password must be at least 6 characters.';
+                document.getElementById('password-match').textContent = 'Passwords do not match';
                 document.getElementById('password-error').style.color = 'red';
+                document.getElementById('password-match').style.color = 'red';
                 return;
             }
-            // Submit form
-            this.submit();
+            var formData = {
+                fullname: document.getElementById('fullname').value,
+                email: document.getElementById('email').value,
+                password: password
+            };
+            fetch('/user/sign-up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    var notification = document.getElementById('notification');
+                    notification.textContent = data.message;
+                    notification.style.display = 'block';
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Handle success
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         });
-
-        window.onload = function() {
-            var theme = localStorage.getItem('theme');
-            if (theme) {
-                isDayMode = theme === 'day';
-                setTheme();
-            }
-        };
     </script>
 </body>
 </html>

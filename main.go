@@ -58,5 +58,5 @@ func main() {
 	}
 
 	app.Static("/static", "./frontend/static")
-	app.Listen(":5000")
+	log.Fatalln(app.Listen(":5001"))
 }
