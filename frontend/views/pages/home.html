@@ -21,7 +21,7 @@
         }
       }
 
-      .b-example-divider {
+      .b-content-divider {
         height: 3rem;
         background-color: rgba(0, 0, 0, .1);
         border: solid rgba(0, 0, 0, .15);
@@ -29,9 +29,8 @@
         box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
       }
 
-      .b-example-vr {
+      .b-content-vr {
         flex-shrink: 0;
-        width: 1.5rem;
         height: 100vh;
       }
 
@@ -75,7 +74,7 @@
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
         <div class="nav-link active" aria-current="page">
-          Milad
+          Home
         </div>
       </li>
       <li>
@@ -89,29 +88,53 @@
         </a>
       </li>
       <li>
-        <a href="#Product" class="nav-link link-dark">
-          Search:
+        <a href="#Privacy" class="nav-link link-dark">
+          Privacy
         </a>
+      </li>
+      <li>
+        <form class="d-flex mt-2 mb-2" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
       </li>
     </ul>
     <hr>
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="#" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>User</strong>
+        <strong>User Area</strong>
       </a>
       <ul class="dropdown-menu text-small shadow">
         <li><a class="dropdown-item" href="#">Sign in</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a class="dropdown-item" href="#">Sign up</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="#">Exit</a></li>
       </ul>
     </div>
   </div>
 
-  <div class="b-example-divider b-example-vr col">
-    
+  <div class="b-content-divider b-content-vr col">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-2"></div>
+                <div class="col-8 " style="background-color: blueviolet;">
+                    <div class="the-content">
+
+                        <p class="title">
+                            <em>Milad Rasouli</em>
+                        </p>
+                        <p class="intervaled-text">
+                            I'm a Happy Backend Developer! 
+                        </p>
+                        <p class="summary">I started my journy 3 years ago and since that I've participated in many diffrent projects and gained a lot of experiences.</p>
+                        <button class="btn btn-dark">My Github</button>
+                        <button class="btn btn-outline-dark">Here</button>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
   </div>
 </main>
 </div>
