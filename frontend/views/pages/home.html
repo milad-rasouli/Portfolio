@@ -19,16 +19,22 @@
         .bd-placeholder-img-lg {
           font-size: 3.5rem;
         }
-      }
+      }   
+
 
       .b-content-divider {
         height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
         border: solid rgba(0, 0, 0, .15);
         border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        box-shadow: inset 0 .5em 1.5em rgba(15, 15, 15, 0.1), inset 0 .125em .5em rgba(0, 0, 0, .15);
       }
-
+      .b-content-divider-night{
+        color: aliceblue    ;
+        background-image: linear-gradient(to left, rgba(10,10,10,0.4) , rgba(10,10,10,0.9));
+      }
+      .b-content-divider-day{
+        background-image: linear-gradient(to left, white , rgba(0,0,0,0.2));
+      }
       .b-content-vr {
         flex-shrink: 0;
         height: 100vh;
@@ -78,6 +84,11 @@
         </div>
       </li>
       <li>
+        <a href="#AboutMe" class="nav-link link-dark">
+          About Me
+        </a>
+      </li>
+      <li>
         <a href="#Blog" class="nav-link link-dark">
           Blogs
         </a>
@@ -85,11 +96,6 @@
       <li>
         <a href="#Contact" class="nav-link link-dark">
           Contact
-        </a>
-      </li>
-      <li>
-        <a href="#Privacy" class="nav-link link-dark">
-          Privacy
         </a>
       </li>
       <li>
@@ -114,22 +120,22 @@
     </div>
   </div>
 
-  <div class="b-content-divider b-content-vr col">
+  <div class="b-content-divider b-content-divider-day b-content-vr col">
         <div class="container h-100">
             <div class="row h-100">
                 <div class="col-2"></div>
-                <div class="col-8 " style="background-color: blueviolet;">
+                <div class="col-8 align-hv-center">
                     <div class="the-content">
 
                         <p class="title">
-                            <em>Milad Rasouli</em>
+                            Milad Rasouli
                         </p>
-                        <p class="intervaled-text">
-                            I'm a Happy Backend Developer! 
+                        <p class="interval-text">
+                            I Am a Happy Backend Developer
                         </p>
-                        <p class="summary">I started my journy 3 years ago and since that I've participated in many diffrent projects and gained a lot of experiences.</p>
-                        <button class="btn btn-dark">My Github</button>
-                        <button class="btn btn-outline-dark">Here</button>
+                        <p class="summary">I started my journey 3 years ago and since that I've participated in many diffrent projects and gained a lot of experiences.</p>
+                        <button class="btn btn-dark" id="btn-github">My Github</button>
+                        <button class="btn btn-outline-dark btn-here">Here</button>
                     </div>
                 </div>
                 <div class="col-2"></div>

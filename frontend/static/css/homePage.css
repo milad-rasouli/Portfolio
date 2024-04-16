@@ -95,9 +95,37 @@ main {
 /* the content*/
 
 .my-content{
-  background-color: red;
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+
+.align-hv-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: 60px;
+  font-weight: bold;
+}
+.the-content
+{
+  text-align: left;
+
+}
+.interval-text{
+  font-weight: 500;
+  font-size: 20px;
+}
+.summary {
+  color: rgba(8, 9, 10, .85);
+  font-size: 15px;
+  width: 70ch; 
+  word-wrap: break-word;
 }
 
