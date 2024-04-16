@@ -1,112 +1,121 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Milad's Portfolio</title>
-    <link href="/static/bootstrap.min.css" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Milad Rasouli</title>
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        /* Styles for day and night mode */
-        body.day-mode {
-            background-color: #FFFDD0; /* Light yellow background for day mode */
-            color: #000000; /* Black text for day mode */
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
         }
-        body.night-mode {
-            background-color: #36454F; /* Dark background for night mode */
-            color: #C0C0C0; /* Light text for night mode */
-        }
-        /* Side header styles */
-        .side-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #333; /* Dark background for the side header */
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center items horizontally */
-        }
-        .side-header img {
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
-        .side-header h2 {
-            margin-bottom: 30px;
-        }
-        .side-header a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            margin: 10px 0;
-        }
-        /* Main content styles */
-        .main-content {
-            margin-left: 250px; /* Same as the width of the side header */
-            padding: 20px;
-        }
-        /* Toggle button styles */
-        #toggle-theme {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-        }
-        /* Button styles */
-        .main-button {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 20px auto;
-            text-align: center;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-        }
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
     </style>
-</head>
-<body class="day-mode">
-    <div class="side-header">
-        <img src="/image/me.jpg" alt="Milad" style="width: 100px; height: auto;">
-        <h2>Milad</h2>
-        <a href="/blog">Blog</a>
-        <a href="/about">About Me</a>
-        <a href="/resume">Resume</a>
-        <a href="/contact">Contact</a>
+    <link href="/static/css/homePage.css" rel="stylesheet">
+  </head>
+  <body>
+
+<div class="container">
+<main class="d-flex flex-nowrap row">
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light col col-lg-2">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="nightMode">
+        <label class="form-check-label" for="nightMode">Night Mode</label>
     </div>
-    <div class="main-content">
-        <p>I'm a Golang developer. Here are what I've done:</p>
-        <a href="/about" class="main-button">Here Me</a>
-        <a href="/work" class="main-button">My Work</a>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <div class="nav-link active" aria-current="page">
+          Milad
+        </div>
+      </li>
+      <li>
+        <a href="#Blog" class="nav-link link-dark">
+          Blogs
+        </a>
+      </li>
+      <li>
+        <a href="#Contact" class="nav-link link-dark">
+          Contact
+        </a>
+      </li>
+      <li>
+        <a href="#Product" class="nav-link link-dark">
+          Search:
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="#" alt="" width="32" height="32" class="rounded-circle me-2">
+        <strong>User</strong>
+      </a>
+      <ul class="dropdown-menu text-small shadow">
+        <li><a class="dropdown-item" href="#">Sign in</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Exit</a></li>
+      </ul>
     </div>
-    <button id="toggle-theme" class="btn btn-primary">Toggle Night Mode</button>
+  </div>
 
-    <script>
-        // Function to toggle day and night mode
-        function toggleTheme() {
-            var body = document.body;
-            if (body.classList.contains('day-mode')) {
-                body.classList.replace('day-mode', 'night-mode');
-                localStorage.setItem('theme', 'night');
-            } else {
-                body.classList.replace('night-mode', 'day-mode');
-                localStorage.setItem('theme', 'day');
-            }
-        }
-
-        // Set the theme on initial load
-        window.onload = function() {
-            var storedTheme = localStorage.getItem('theme');
-            if (storedTheme) {
-                document.body.classList.add(storedTheme + '-mode');
-            } else {
-                document.body.classList.add('day-mode');
-            }
-        };
-
-        // Event listener for the theme toggle button
-        document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
-    </script>
-</body>
+  <div class="b-example-divider b-example-vr col">
+    
+  </div>
+</main>
+</div>
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/sidebars.js"></script>
+  </body>
 </html>
