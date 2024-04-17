@@ -18,35 +18,39 @@ function ReadNightMode(){
 
 function ActiveNightMode()
 {
-  console.log("ActiveNightMode: ", currentMode)
   document.querySelector("#nightMode").addEventListener("click",()=>{
-    console.log("click event: ", currentMode)
-    if(currentMode.includes("night-mode")==true){
+    if(currentMode.indexOf("night-mode")==0){
       moveToDayMode();
     }else{
       moveToNightMode();
     }
   })
-  if(currentMode.includes("night-mode")==true)
+  if(currentMode.indexOf("night-mode")==0)
   {
     moveToNightMode();
-  }else{
+  }
+  else{
     moveToDayMode();
   }
 }
 
 function Swap(target,oldOne,newOne){
   const content =  document.querySelector(target);
-  if (content?.classList?.contains(oldOne)){
+  if (content?.classList.contains(oldOne)){
     content.classList.replace(oldOne,newOne);
-  }else{
-    classList.add(newOne);
+  }else if(content?.classList.contains(newOne)==false){
+    content.classList.add(newOne);
   }
 }
 function moveToNightMode(){
   Swap(".b-content-divider","b-content-divider-day","b-content-divider-night");
-  // Swap("#btn-github","btn-dark","btn-light");
-  // Swap(".btn-here","btn-outline-dark","btn-outline-light");
+  Swap(".btn-dark","btn-dark","btn-light");
+  Swap(".btn-outline-dark","btn-outline-dark","btn-outline-light");
+  Swap(".summary","summary-day","summary-night");
+  Swap(".active","bg-dark","bg-light");
+  Swap(".active","text-light","text-dark");
+  Swap(".side-nav","bg-light","bg-dark");
+  Swap("a","link-dark","link-light");
 
   localStorage.setItem('theme', 'night');
   currentMode = "night-mode";
@@ -54,8 +58,15 @@ function moveToNightMode(){
 
 function moveToDayMode(){
   Swap(".b-content-divider","b-content-divider-night","b-content-divider-day");
-  // Swap("#btn-github","btn-light","btn-dark");
-  // Swap(".btn-here","btn-outline-light","btn-outline-dark");
+  Swap(".btn-light","btn-light","btn-dark");
+  Swap(".btn-outline-light","btn-outline-light","btn-outline-dark");
+  Swap(".summary","summary-night","summary-day");  
+  Swap(".active","bg-light","bg-dark");
+  Swap(".active","text-dark","text-light");
+  Swap(".side-nav","bg-dark","bg-light");
+  Swap("a","link-light","link-dark");
+
+
   localStorage.setItem('theme', 'day');
   currentMode = "day-mode";
 }

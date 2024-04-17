@@ -90,8 +90,6 @@ main {
 .nav li:last-child{
   border-bottom: none;
 }
-
-
 /* the content*/
 
 .my-content{
@@ -127,5 +125,13 @@ main {
   font-size: 15px;
   width: 70ch; 
   word-wrap: break-word;
+}
+
+.summary-day {
+  color: rgba(8, 9, 10, .85);
+}
+
+.summary-night {
+  color: antiquewhite;
 }
 
