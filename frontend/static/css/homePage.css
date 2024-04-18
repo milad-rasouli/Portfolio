@@ -90,6 +90,27 @@ main {
 .nav li:last-child{
   border-bottom: none;
 }
+
+.form-control-night::placeholder{
+  color: snow !important;
+}
+/* .form-control-night{
+  background-color: gray;
+  color: black;
+} */
+.form-control-day::placeholder{
+  color: gray !important;
+}
+/* .form-control-day{
+  background-color: rgb(248, 249, 250);
+} */
+.form-control:focus {
+  box-shadow: 0 0 8px gray; 
+}
+
+#nightMode:focus  {
+  box-shadow: 0 0 8px gray; 
+}
 /* the content*/
 
 .my-content{
@@ -123,10 +144,22 @@ main {
 .summary {
   color: rgba(8, 9, 10, .85);
   font-size: 15px;
-  width: 70ch; 
+  width: 60ch; 
   word-wrap: break-word;
 }
+@media (max-width: 575.98px) {
+  .title {
+    font-size: 52px; 
+  }
 
+  .interval-text {
+    font-size: 18px; 
+  }
+
+  .summary {
+    font-size: 10px; 
+  }
+}
 .summary-day {
   color: rgba(8, 9, 10, .85);
 }

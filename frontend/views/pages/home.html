@@ -68,10 +68,44 @@
   <body>
 
 <div class="container">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top d-md-none" aria-label="second navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Expand at sm</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample03">
+        <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+        <form role="search">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+        </form>
+      </div>
+    </div>
+  </nav>
 <main class="d-flex flex-nowrap row">
-  <div style="border-right: 1px solid blue;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-lg-2 border-light">
-    <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-    <div class="form-check form-switch">
+
+  <div style="border-right: 1px solid;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-xl-2 col-lg-3 border-secondary d-none d-md-flex">
+    <span class="mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <div class="d-flex align-items-center form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="nightMode">
         <label class="form-check-label text-dark" for="nightMode">Night Mode</label>
     </div>
@@ -100,8 +134,8 @@
       </li>
       <li>
         <form class="d-flex mt-2 mb-2" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-dark" type="submit">Search</button>
         </form>
       </li>
     </ul>
@@ -123,10 +157,9 @@
   <div class="b-content-divider b-content-divider-day b-content-vr col">
         <div class="container h-100">
             <div class="row h-100">
-                <div class="col-2"></div>
-                <div class="col-8 align-hv-center">
-                    <div class="the-content">
-
+                <div class="col-xl-2 col-lg-1 col-md-0"></div>
+                <div class="col-xl-8 col-lg-10 col-md-12 align-hv-center">
+                    <div class="the-content justify-content-center align-items-center">
                         <p class="title">
                             Milad Rasouli
                         </p>
@@ -138,7 +171,7 @@
                         <button class="btn btn-outline-dark">Here</button>
                     </div>
                 </div>
-                <div class="col-2"></div>
+                <div class="col-xl-2 col-lg-1 col-md-0"></div>
             </div>
         </div>
   </div>

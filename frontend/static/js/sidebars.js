@@ -58,7 +58,7 @@ function SwapAll(target,oldOne,newOne){
 }
 function moveToNightMode(){
   Swap(".b-content-divider","b-content-divider-day","b-content-divider-night");
-  Swap(".btn-dark","btn-dark","btn-light");
+  SwapAll(".btn-dark","btn-dark","btn-light");
   Swap(".btn-outline-dark","btn-outline-dark","btn-outline-light");
   Swap(".summary","summary-day","summary-night");
   Swap(".active","bg-dark","bg-light");
@@ -67,7 +67,12 @@ function moveToNightMode(){
   // SwapAll(".nav-link","link-dark","link-light");
   SwapAll(".link-dark","link-dark","link-light");
   SwapAll(".text-dark","text-dark","text-light");
+  SwapAll(".border-secondary","border-secondary","border-light");
   SwapAll(".dropdown-menu-light","dropdown-menu-light","dropdown-menu-dark");
+  Swap(".form-control-day","form-control-day","form-control-night")
+  SwapAll(".form-control","bg-light","bg-secondary");
+
+  console.log("move to night mode");
 
   localStorage.setItem('theme', 'night');
   currentMode = "night-mode";
@@ -75,7 +80,7 @@ function moveToNightMode(){
 
 function moveToDayMode(){
   Swap(".b-content-divider","b-content-divider-night","b-content-divider-day");
-  Swap(".btn-light","btn-light","btn-dark");
+  SwapAll(".btn-light","btn-light","btn-dark");
   Swap(".btn-outline-light","btn-outline-light","btn-outline-dark");
   Swap(".summary","summary-night","summary-day");  
   Swap(".active","bg-light","bg-dark");
@@ -84,8 +89,11 @@ function moveToDayMode(){
   // SwapAll(".nav-link","link-light","link-dark");
   SwapAll(".link-light","link-light","link-dark");
   SwapAll(".text-light","text-light","text-dark");
+  SwapAll(".border-light","border-light","border-secondary");
   SwapAll(".dropdown-menu-dark","dropdown-menu-dark","dropdown-menu-light");
-  
+  Swap(".form-control-night","form-control-night","form-control-day");
+  SwapAll(".form-control","bg-secondary","bg-light");
+  console.log("move to day mode");
 
   localStorage.setItem('theme', 'day');
   currentMode = "day-mode";
