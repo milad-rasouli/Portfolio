@@ -33,7 +33,7 @@
         background-image: linear-gradient(to left, rgba(10,10,10,0.4) , rgba(10,10,10,0.9));
       }
       .b-content-divider-day{
-        background-image: linear-gradient(to left, white , rgba(0,0,0,0.2));
+        background-image: linear-gradient(to left, rgba(0,0,0,0.2), white);
       }
       .b-content-vr {
         flex-shrink: 0;
@@ -69,14 +69,14 @@
 
 <div class="container">
 <main class="d-flex flex-nowrap row">
-  <div class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-lg-2">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+  <div style="border-right: 1px solid blue;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-lg-2 border-light">
+    <span class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="nightMode">
-        <label class="form-check-label" for="nightMode">Night Mode</label>
+        <label class="form-check-label text-dark" for="nightMode">Night Mode</label>
     </div>
-    </a>
-    <hr>
+    </span>
+    <hr class="text-dark">
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
         <a href="#Home" class="nav-link link-dark">
@@ -105,12 +105,12 @@
         </form>
       </li>
     </ul>
-    <hr>
+    <hr class="text-dark">
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <strong>User Area</strong>
       </a>
-      <ul class="dropdown-menu text-small shadow">
+      <ul class="dropdown-menu dropdown-menu-light text-small shadow ">
         <li><a class="dropdown-item" href="#">Sign in</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="#">Sign up</a></li>
