@@ -171,20 +171,20 @@
         <div class="container h-100">
             <div class="row h-100 align-hv-center">
                 <div class="main-form text-start">
-                <div class="card-header text-center">
+                <div class="card-header text-center border-bottom border-3 border-light">
                     <h1>Sign up</h1>
                 </div>
                 <div class="card-body">
                     <form id="signup-form" action="/sign-up" method="post">
-                        <div class="form-group">
+                        <div class="form-group mt-2">
                             <label for="fullname">Full Name:</label>
                             <input type="text" class="form-control form-control-day bg-light border-secondary text-dark" id="fullname" name="fullname" placeholder="Full Name" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mt-2">
                             <label for="email">Email:</label>
                             <input type="email" class="form-control form-control-day bg-light border-secondary text-dark" id="email" name="email" placeholder="Email" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mt-2">
                             <label for="password">Password:</label>
                             <input type="password" class="form-control form-control-day bg-light border-secondary text-dark" id="password" name="password" placeholder="Password" required>
                             <div id="password-strength" class="progress mt-2">
@@ -192,12 +192,12 @@
                             </div>
                             <div id="password-error" class="mt-2"></div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mt-2">
                             <label for="confirm-password">Confirm Password:</label>
                             <input type="password" class="form-control form-control-day bg-light border-secondary text-dark" id="confirm-password" placeholder="Confirm Password" required>
                             <div id="password-match" class="mt-2"></div>
                         </div>
-                        <button type="submit" class="btn btn-dark float-start">Sign Up</button>
+                        <button type="submit" class="btn btn-dark float-start">Sign up</button>
                         <button type="button" class="btn btn-dark float-end">Sign Up with Github</button>
                     </form>
                 </div>
