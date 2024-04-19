@@ -14,7 +14,7 @@ type Blog struct {
 func (b *Blog) list(c fiber.Ctx) error {
 	b.Logger.Info("blog list page is called!")
 
-	return c.JSON("welcome to the post list page")
+	return c.Render("blogs-list", fiber.Map{})
 }
 
 func (b *Blog) blog(c fiber.Ctx) error {

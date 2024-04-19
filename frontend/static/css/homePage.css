@@ -176,6 +176,13 @@ main {
   width: 100%; 
 }
 
+/*blogs list*/
+.blogs-list{
+  width: 100%;
+  height: 80%;
+  border-radius: 5px;
+}
+
 @media (min-width: 576px) {
   .main-form {
       width: 75%; 
@@ -185,6 +192,10 @@ main {
 @media (min-width: 768px) {
   .main-form {
       width: 50%; 
+    }
+    .blogs-list{
+      width: 75%;
+      height: 75%;
     }
 }
 
