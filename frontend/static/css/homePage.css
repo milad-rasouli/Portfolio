@@ -66,9 +66,7 @@ main {
   background-color: #d2f4ea;
 }
 
-.scrollarea {
-  overflow-y: auto;
-}
+
 /* night mode switch */
 /* night mode switch */
 .form-switch {
@@ -168,3 +166,6 @@ main {
   color: antiquewhite;
 }
 
+.no-wrap {
+  white-space: nowrap;
+}

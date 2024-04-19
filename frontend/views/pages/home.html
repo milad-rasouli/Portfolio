@@ -68,32 +68,39 @@
   <body>
 
 <div class="container">
-  <nav class="navbar navbar-expand-sm border border-secondary navbar-dark bg-dark fixed-top d-md-none" aria-label="second navbar">
+  <nav class="navbar navbar-expand-md border border-secondary navbar-dark bg-dark fixed-top d-lg-none" aria-label="second navbar">
     <div class="container-fluid">
-      <a class="navbar-brand link-dark" href="#">Logo</a>
+      <a class="navbar-brand link-dark" href="#">
+        <div class="d-flex align-items-center form-check form-switch justify-content-center">
+          <input class="form-check-input nightModeButton" type="checkbox" role="switch" id="nightMode">
+          <label class="form-check-label text-dark" for="nightMode" style="font-size: 15px;">Night Mode</label>
+      </div>
+      </a>
       <button class="navbar-toggler bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#secondNavbar" aria-controls="secondNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="secondNavbar">
-        <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 no-wrap">
           <li class="nav-item">
-            <a class="nav-link link-dark" aria-current="page" href="#">Home</a>
+            <a class="nav-link link-dark rounded active" aria-current="page" href="#">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark" href="#">About me</a>
+            <a class="nav-link link-dark rounded" href="#">About me</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark" href="#">Blogs</a>
+            <a class="nav-link link-dark rounded" href="#">Blogs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark" href="#">Contact</a>
+            <a class="nav-link link-dark rounded" href="#">Contact</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle link-dark" href="#" data-bs-toggle="dropdown" aria-expanded="false">User Area</a>
+            <a class="nav-link dropdown-toggle link-dark rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">User Area</a>
             <ul class="dropdown-menu dropdown-menu-light">
               <li><a class="dropdown-item" href="#">Sign in</a></li>
+              <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Sign up</a></li>
+              <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Exit</a></li>
             </ul>
           </li>
@@ -105,36 +112,19 @@
     </div>
   </nav>
 <main class="d-flex flex-nowrap row">
-
-  <div style="border-right: 1px solid;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-xl-2 col-lg-3 border-secondary d-none d-md-flex">
+  <div style="border-right: 1px solid;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-xl-2 col-lg-3 border-secondary d-none d-lg-flex">
     <span class="mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-    <div class="d-flex align-items-center form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="nightMode">
+    <div class="d-flex align-items-center form-check form-switch justify-content-center">
+        <input class="form-check-input nightModeButton" type="checkbox" role="switch" id="nightMode">
         <label class="form-check-label text-dark" for="nightMode">Night Mode</label>
     </div>
     </span>
     <hr class="text-dark">
     <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a href="#Home" class="nav-link link-dark">
-            Home
-        </a>
-      </li>
-      <li>
-        <a href="#AboutMe" class="nav-link link-dark">
-          About Me
-        </a>
-      </li>
-      <li>
-        <a href="#Blog" class="nav-link link-dark">
-          Blogs
-        </a>
-      </li>
-      <li>
-        <a href="#Contact" class="nav-link link-dark">
-          Contact
-        </a>
-      </li>
+      <li class="nav-item"><a href="#Home" class="nav-link link-dark">Home</a></li>
+      <li><a href="#AboutMe" class="nav-link link-dark active">About Me</a></li>
+      <li><a href="#Blog" class="nav-link link-dark">Blogs</a></li>
+      <li><a href="#Contact" class="nav-link link-dark">Contact</a></li>
       <li>
         <form class="d-flex mt-2 mb-2" role="search">
             <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search">
