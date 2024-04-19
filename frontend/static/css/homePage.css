@@ -169,3 +169,28 @@ main {
 .no-wrap {
   white-space: nowrap;
 }
+
+
+/*sign up page*/
+.main-form {
+  width: 100%; 
+}
+
+@media (min-width: 576px) {
+  .main-form {
+      width: 75%; 
+    }
+}
+
+@media (min-width: 768px) {
+  .main-form {
+      width: 50%; 
+    }
+}
+
+@media (min-width: 1200px) {
+  .main-form {
+      width: 30%; 
+  }
+}
+

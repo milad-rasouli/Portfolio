@@ -125,6 +125,9 @@ window.onload = ()=>{
   ActiveNightMode();
 
   const textElement = document.querySelector('.interval-text');
+  if(textElement==undefined){
+    return;
+  }
   let text = textElement.textContent;
   textElement.textContent = '';
   let i = 0;
