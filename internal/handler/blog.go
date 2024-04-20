@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/gofiber/fiber/v3"
@@ -16,7 +14,7 @@ type Blog struct {
 func (b *Blog) list(c fiber.Ctx) error {
 	b.Logger.Info("blog list page is called!")
 
-	return c.JSON("welcome to the post list page")
+	return c.Render("blogs-list", fiber.Map{})
 }
 
 func (b *Blog) blog(c fiber.Ctx) error {
@@ -29,7 +27,7 @@ func (b *Blog) blog(c fiber.Ctx) error {
 	)
 	if err != nil {
 		b.Logger.Error(err.Error())
-		return c.Status(http.StatusBadRequest).JSON(err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
 	return c.JSON("welcome to the post " + param)
 }

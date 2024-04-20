@@ -11,7 +11,7 @@ type Home struct {
 
 func (h *Home) home(c fiber.Ctx) error {
 	h.Logger.Info("home page is called!")
-	return c.JSON("welcome to the page")
+	return c.Render("home", fiber.Map{})
 }
 
 func (h *Home) Register(g fiber.Router) {
