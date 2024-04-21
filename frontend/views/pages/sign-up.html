@@ -104,25 +104,25 @@
       <div class="collapse navbar-collapse" id="secondNavbar">
         <ul class="navbar-nav me-auto mb-2 mb-md-0 no-wrap">
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" aria-current="page" href="#">Home</a>
+            <a class="nav-link link-dark rounded" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">About me</a>
+            <a class="nav-link link-dark rounded" href="/about-me">About me</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">Blogs</a>
+            <a class="nav-link link-dark rounded" href="/blog">Blogs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">Contact</a>
+            <a class="nav-link link-dark rounded" href="/contact">Contact</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle link-dark active rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">User Area</a>
             <ul class="dropdown-menu dropdown-menu-light">
-              <li><a class="dropdown-item" href="#">Sign in</a></li>
+              <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item rounded" href="#">Sign up</a></li>
+              <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Exit</a></li>
+              <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
             </ul>
           </li>
         </ul>
@@ -142,10 +142,10 @@
     </span>
     <hr class="text-dark">
     <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item"><a href="#Home" class="nav-link link-dark">Home</a></li>
-      <li><a href="#AboutMe" class="nav-link link-dark">About Me</a></li>
-      <li><a href="#Blog" class="nav-link link-dark">Blogs</a></li>
-      <li><a href="#Contact" class="nav-link link-dark">Contact</a></li>
+      <li class="nav-item"><a href="/" class="nav-link link-dark">Home</a></li>
+      <li><a href="/about-me" class="nav-link link-dark">About Me</a></li>
+      <li><a href="/blog" class="nav-link link-dark">Blogs</a></li>
+      <li><a href="/contact" class="nav-link link-dark">Contact</a></li>
       <li>
         <form class="d-flex mt-2 mb-2" role="search">
             <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search">
@@ -159,11 +159,11 @@
         <strong>User Area</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-light text-small shadow ">
-        <li><a class="dropdown-item" href="#">Sign in</a></li>
+        <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item rounded" href="#">Sign up</a></li>
+        <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Exit</a></li>
+        <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
       </ul>
     </div>
   </div>
@@ -198,7 +198,7 @@
                             <div id="password-match" class="mt-2"></div>
                         </div>
                         <button type="submit" class="btn btn-dark float-start">Sign up</button>
-                        <button type="button" class="btn btn-dark float-end">Sign Up with Github</button>
+                        <button type="button" class="btn btn-dark float-end">Sign up with Github</button>
                     </form>
                 </div>
             </div>
