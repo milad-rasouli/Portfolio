@@ -19,7 +19,6 @@ func (a *Auth) GetSignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) PostSignUp(c fiber.Ctx) error {
-	// usr := model.UserSignUp{}
 	data := c.Body()
 	a.Logger.Info(string(data))
 	return c.JSON(map[string]string{"message": "just a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple error"})

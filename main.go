@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 
 	"github.com/Milad75Rasouli/portfolio/internal/config"
@@ -26,22 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	log.Println(db)
-	conn := db.Get(context.TODO())
-	_ = conn.Prep(`CREATE TABLE IF NOT EXISTS post (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		body TEXT,
-		image_path TEXT,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		modified_at DATETIME 
-	);`)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer db.Put(conn)
-
 	engine := html.New("frontend/views/pages/", ".html")
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
