@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/Milad75Rasouli/portfolio/internal/config"
+	"github.com/Milad75Rasouli/portfolio/internal/db"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
@@ -11,14 +13,36 @@ import (
 )
 
 func main() {
-	cfg := config.New()
-	log.Printf("Config:%+v", cfg)
-
-	engine := html.New("frontend/views/pages/", ".html")
 	var (
 		logger *zap.Logger
 		err    error
 	)
+
+	cfg := config.New()
+	log.Printf("Config:%+v", cfg)
+
+	// var db *sqlitex.Pool
+	db, err := db.New(cfg.Database)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(db)
+	conn := db.Get(context.TODO())
+	_ = conn.Prep(`CREATE TABLE IF NOT EXISTS post (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL,
+		body TEXT,
+		image_path TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		modified_at DATETIME 
+	);`)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Put(conn)
+
+	engine := html.New("frontend/views/pages/", ".html")
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
 		engine.Reload(true)

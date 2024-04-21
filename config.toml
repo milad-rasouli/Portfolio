@@ -1,3 +1,5 @@
 
 debug = true
 
+[database]
+is_sqlite=true
