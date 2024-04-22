@@ -9,14 +9,17 @@ import (
 
 var unableToEstablishDatabase = errors.New("the Database cannot be established")
 
-func New(cfg Config) (dbpool *sqlitex.Pool, err error) {
-
+func New(cfg Config) (*sqlitex.Pool, error) {
+	var (
+		dbPool *sqlitex.Pool
+		err    error
+	)
 	if cfg.IsSqlite == true {
-		dbpool, err := sqlitex.Open("file:./data/locked.sqlite?cache=shared", 0, 10)
+		dbPool, err = sqlitex.Open("file:./data/locked.sqlite?cache=shared", 0, 10)
 		if err != nil {
 			log.Fatal(err)
 		}
-		return dbpool, err
+		return dbPool, err
 	}
-	return nil, unableToEstablishDatabase
+	return dbPool, unableToEstablishDatabase
 }

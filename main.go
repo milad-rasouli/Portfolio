@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 
+	"crawshaw.io/sqlite/sqlitex"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
 	"github.com/Milad75Rasouli/portfolio/internal/db"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
+	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
 	"go.uber.org/zap"
@@ -15,17 +17,23 @@ func main() {
 	var (
 		logger *zap.Logger
 		err    error
+		dbPool *sqlitex.Pool
 	)
 
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
-	// var db *sqlitex.Pool
-	db, err := db.New(cfg.Database)
-	if err != nil {
-		log.Fatalln(err)
+	{
+		dbPool, err = db.New(cfg.Database)
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+		err = store.CreateSqliteTable(dbPool, cfg.Database)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
-	log.Println(db)
 	engine := html.New("frontend/views/pages/", ".html")
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
