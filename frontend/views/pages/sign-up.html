@@ -225,8 +225,8 @@
         } else if (strength >= 8) {
             progressBar.classList.add('progress-bar-strong');
         }
-        document.getElementById('password-error').textContent = strength >= 6 ? '' : 'Password must be at least 6 characters.';
-        document.getElementById('password-error').style.color = strength >= 6 ? 'green' : 'red';
+        document.getElementById('password-error').textContent = strength >= 8 ? '' : 'Password must be at least 8 characters.';
+        document.getElementById('password-error').style.color = strength >= 8 ? 'green' : 'red';
     });
 
     document.getElementById('confirm-password').addEventListener('input', function() {
@@ -239,8 +239,8 @@
         e.preventDefault();
         var password = document.getElementById('password').value;
         var confirmPassword = document.getElementById('confirm-password').value;
-        if (password.length < 6 || password !== confirmPassword) {
-            document.getElementById('password-error').textContent = 'Password must be at least 6 characters.';
+        if (password.length < 8 || password !== confirmPassword) {
+            document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
             document.getElementById('password-match').textContent = 'Passwords do not match';
             document.getElementById('password-error').style.color = 'red';
             document.getElementById('password-match').style.color = 'red';
@@ -253,12 +253,19 @@
         };
         fetch('/user/sign-up', {
             method: 'POST',
+            redirect:"follow",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response.redirected) {
+              window.location.href = response.url; // Redirect to the new URL
+          } else {
+              return response.json();
+          }
+        })
         .then(data => {
             if (data.message) {
                 var notification = document.getElementById('notification');

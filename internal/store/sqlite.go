@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"crawshaw.io/sqlite"
@@ -21,6 +22,7 @@ type UserSqlite struct {
 	dbPool *sqlitex.Pool
 	logger *zap.Logger
 }
+
 func NewUserSqlite(dbPool *sqlitex.Pool, logger *zap.Logger) *UserSqlite {
 	return &UserSqlite{
 		dbPool: dbPool,
@@ -90,6 +92,10 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	stmt.SetText("$7", usr.CreatedAt.Format(timeLayout))
 
 	_, err = stmt.Step()
+	//sqlite.Stmt.Step: SQLITE_CONSTRAINT_UNIQUE (INSERT INTO user (full_name, email, password, is_github,online_at, modified_at, created_at) VALUES($1,$2,$3,$4,$5,$6,$7);)
+	if strings.Contains(err.Error(), "SQLITE_CONSTRAINT_UNIQUE") {
+		return DuplicateUserError
+	}
 	return err
 }
 func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, error) {
@@ -208,6 +214,7 @@ func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, passw
 type SqliteInit struct {
 	Folder string
 }
+
 func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, func(), error) {
 	var userDB *UserSqlite
 
