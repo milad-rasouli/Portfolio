@@ -75,8 +75,8 @@ func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
-	stmt, err := conn.Prepare(`INSERT INTO user (full_name, email, password, is_github,online_at, modified_at) 
-		VALUES($1,$2,$3,$4,$5,$6);`)
+	stmt, err := conn.Prepare(`INSERT INTO user (full_name, email, password, is_github,online_at, modified_at, created_at) 
+		VALUES($1,$2,$3,$4,$5,$6,$7);`)
 	if err != nil {
 		return errors.Errorf("unable to create the new user %s", err.Error())
 	}
@@ -87,6 +87,7 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	stmt.SetInt64("$4", usr.IsGithub)
 	stmt.SetText("$5", usr.OnlineAt.Format(timeLayout))
 	stmt.SetText("$6", usr.ModifiedAt.Format(timeLayout))
+	stmt.SetText("$7", usr.CreatedAt.Format(timeLayout))
 
 	_, err = stmt.Step()
 	return err
