@@ -10,4 +10,5 @@ generate:
 test:
     go test -v ./...
 
-
+benchmark:
+    go test -bench=. -benchmem -benchtime=3s ./...

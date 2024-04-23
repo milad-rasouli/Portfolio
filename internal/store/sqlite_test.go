@@ -2,7 +2,10 @@ package store
 
 import (
 	"context"
+	"log"
+	"math/rand"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -10,6 +13,40 @@ import (
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/stretchr/testify/assert"
 )
+
+type DatabaseInit struct {
+	folder string
+}
+type cancelDB func()
+
+func (d *DatabaseInit) Init() (*UserSqlite, cancelDB, error) {
+	var userDB *UserSqlite
+
+	os.Mkdir(d.folder, 0777)
+	cfg := db.Config{
+		IsSqlite:          true,
+		ConnectionTimeout: time.Millisecond * 200,
+	}
+	dbPool, err := db.New(cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	err = CreateSqliteTable(dbPool, cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	userDB = NewUserSqlite(dbPool, nil)
+	return userDB, func() {
+		err := dbPool.Close()
+		if err != nil {
+			log.Printf("Error closing database connection: %v", err)
+		}
+		err = os.RemoveAll(d.folder)
+		if err != nil {
+			log.Printf("Error removing database folder: %v", err)
+		}
+	}, nil
+}
 
 func TestUserCRUD(t *testing.T) {
 	var userDB *UserSqlite
@@ -25,23 +62,10 @@ func TestUserCRUD(t *testing.T) {
 		OnlineAt:   ti,
 	}
 
-	os.Mkdir("data", 0777)
-
-	{
-		cfg := db.Config{
-			IsSqlite:          true,
-			ConnectionTimeout: time.Millisecond * 200,
-		}
-		dbPool, err := db.New(cfg)
-		if err != nil {
-			t.Error(err)
-		}
-		err = CreateSqliteTable(dbPool, cfg)
-		if err != nil {
-			t.Error(err)
-		}
-		userDB = NewUserSqlite(dbPool, nil)
-	}
+	d := DatabaseInit{folder: "data"}
+	userDB, cancel, err := d.Init()
+	assert.NoError(t, err)
+	defer cancel()
 
 	{
 		err = userDB.Create(context.TODO(), user)
@@ -117,9 +141,42 @@ func TestUserCRUD(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	err = os.RemoveAll("data")
-	if err != nil {
-		t.Error("Error removing directory:", err)
-		return
+}
+
+func BenchmarkCreateUser(b *testing.B) {
+	d := DatabaseInit{folder: "data"}
+	userDB, cancel, err := d.Init()
+	assert.NoError(b, err)
+	defer cancel()
+
+	b.ResetTimer()
+
+	var totalDuration time.Duration
+	var totalUsers int
+
+	for i := 0; i < b.N; i++ {
+		now := time.Now()
+		user := model.User{
+			FullName:   "foo",
+			Password:   "barbaz123",
+			Email:      strconv.FormatUint(uint64(rand.Int63()), 10),
+			OnlineAt:   now,
+			ModifiedAt: now,
+		}
+
+		start := time.Now()
+		err = userDB.Create(context.TODO(), user)
+		assert.NoError(b, err)
+		elapsed := time.Since(start)
+
+		totalDuration += elapsed
+		totalUsers++
 	}
+
+	b.StopTimer()
+
+	b.Logf("Total Users Created: %d", totalUsers)
+	b.Logf("Total Time Taken: %v", totalDuration)
+	b.Logf("Avg. Time per User: %v", totalDuration/time.Duration(totalUsers))
+	b.Logf("Ops/second: %f", float64(totalUsers)/totalDuration.Seconds())
 }
