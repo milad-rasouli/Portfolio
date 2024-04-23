@@ -5,12 +5,14 @@ import (
 	// validation "github.com/go-ozzo/ozzo-validation"
 	// "github.com/go-ozzo/ozzo-validation/is"
 
+	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
 
 type Auth struct {
-	Logger *zap.Logger
+	Logger    *zap.Logger
+	UserStore store.User
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {

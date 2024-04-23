@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"crawshaw.io/sqlite"
@@ -19,7 +21,6 @@ type UserSqlite struct {
 	dbPool *sqlitex.Pool
 	logger *zap.Logger
 }
-
 func NewUserSqlite(dbPool *sqlitex.Pool, logger *zap.Logger) *UserSqlite {
 	return &UserSqlite{
 		dbPool: dbPool,
@@ -50,7 +51,6 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 
 	return err
 }
-
 func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 	var (
 		usr model.User
@@ -72,7 +72,6 @@ func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 	usr.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
 	return usr, err
 }
-
 func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -93,7 +92,6 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	_, err = stmt.Step()
 	return err
 }
-
 func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
@@ -116,7 +114,6 @@ func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, 
 	usr, err = u.parseToUser(stmt)
 	return usr, err
 }
-
 func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
@@ -206,4 +203,41 @@ func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, passw
 		return UserNotFountError
 	}
 	return err
+}
+
+type SqliteInit struct {
+	Folder string
+}
+func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, func(), error) {
+	var userDB *UserSqlite
+
+	os.Mkdir(d.Folder, 0777)
+	cfg := config
+	if isTestMode == true {
+		cfg = db.Config{
+			IsSqlite:          true,
+			ConnectionTimeout: time.Millisecond * 200,
+		}
+	}
+	dbPool, err := db.New(cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	err = CreateSqliteTable(dbPool, cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	userDB = NewUserSqlite(dbPool, logger)
+	return userDB, func() {
+		err := dbPool.Close()
+		if err != nil {
+			log.Printf("Error closing database connection: %v", err)
+		}
+		if isTestMode == true {
+			err = os.RemoveAll(d.Folder)
+			if err != nil {
+				log.Printf("Error removing database folder: %v", err)
+			}
+		}
+	}, nil
 }

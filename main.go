@@ -3,9 +3,7 @@ package main
 import (
 	"log"
 
-	"crawshaw.io/sqlite/sqlitex"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
-	"github.com/Milad75Rasouli/portfolio/internal/db"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
@@ -15,26 +13,20 @@ import (
 
 func main() {
 	var (
-		logger *zap.Logger
-		err    error
-		dbPool *sqlitex.Pool
+		logger    *zap.Logger
+		err       error
+		userStore store.User
 	)
 
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
-	{
-		dbPool, err = db.New(cfg.Database)
+	sqlite := store.SqliteInit{Folder: "data"}
+	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	defer cancelDB()
 
-		if err != nil {
-			log.Fatalln(err)
-		}
-		err = store.CreateSqliteTable(dbPool, cfg.Database)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
 	engine := html.New("frontend/views/pages/", ".html")
+
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
 		engine.Reload(true)
@@ -46,10 +38,12 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer logger.Sync()
+
 	app := fiber.New(fiber.Config{
 		Immutable: true,
 		Views:     engine,
 	})
+
 	{
 		logger := logger.Named("http")
 		h := handler.Home{
@@ -61,7 +55,8 @@ func main() {
 		}
 
 		a := handler.Auth{
-			Logger: logger.Named("auth"),
+			Logger:    logger.Named("auth"),
+			UserStore: userStore,
 		}
 
 		home := app.Group("/")

@@ -17,5 +17,5 @@ type User interface {
 	GetByID(context.Context, int64) (model.User, error)
 	GetAll(context.Context) ([]model.User, error)
 	DeleteByID(context.Context, int64) error
-	UpdateByID(context.Context, int64) error
+	UpdatePasswordFullName(context.Context, int64, string, string) error
 }
