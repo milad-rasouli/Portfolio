@@ -6,3 +6,7 @@ type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+func (u *User) IsValid() bool {
+	return false
+}

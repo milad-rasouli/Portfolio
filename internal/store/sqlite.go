@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"crawshaw.io/sqlite"
@@ -173,27 +174,36 @@ func (u *UserSqlite) DeleteByID(ctx context.Context, id int64) error {
 		return err
 	}
 	defer stmt.Finalize()
+	stmt.SetInt64("$1", id)
+	_, err = stmt.Step()
+	return err
+}
+func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, password string, fullname string) error {
+	conn := u.dbPool.Get(ctx)
+	defer u.dbPool.Put(conn)
+	var s string
+	if len(password) != 0 && len(fullname) != 0 {
+		s = fmt.Sprintf(`UPDATE user
+		SET password='%s', full_name='%s'
+		WHERE id=%d;`, password, fullname, id)
+	} else if len(password) != 0 {
+		s = fmt.Sprintf(`UPDATE user
+		SET password='%s'
+		WHERE id=%d;`, password, id)
+	} else if len(fullname) != 0 {
+		s = fmt.Sprintf(`UPDATE user
+		SET full_name='%s'
+		WHERE id=%d;`, fullname, id)
+	}
+	stmt, err := conn.Prepare(s)
+	if err != nil {
+		return err
+	}
+	defer stmt.Finalize()
 	var hasRow bool
 	hasRow, err = stmt.Step()
-	if hasRow == false {
+	if hasRow {
 		return UserNotFountError
 	}
 	return err
-}
-func (u *UserSqlite) UpdateByID(ctx context.Context, id int64) error {
-	// conn := u.dbPool.Get(ctx)
-	// defer u.dbPool.Put(conn)
-	// stmt, err := conn.Prepare(`DELETE FROM user WHERE id=$1;`)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer stmt.Finalize()
-	// var hasRow bool
-	// hasRow, err = stmt.Step()
-	// if hasRow {
-	// 	return UserNotFountError
-	// }
-	// return err
-
-	return nil
 }
