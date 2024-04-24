@@ -22,3 +22,15 @@ func (u UserSingUp) Validate() error {
 		validation.Field(&u.Password, validation.Length(8, 50), is.ASCII, validation.Match(UserSingUpPasswordRegex)),
 	)
 }
+
+type UserSignIn struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (u UserSignIn) Validate() error {
+	return validation.ValidateStruct(&u,
+		validation.Field(&u.Email, validation.Required, is.Email),
+		validation.Field(&u.Password, validation.Length(8, 50), is.ASCII, validation.Match(UserSingUpPasswordRegex)),
+	)
+}

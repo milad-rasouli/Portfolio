@@ -32,7 +32,7 @@ func TestUserCRUD(t *testing.T) {
 	defer cancel()
 
 	{
-		err = userDB.Create(context.TODO(), user)
+		_, err = userDB.Create(context.TODO(), user)
 		if err != nil {
 			t.Error(err)
 		}
@@ -129,7 +129,7 @@ func BenchmarkCreateUser(b *testing.B) {
 		}
 
 		start := time.Now()
-		err = userDB.Create(context.TODO(), user)
+		_, err = userDB.Create(context.TODO(), user)
 		assert.NoError(b, err)
 		elapsed := time.Since(start)
 

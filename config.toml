@@ -10,3 +10,6 @@ paper="verySecurePaper"
 time=2
 memory=131072 #128*1024 
 Thread=5
+
+[jwt]
+secret_key="key123456"

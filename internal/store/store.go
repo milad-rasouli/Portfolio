@@ -12,7 +12,7 @@ var UserNotFountError = errors.New("could not find the user")
 var CannotCreateTableError = errors.New("Cannot create tables")
 
 type User interface {
-	Create(context.Context, model.User) error
+	Create(context.Context, model.User) (int64, error)
 	GetByEmail(context.Context, string) (model.User, error)
 	GetByID(context.Context, int64) (model.User, error)
 	GetAll(context.Context) ([]model.User, error)

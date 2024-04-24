@@ -1,10 +1,6 @@
 package handler
 
 import (
-
-	// validation "github.com/go-ozzo/ozzo-validation"
-	// "github.com/go-ozzo/ozzo-validation/is"
-
 	"errors"
 	"time"
 
@@ -28,29 +24,28 @@ func (a *Auth) GetSignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) PostSignUp(c fiber.Ctx) error {
-	// data := c.Body()
-	// a.Logger.Info(fmt.Sprintf("%+v", user))
-	// a.Logger.Info(string(data))
 	var user request.UserSingUp
 	c.Bind().Body(&user)
 	err := user.Validate()
 	if err != nil {
-		return c.JSON(map[string]string{"message": err.Error()}) // TODO: retrieve meaningful message based on the error
+		return Message(c, err) // TODO: retrieve meaningful message based on the error
 	}
+	now := time.Now()
 	validUser := model.User{
-		FullName: user.FullName,
-		Email:    user.Email,
-		Password: a.UserPassword.HashPassword(user.Password, user.Email),
-		OnlineAt: time.Now(),
+		FullName:  user.FullName,
+		Email:     user.Email,
+		Password:  a.UserPassword.HashPassword(user.Password, user.Email),
+		OnlineAt:  now,
+		CreatedAt: now,
 	}
-	err = a.UserStore.Create(c.Context(), validUser)
+	validUser.ID, err = a.UserStore.Create(c.Context(), validUser)
 	if errors.Is(err, store.DuplicateUserError) {
-		return c.JSON(map[string]string{"message": "user is duplicated"})
+		return Message(c, errors.New("user is duplicated"))
 	} else if err != nil {
 		a.Logger.Error("creating user failed", zap.Error(err))
-		return c.JSON(map[string]string{"message": "unknown error"})
+		return Message(c, errors.New("unknown error"))
 	}
-	a.Logger.Info("user created", zap.Any("User", user))
+	a.Logger.Info("user created", zap.Any("User", validUser))
 	return c.Redirect().To("/user/sign-in")
 }
 
@@ -60,10 +55,24 @@ func (a *Auth) GetSignIn(c fiber.Ctx) error {
 }
 
 func (a *Auth) PostSignIn(c fiber.Ctx) error {
-	data := c.Body()
-	a.Logger.Info(string(data))
-	return c.JSON(map[string]string{"message": "just a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple errorjust a simple error"})
+	var user request.UserSignIn
+	c.Bind().Body(&user)
+	err := user.Validate()
+	if err != nil {
+		return Message(c, err)
+	}
 
+	UserFromDB, err := a.UserStore.GetByEmail(c.Context(), user.Email)
+	if err != nil {
+		return Message(c, errors.New("password or email is wrong"))
+	}
+	if a.UserPassword.ComparePasswords(UserFromDB.Password, user.Password, user.Email) == false {
+		return Message(c, errors.New("password or email is wrong"))
+	}
+
+	a.Logger.Info("signed up user", zap.Any("user", UserFromDB))
+	// a.Logger.Info("token", zap.Any("user token", tokenString))
+	return Message(c, errors.New("you are signed up")) //TODO: redirect if necessary
 }
 
 func (a *Auth) Register(g fiber.Router) {
