@@ -92,7 +92,6 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	stmt.SetText("$7", usr.CreatedAt.Format(timeLayout))
 
 	_, err = stmt.Step()
-	//sqlite.Stmt.Step: SQLITE_CONSTRAINT_UNIQUE (INSERT INTO user (full_name, email, password, is_github,online_at, modified_at, created_at) VALUES($1,$2,$3,$4,$5,$6,$7);)
 	if strings.Contains(err.Error(), "SQLITE_CONSTRAINT_UNIQUE") {
 		return DuplicateUserError
 	}

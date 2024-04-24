@@ -8,6 +8,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/request"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
@@ -16,8 +17,9 @@ import (
 )
 
 type Auth struct {
-	Logger    *zap.Logger
-	UserStore store.User
+	Logger       *zap.Logger
+	UserStore    store.User
+	UserPassword *cipher.UserPassword
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
@@ -33,12 +35,12 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 	c.Bind().Body(&user)
 	err := user.Validate()
 	if err != nil {
-		return c.JSON(map[string]string{"message": err.Error()})
+		return c.JSON(map[string]string{"message": err.Error()}) // TODO: retrieve meaningful message based on the error
 	}
 	validUser := model.User{
 		FullName: user.FullName,
 		Email:    user.Email,
-		Password: user.Password, // TODO: user argon2 here for the password
+		Password: a.UserPassword.HashPassword(user.Password, user.Email),
 		OnlineAt: time.Now(),
 	}
 	err = a.UserStore.Create(c.Context(), validUser)
@@ -48,6 +50,7 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 		a.Logger.Error("creating user failed", zap.Error(err))
 		return c.JSON(map[string]string{"message": "unknown error"})
 	}
+	a.Logger.Info("user created", zap.Any("User", user))
 	return c.Redirect().To("/user/sign-in")
 }
 

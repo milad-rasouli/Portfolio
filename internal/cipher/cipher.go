@@ -18,7 +18,7 @@ func NewUserPassword(cfg Config) *UserPassword {
 }
 
 func (u UserPassword) HashPassword(password string, salt string) string {
-	hash := argon2.IDKey([]byte(password), []byte(u.cfg.MoreSalt+salt), u.cfg.Time, u.cfg.Memory, u.cfg.Thread, u.cfg.KeyLen)
+	hash := argon2.IDKey([]byte(password), []byte(u.cfg.Paper+salt), u.cfg.Time, u.cfg.Memory, u.cfg.Thread, u.cfg.KeyLen)
 	encodedHash := base64.RawStdEncoding.EncodeToString(hash)
 	return encodedHash
 }

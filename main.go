@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
@@ -24,6 +25,8 @@ func main() {
 	sqlite := store.SqliteInit{Folder: "data"}
 	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	defer cancelDB()
+
+	userPassword := cipher.NewUserPassword(cfg.Cipher)
 
 	engine := html.New("frontend/views/pages/", ".html")
 
@@ -55,8 +58,9 @@ func main() {
 		}
 
 		a := handler.Auth{
-			Logger:    logger.Named("auth"),
-			UserStore: userStore,
+			Logger:       logger.Named("auth"),
+			UserStore:    userStore,
+			UserPassword: userPassword,
 		}
 
 		home := app.Group("/")

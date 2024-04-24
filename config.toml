@@ -6,4 +6,7 @@ is_sqlite=true
 connection_timeout="2s"
 
 [cipher]
-more_salt="test123"
+paper="verySecurePaper"
+time=2
+memory=131072 #128*1024 
+Thread=5
