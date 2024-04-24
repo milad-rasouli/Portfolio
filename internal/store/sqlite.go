@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"crawshaw.io/sqlite"
@@ -92,8 +91,12 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) error {
 	stmt.SetText("$7", usr.CreatedAt.Format(timeLayout))
 
 	_, err = stmt.Step()
-	if strings.Contains(err.Error(), "SQLITE_CONSTRAINT_UNIQUE") {
-		return DuplicateUserError
+	if err != nil {
+		e := err.Error()[18:42]
+		log.Println(e)
+		if e == "SQLITE_CONSTRAINT_UNIQUE" {
+			return DuplicateUserError
+		}
 	}
 	return err
 }

@@ -9,11 +9,11 @@ import (
 
 func TestUserPassword(t *testing.T) {
 	cfg := Config{
-		MoreSalt: "test123",
-		Time:     1,
-		Memory:   64 * 1024,
-		Thread:   1,
-		KeyLen:   64,
+		Paper:  "test123",
+		Time:   1,
+		Memory: 64 * 1024,
+		Thread: 1,
+		KeyLen: 64,
 	}
 	password := "1234qwer"
 	salt := "salt123"
