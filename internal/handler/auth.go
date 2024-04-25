@@ -19,7 +19,7 @@ type Auth struct {
 	Logger       *zap.Logger
 	UserStore    store.User
 	UserPassword *cipher.UserPassword
-	RefreshJWT   *jwt.RefreshJWT
+	JWTToken     *jwt.JWTToken
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
@@ -85,7 +85,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 	}
 
 	{
-		token, err = a.RefreshJWT.CreateRefreshToken(jwt.JWTUser{
+		token, err = a.JWTToken.RefreshToken.Create(jwt.JWTUser{
 			FullName: UserFromDB.FullName,
 			Email:    UserFromDB.Email,
 			Role:     "admin", //TODO: implement for diffrent roles
@@ -115,7 +115,7 @@ func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should
 	}
 
 	{
-		jwtUser, err = a.RefreshJWT.VerifyParseRefreshToken(token)
+		jwtUser, err = a.JWTToken.RefreshToken.VerifyParse(token)
 		if err != nil {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
@@ -128,7 +128,7 @@ func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should
 	}
 
 	{
-		newToken, err = a.RefreshJWT.CreateRefreshToken(jwtUser)
+		newToken, err = a.JWTToken.RefreshToken.Create(jwtUser)
 		if err != nil {
 			a.Logger.Error("refresh token failed", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)

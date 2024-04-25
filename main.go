@@ -29,7 +29,7 @@ func main() {
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)
 
-	refreshJWT := jwt.NewRefreshJWT(cfg.JWT)
+	jwtToken := jwt.New(cfg.JWT)
 
 	engine := html.New("frontend/views/pages/", ".html")
 
@@ -64,7 +64,7 @@ func main() {
 			Logger:       logger.Named("auth"),
 			UserStore:    userStore,
 			UserPassword: userPassword,
-			RefreshJWT:   refreshJWT,
+			JWTToken:     jwtToken,
 		}
 
 		home := app.Group("/")

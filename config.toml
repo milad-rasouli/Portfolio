@@ -11,4 +11,5 @@ memory=131072 #128*1024
 Thread=5
 
 [jwt]
-refresh_secret_key="key123456" # it should be over 48 characters long to be secure 
+refresh_secret_key="key1234567890" # it should be over 48 characters long to be secure 
+access_secret_key="key123456" # it should be over 32 characters long to be secure
