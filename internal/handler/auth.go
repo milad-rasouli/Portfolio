@@ -95,24 +95,63 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		a.Logger.Info("signed in user", zap.Any("user", UserFromDB), zap.String("token:", token))
-
-		c.Cookie(&fiber.Cookie{
-			Name:     "jwt_token",
-			Value:    token,
-			Expires:  time.Now().Add(time.Hour * jwt.RefreshTokenExpireAfter),
-			HTTPOnly: true,
-			Secure:   true, // false for when you do not use Https
-			SameSite: fiber.CookieSameSiteStrictMode,
-			Path:     "/user/refresh-token",
-			// Domain:   "MiladRasouli.ir", //TODO: take it from the config
-		})
+		SetRefreshTokenCookie(c, token)
 	}
 	return c.Redirect().To("/")
 }
 
+func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should handel the incoming traffic of this route
+	var (
+		err             error
+		jwtUser         jwt.JWTUser
+		newToken, token string
+	)
+	{
+		token = c.Cookies("jwt_refresh_token")
+		if len(token) == 0 {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+		jwtUser, err = a.RefreshJWT.VerifyParseRefreshToken(token)
+		if err != nil {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+	}
+	{
+		newToken, err = a.RefreshJWT.CreateRefreshToken(jwtUser)
+		if err != nil {
+			a.Logger.Error("refresh token failed", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		a.Logger.Info("New refresh token", zap.String("token", token))
+		SetRefreshTokenCookie(c, newToken)
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
+}
+
+func (a *Auth) AccessToken(c fiber.Ctx) error {
+
+	return c.SendStatus(fiber.StatusCreated)
+}
 func (a *Auth) Register(g fiber.Router) {
 	g.Get("/sign-up", a.GetSignUp)
 	g.Post("/sign-up", a.PostSignUp)
 	g.Get("/sign-in", a.GetSignIn)
 	g.Post("/sign-in", a.PostSignIn)
+
+	g.Post("refresh-token", a.RefreshToken)
+	g.Post("access-token")
+}
+
+func SetRefreshTokenCookie(c fiber.Ctx, token string) {
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt_refresh_token",
+		Value:    token,
+		Expires:  time.Now().Add(time.Second * 150), // * jwt.RefreshTokenExpireAfter), //TODO: turn it to Hour
+		HTTPOnly: true,
+		Secure:   true, // false for when you do not use Https
+		SameSite: fiber.CookieSameSiteStrictMode,
+		Path:     "/",
+		// Domain:   "MiladRasouli.ir", //TODO: take it from the config
+	})
 }

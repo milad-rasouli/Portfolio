@@ -141,3 +141,23 @@ window.onload = ()=>{
   }
   typeWriter();
 }
+
+// TODO: add this to base.templ
+function sendRefreshTokenRequest() {
+  fetch('/user/refresh-token', {
+      method: 'POST',
+      credentials: 'include',
+  })
+  .then(response => {
+      if (response === null) {
+          console.log('No response from server');
+          return;
+      }
+      return true;
+  })
+  .catch(error => {
+      console.log('Error refreshing token:', error);
+  });
+}
+sendRefreshTokenRequest();
+setInterval(sendRefreshTokenRequest, 5000);
