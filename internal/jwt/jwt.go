@@ -8,18 +8,24 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var InvalidJWTMethod = errors.New("Invalid JWT Method")
-var FailedToParseToken = errors.New("Failed to parse the token")
-var InvalidToken = errors.New("Invalid token")
-var InvalidTokenClaims = errors.New("Invalid token claims")
-var FailedToReadClaims = errors.New("Failed to read the claims")
+const (
+	RefreshTokenExpireAfter = 48 // Hours
+)
 
-type JWT struct {
-	cfg Config
+var (
+	InvalidJWTMethod   = errors.New("Invalid JWT Method")
+	FailedToParseToken = errors.New("Failed to parse the token")
+	InvalidToken       = errors.New("Invalid token")
+	InvalidTokenClaims = errors.New("Invalid token claims")
+	FailedToReadClaims = errors.New("Failed to read the claims")
+)
+
+type RefreshJWT struct {
+	SecretKey string
 }
 
-func NewJWT(c Config) *JWT {
-	return &JWT{cfg: c}
+func NewRefreshJWT(c Config) *RefreshJWT {
+	return &RefreshJWT{SecretKey: c.RefreshSecretKey}
 }
 
 type JWTUser struct {
@@ -28,21 +34,21 @@ type JWTUser struct {
 	Role     string
 }
 
-func (j JWT) CreateToken(jwtUser JWTUser) (string, error) {
+func (j RefreshJWT) CreateRefreshToken(jwtUser JWTUser) (string, error) {
 
 	now := time.Now()
 	claims := &jwt.RegisteredClaims{
-		Issuer:    "MiladRasouli.ir",
+		Issuer:    "MiladRasouli.ir", //TODO: take it from the config
 		Subject:   jwtUser.FullName,
 		Audience:  []string{jwtUser.Role},
-		ExpiresAt: jwt.NewNumericDate(now.Add(time.Second)), //TODO: choose a reasonable amount
+		ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour * RefreshTokenExpireAfter)),
 		NotBefore: jwt.NewNumericDate(now),
 		IssuedAt:  jwt.NewNumericDate(now),
 		ID:        jwtUser.Email,
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 
-	tokenString, err := token.SignedString([]byte(j.cfg.SecretKey))
+	tokenString, err := token.SignedString([]byte(j.SecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -50,7 +56,7 @@ func (j JWT) CreateToken(jwtUser JWTUser) (string, error) {
 	return tokenString, nil
 }
 
-func (j JWT) VerifyParseUserToken(tokenString string) (JWTUser, error) {
+func (j RefreshJWT) VerifyParseRefreshToken(tokenString string) (JWTUser, error) {
 	var jwtUser JWTUser
 
 	token, err := jwt.ParseWithClaims(tokenString, new(jwt.RegisteredClaims),
@@ -59,7 +65,7 @@ func (j JWT) VerifyParseUserToken(tokenString string) (JWTUser, error) {
 				return nil, InvalidJWTMethod
 			}
 
-			return []byte(j.cfg.SecretKey), nil
+			return []byte(j.SecretKey), nil
 		})
 
 	if err != nil {

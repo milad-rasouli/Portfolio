@@ -6,6 +6,7 @@ import (
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
+	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
@@ -27,6 +28,8 @@ func main() {
 	defer cancelDB()
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)
+
+	refreshJWT := jwt.NewRefreshJWT(cfg.JWT)
 
 	engine := html.New("frontend/views/pages/", ".html")
 
@@ -61,6 +64,7 @@ func main() {
 			Logger:       logger.Named("auth"),
 			UserStore:    userStore,
 			UserPassword: userPassword,
+			RefreshJWT:   refreshJWT,
 		}
 
 		home := app.Group("/")

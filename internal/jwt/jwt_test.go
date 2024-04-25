@@ -13,30 +13,30 @@ func TestTokenStuff(t *testing.T) {
 		err   error
 	)
 	cfg := Config{
-		SecretKey: "VerySecretKey",
+		RefreshSecretKey: "VerySecretKey",
 	}
 	user := JWTUser{
 		FullName: "foo bar",
 		Email:    "bar@baz.com",
 		Role:     "admin",
 	}
-	jwt := NewJWT(cfg)
+	jwt := NewRefreshJWT(cfg)
 
 	{
-		token, err = jwt.CreateToken(user)
+		token, err = jwt.CreateRefreshToken(user)
 		assert.NoError(t, err)
 		fmt.Printf("created token: %s\n", token)
 	}
 
 	{
-		jwtUser, err := jwt.VerifyParseUserToken(token)
+		jwtUser, err := jwt.VerifyParseRefreshToken(token)
 		assert.NoError(t, err)
 		fmt.Printf("parsed token: %+v\n", jwtUser)
 	}
 
 	{
-		expiredToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNaWxhZFJhc291bGkuaXIiLCJzdWIiOiJmb28gYmFyIiwiYXVkIjpbImFkbWluIl0sImV4cCI6MTcxNDAzMTM5NCwibmJmIjoxNzE0MDMxMzkzLCJpYXQiOjE3MTQwMzEzOTMsImp0aSI6ImJhckBiYXouY29tIn0.7UVbHcnh3w70TZAywpexFhc3az_S77hYHcUezM19xtM"
-		jwtUser, err := jwt.VerifyParseUserToken(expiredToken)
+		expiredToken := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNaWxhZFJhc291bGkuaXIiLCJzdWIiOiJmb28gYmFyIiwiYXVkIjpbImFkbWluIl0sImV4cCI6MTcxNDAzNDE4MCwibmJmIjoxNzE0MDM0MTMyLCJpYXQiOjE3MTQwMzQxMzIsImp0aSI6ImJhckBiYXouY29tIn0.1sdIsJ1XGm4kCqEha98TvAyoEFqJ74sRcI1zjHN6LFKqd-GfzPpwnL-_9BIPeTC1B43ZrUaDMbHy8KhiOjMcBg"
+		jwtUser, err := jwt.VerifyParseRefreshToken(expiredToken)
 		assert.Error(t, err)
 
 		fmt.Printf("parsed token: %+v expiration error: %+v\n", jwtUser, err)

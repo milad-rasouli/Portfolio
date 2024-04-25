@@ -217,7 +217,13 @@
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response.redirected) {
+              window.location.href = response.url; // Redirect to the new URL
+          } else {
+              return response.json();
+          }
+        })
         .then(data => {
             if (data.message) {
                 var notification = document.getElementById('notification');

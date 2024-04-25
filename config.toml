@@ -1,4 +1,3 @@
-
 debug = true
 
 [database]
@@ -12,4 +11,4 @@ memory=131072 #128*1024
 Thread=5
 
 [jwt]
-secret_key="key123456"
+refresh_secret_key="key123456" # it should be over 48 characters long to be secure 

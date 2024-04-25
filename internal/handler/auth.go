@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
+	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/request"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
@@ -12,10 +13,13 @@ import (
 	"go.uber.org/zap"
 )
 
+var WrongPasswordOrEmail = errors.New("password or email is wrong")
+
 type Auth struct {
 	Logger       *zap.Logger
 	UserStore    store.User
 	UserPassword *cipher.UserPassword
+	RefreshJWT   *jwt.RefreshJWT
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
@@ -55,24 +59,55 @@ func (a *Auth) GetSignIn(c fiber.Ctx) error {
 }
 
 func (a *Auth) PostSignIn(c fiber.Ctx) error {
-	var user request.UserSignIn
-	c.Bind().Body(&user)
-	err := user.Validate()
-	if err != nil {
-		return Message(c, err)
+	var (
+		user       request.UserSignIn
+		token      string
+		UserFromDB model.User
+		err        error
+	)
+
+	{
+		c.Bind().Body(&user)
+		err = user.Validate()
+		if err != nil {
+			return Message(c, err)
+		}
 	}
 
-	UserFromDB, err := a.UserStore.GetByEmail(c.Context(), user.Email)
-	if err != nil {
-		return Message(c, errors.New("password or email is wrong"))
-	}
-	if a.UserPassword.ComparePasswords(UserFromDB.Password, user.Password, user.Email) == false {
-		return Message(c, errors.New("password or email is wrong"))
+	{
+		UserFromDB, err = a.UserStore.GetByEmail(c.Context(), user.Email)
+		if err != nil {
+			return Message(c, WrongPasswordOrEmail)
+		}
+		if a.UserPassword.ComparePasswords(UserFromDB.Password, user.Password, user.Email) == false {
+			return Message(c, WrongPasswordOrEmail)
+		}
 	}
 
-	a.Logger.Info("signed up user", zap.Any("user", UserFromDB))
-	// a.Logger.Info("token", zap.Any("user token", tokenString))
-	return Message(c, errors.New("you are signed up")) //TODO: redirect if necessary
+	{
+		token, err = a.RefreshJWT.CreateRefreshToken(jwt.JWTUser{
+			FullName: UserFromDB.FullName,
+			Email:    UserFromDB.Email,
+			Role:     "admin", //TODO: implement for diffrent roles
+		})
+		if err != nil {
+			a.Logger.Error("Refresh token failed", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		a.Logger.Info("signed in user", zap.Any("user", UserFromDB), zap.String("token:", token))
+
+		c.Cookie(&fiber.Cookie{
+			Name:     "jwt_token",
+			Value:    token,
+			Expires:  time.Now().Add(time.Hour * jwt.RefreshTokenExpireAfter),
+			HTTPOnly: true,
+			Secure:   true, // false for when you do not use Https
+			SameSite: fiber.CookieSameSiteStrictMode,
+			Path:     "/user/refresh-token",
+			// Domain:   "MiladRasouli.ir", //TODO: take it from the config
+		})
+	}
+	return c.Redirect().To("/")
 }
 
 func (a *Auth) Register(g fiber.Router) {

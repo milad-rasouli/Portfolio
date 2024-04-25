@@ -1,5 +1,6 @@
 package jwt
 
 type Config struct {
-	SecretKey string `koanf:"secret_key"`
+	RefreshSecretKey string `koanf:"refresh_secret_key"`
+	AccessSecretKey  string `koanf:"access_secret_key"`
 }

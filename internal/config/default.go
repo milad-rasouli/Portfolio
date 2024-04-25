@@ -16,7 +16,8 @@ func Default() Config {
 			KeyLen: 64,
 		},
 		JWT: jwt.Config{
-			SecretKey: "VerySecretKey",
+			RefreshSecretKey: "changeIt",
+			AccessSecretKey:  "changeIt",
 		},
 	}
 }
