@@ -29,11 +29,13 @@ func NewRefreshJWT(c Config) *RefreshJWT {
 }
 
 type JWTUser struct {
-	FullName string
-	Email    string
-	Role     string
+	FullName     string
+	Email        string
+	Role         string
+	InitiateTime time.Time
 }
 
+// Caution for jwtUser the InitiateTime won't effect the result. it's always time.Now()
 func (j RefreshJWT) CreateRefreshToken(jwtUser JWTUser) (string, error) {
 
 	now := time.Now()
@@ -90,6 +92,11 @@ func (j RefreshJWT) VerifyParseRefreshToken(tokenString string) (JWTUser, error)
 		return jwtUser, errors.Join(FailedToReadClaims, errors.New("audience claims error"))
 	}
 	jwtUser.Role = strings.Join(a, "")
+	initiateTime, err := claims.GetIssuedAt()
+	if err != nil {
+		return jwtUser, errors.Join(FailedToReadClaims, errors.New("expiration time claims error"))
+	}
+	jwtUser.InitiateTime = initiateTime.Time
 
 	return jwtUser, nil
 }

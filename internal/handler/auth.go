@@ -106,16 +106,27 @@ func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should
 		jwtUser         jwt.JWTUser
 		newToken, token string
 	)
+
 	{
 		token = c.Cookies("jwt_refresh_token")
 		if len(token) == 0 {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
+	}
+
+	{
 		jwtUser, err = a.RefreshJWT.VerifyParseRefreshToken(token)
 		if err != nil {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
+		since := time.Since(jwtUser.InitiateTime)
+		a.Logger.Info(since.String())
+		if since < time.Second*20 { //TODO: change it after the task
+			a.Logger.Info("unneccery request")
+			return c.SendStatus(fiber.StatusAccepted)
+		}
 	}
+
 	{
 		newToken, err = a.RefreshJWT.CreateRefreshToken(jwtUser)
 		if err != nil {
@@ -140,7 +151,7 @@ func (a *Auth) Register(g fiber.Router) {
 	g.Post("/sign-in", a.PostSignIn)
 
 	g.Post("refresh-token", a.RefreshToken)
-	g.Post("access-token")
+	g.Post("access-token", a.AccessToken)
 }
 
 func SetRefreshTokenCookie(c fiber.Ctx, token string) {
