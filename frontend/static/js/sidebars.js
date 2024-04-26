@@ -144,9 +144,13 @@ window.onload = ()=>{
 
 // TODO: add this to base.templ
 function sendRefreshTokenRequest() {
-  fetch('/user/refresh-token', {
+  fetch('/user/update-token', {
       method: 'POST',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'JWT-Token':'refresh',
+      },
   })
   .then(response => {
       if (response === null) {

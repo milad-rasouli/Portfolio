@@ -13,6 +13,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	accessToken  = 1
+	refreshToken = 2
+)
+
 var WrongPasswordOrEmail = errors.New("password or email is wrong")
 
 type Auth struct {
@@ -95,17 +100,34 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		a.Logger.Info("signed in user", zap.Any("user", UserFromDB), zap.String("token:", token))
-		SetRefreshTokenCookie(c, token)
+		SetTokenCookie(c, token, refreshToken)
 	}
+
+	{
+		token, err = a.JWTToken.AccessToken.Create(jwt.JWTUser{
+			FullName: UserFromDB.FullName,
+			Email:    UserFromDB.Email,
+			Role:     "admin", //TODO: implement for diffrent roles
+		}) //TODO: Refactor the return arguments of the jwt package
+		if err != nil {
+			a.Logger.Error("access token failed", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		a.Logger.Info("New access token", zap.String("token", token))
+		SetTokenCookie(c, token, accessToken)
+	}
+
 	return c.Redirect().To("/")
 }
 
-func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should handel the incoming traffic of this route
+func (a *Auth) updateToken(c fiber.Ctx) error { //TODO: in frontend side should handel the incoming traffic of this route
 	var (
 		err             error
 		jwtUser         jwt.JWTUser
 		newToken, token string
+		requestedToken  = c.Get("JWT-Token")
 	)
+	a.Logger.Info("New refresh token", zap.String("requitedToken", requestedToken))
 
 	{
 		token = c.Cookies("jwt_refresh_token")
@@ -133,36 +155,46 @@ func (a *Auth) RefreshToken(c fiber.Ctx) error { //TODO: in frontend side should
 			a.Logger.Error("refresh token failed", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
-		a.Logger.Info("New refresh token", zap.String("token", token))
-		SetRefreshTokenCookie(c, newToken)
+		a.Logger.Info("New refresh token", zap.String("token", newToken))
+		SetTokenCookie(c, newToken, refreshToken)
 	}
 
 	return c.SendStatus(fiber.StatusCreated)
 }
 
-func (a *Auth) AccessToken(c fiber.Ctx) error {
-
-	return c.SendStatus(fiber.StatusCreated)
-}
 func (a *Auth) Register(g fiber.Router) {
 	g.Get("/sign-up", a.GetSignUp)
 	g.Post("/sign-up", a.PostSignUp)
 	g.Get("/sign-in", a.GetSignIn)
 	g.Post("/sign-in", a.PostSignIn)
 
-	g.Post("refresh-token", a.RefreshToken)
-	g.Post("access-token", a.AccessToken)
+	g.Post("update-token", a.updateToken)
 }
 
-func SetRefreshTokenCookie(c fiber.Ctx, token string) {
+func SetTokenCookie(c fiber.Ctx, token string, token_type int) {
+	var (
+		expTime time.Time
+		path    string
+		name    string
+	)
+
+	if token_type == refreshToken {
+		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: turn it to Hour
+		path = "/user/update-token"
+		name = "jwt_refresh_token"
+	} else {
+		expTime = time.Now().Add(time.Second * jwt.AccessTokenExpireAfter) //TODO: turn it to Min
+		path = "/"
+		name = "jwt_access_token"
+	}
 	c.Cookie(&fiber.Cookie{
-		Name:     "jwt_refresh_token",
+		Name:     name,
 		Value:    token,
-		Expires:  time.Now().Add(time.Second * 150), // * jwt.RefreshTokenExpireAfter), //TODO: turn it to Hour
+		Expires:  expTime,
 		HTTPOnly: true,
 		Secure:   true, // false for when you do not use Https
 		SameSite: fiber.CookieSameSiteStrictMode,
-		Path:     "/",
+		Path:     path,
 		// Domain:   "MiladRasouli.ir", //TODO: take it from the config
 	})
 }
