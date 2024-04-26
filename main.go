@@ -9,6 +9,7 @@ import (
 	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/csrf"
 	"github.com/gofiber/template/html/v2"
 	"go.uber.org/zap"
 )
@@ -49,6 +50,12 @@ func main() {
 		Immutable: true,
 		Views:     engine,
 	})
+
+	app.Use(csrf.New(csrf.Config{
+		KeyLookup:      "header:X-Csrf-Token",
+		CookieName:     "_csrf",
+		CookieSameSite: "Strict",
+	}))
 
 	{
 		logger := logger.Named("http")
