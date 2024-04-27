@@ -18,6 +18,11 @@ func (b *Blog) list(c fiber.Ctx) error {
 }
 
 func (b *Blog) blog(c fiber.Ctx) error {
+	var (
+		fullName = c.Get("userFullName")
+		role     = c.Get("userRole")
+		email    = c.Get("userEmail")
+	)
 	b.Logger.Info("blog page is called!")
 	param := c.Params("blogID")
 
@@ -29,7 +34,12 @@ func (b *Blog) blog(c fiber.Ctx) error {
 		b.Logger.Error(err.Error())
 		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
-	return c.JSON("welcome to the post " + param)
+	return c.Render("blog", fiber.Map{
+		"blogID":   param,
+		"fullName": fullName,
+		"email":    email,
+		"role":     role,
+	})
 }
 
 func (b *Blog) Register(g fiber.Router) {

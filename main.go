@@ -78,8 +78,9 @@ func main() {
 			JWTToken:     jwtToken,
 		}
 
+		// home := app.Group("/", a.LimitToAuthMiddleWare)
 		home := app.Group("/")
-		blog := app.Group("/blog")
+		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
 		auth := app.Group("/user")
 
 		h.Register(home)
