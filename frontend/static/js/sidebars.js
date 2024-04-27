@@ -164,4 +164,27 @@ function sendRefreshTokenRequest() {
   });
 }
 sendRefreshTokenRequest();
-setInterval(sendRefreshTokenRequest, 5000);
+setInterval(sendRefreshTokenRequest, 13000);
+
+function sendAccessTokenRequest() {
+  fetch('/user/update-token', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'JWT-Token':'access',
+      },
+  })
+  .then(response => {
+      if (response === null) {
+          console.log('No response from server');
+          return;
+      }
+      return true;
+  })
+  .catch(error => {
+      console.log('Error refreshing token:', error);
+  });
+}
+sendAccessTokenRequest();
+setInterval(sendAccessTokenRequest, 6000);

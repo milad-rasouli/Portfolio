@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	accessToken  = 1
-	refreshToken = 2
+	TokenTypeAccess  = 1
+	TokenTypeRefresh = 2
 )
 
 var WrongPasswordOrEmail = errors.New("password or email is wrong")
@@ -70,6 +70,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 		UserFromDB model.User
 		err        error
 	)
+	a.Logger.Info("user is trying to sign in1")
 
 	{
 		c.Bind().Body(&user)
@@ -88,7 +89,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 			return Message(c, WrongPasswordOrEmail)
 		}
 	}
-
+	a.Logger.Info("user is trying to sign in")
 	{
 		token, err = a.JWTToken.RefreshToken.Create(jwt.JWTUser{
 			FullName: UserFromDB.FullName,
@@ -100,7 +101,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		a.Logger.Info("signed in user", zap.Any("user", UserFromDB), zap.String("token:", token))
-		SetTokenCookie(c, token, refreshToken)
+		SetTokenCookie(c, token, TokenTypeRefresh)
 	}
 
 	{
@@ -114,49 +115,71 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		a.Logger.Info("New access token", zap.String("token", token))
-		SetTokenCookie(c, token, accessToken)
+		SetTokenCookie(c, token, TokenTypeAccess)
 	}
 
 	return c.Redirect().To("/")
 }
 
+// TODO: stop the update request for ordinal users in the middleware
 func (a *Auth) updateToken(c fiber.Ctx) error { //TODO: in frontend side should handel the incoming traffic of this route
 	var (
-		err             error
-		jwtUser         jwt.JWTUser
-		newToken, token string
-		requestedToken  = c.Get("JWT-Token")
+		err                           error
+		jwtUser                       jwt.JWTUser
+		newRefreshToken, refreshToken string
+		requestedToken                = c.Get("JWT-Token")
+		newAccessToken                string
+		accessToken                   string
+		accessJWTUser                 jwt.JWTUser
 	)
-	a.Logger.Info("New refresh token", zap.String("requitedToken", requestedToken))
-
 	{
-		token = c.Cookies("jwt_refresh_token")
-		if len(token) == 0 {
+		refreshToken = c.Cookies("jwt_refresh_token")
+		if len(refreshToken) == 0 {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+	}
+	{
+		jwtUser, err = a.JWTToken.RefreshToken.VerifyParse(refreshToken)
+		if err != nil {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 	}
 
-	{
-		jwtUser, err = a.JWTToken.RefreshToken.VerifyParse(token)
-		if err != nil {
-			return c.SendStatus(fiber.StatusUnauthorized)
+	switch requestedToken {
+	case "access":
+		{
+			accessToken = c.Cookies("jwt_access_token") //TODO: check what happens if the cookie is removed
+			accessJWTUser, err = a.JWTToken.AccessToken.VerifyParse(accessToken)
+			if accessJWTUser.Email != "" && accessJWTUser.Email != jwtUser.Email {
+				a.Logger.Error("Access Token failed match", zap.String("err", "refresh token email: "+jwtUser.Email+" access token email: "+accessJWTUser.Email))
+			} else if err != nil {
+				newAccessToken, err = a.JWTToken.AccessToken.Create(jwtUser)
+				if err != nil {
+					return c.SendStatus(fiber.StatusInternalServerError)
+				}
+				SetTokenCookie(c, newAccessToken, TokenTypeAccess)
+			}
+			return c.SendStatus(fiber.StatusOK)
 		}
-		since := time.Since(jwtUser.InitiateTime)
-		a.Logger.Info(since.String())
-		if since < time.Second*20 { //TODO: change it after the task
-			a.Logger.Info("unneccery request")
-			return c.SendStatus(fiber.StatusAccepted)
-		}
-	}
+	case "refresh":
 
-	{
-		newToken, err = a.JWTToken.RefreshToken.Create(jwtUser)
-		if err != nil {
-			a.Logger.Error("refresh token failed", zap.Error(err))
-			return c.SendStatus(fiber.StatusInternalServerError)
+		{
+			since := time.Since(jwtUser.InitiateTime)
+			a.Logger.Info(since.String())
+			if since < time.Second*20 { //TODO: change it after the task
+				a.Logger.Info("unneccery request")
+				return c.SendStatus(fiber.StatusAccepted)
+			}
 		}
-		a.Logger.Info("New refresh token", zap.String("token", newToken))
-		SetTokenCookie(c, newToken, refreshToken)
+		{
+			newRefreshToken, err = a.JWTToken.RefreshToken.Create(jwtUser)
+			if err != nil {
+				a.Logger.Error("refresh token failed", zap.Error(err))
+				return c.SendStatus(fiber.StatusInternalServerError)
+			}
+			a.Logger.Info("New refresh token", zap.String("token", newRefreshToken))
+			SetTokenCookie(c, newRefreshToken, TokenTypeRefresh)
+		}
 	}
 
 	return c.SendStatus(fiber.StatusCreated)
@@ -178,7 +201,7 @@ func SetTokenCookie(c fiber.Ctx, token string, token_type int) {
 		name    string
 	)
 
-	if token_type == refreshToken {
+	if token_type == TokenTypeRefresh {
 		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: turn it to Hour
 		path = "/user/update-token"
 		name = "jwt_refresh_token"
