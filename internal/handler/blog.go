@@ -19,9 +19,9 @@ func (b *Blog) list(c fiber.Ctx) error {
 
 func (b *Blog) blog(c fiber.Ctx) error {
 	var (
-		fullName = c.Get("userFullName")
-		role     = c.Get("userRole")
-		email    = c.Get("userEmail")
+		fullName = c.Locals("userFullName")
+		role     = c.Locals("userRole")
+		email    = c.Locals("userEmail")
 	)
 	b.Logger.Info("blog page is called!")
 	param := c.Params("blogID")

@@ -153,7 +153,6 @@ func (a *Auth) updateToken(c fiber.Ctx) error { //TODO: in frontend side should 
 			accessJWTUser, err = a.JWTToken.AccessToken.VerifyParse(accessToken)
 			if accessJWTUser.Email != "" && accessJWTUser.Email != jwtUser.Email {
 				a.Logger.Error("Access Token failed match", zap.String("err", "refresh token email: "+jwtUser.Email+" access token email: "+accessJWTUser.Email))
-				// return RemoveCookiesAndRedirectToSignIn(c)
 			} else if err != nil {
 				newAccessToken, err = a.JWTToken.AccessToken.Create(jwtUser)
 				if err != nil {
@@ -167,9 +166,7 @@ func (a *Auth) updateToken(c fiber.Ctx) error { //TODO: in frontend side should 
 
 		{
 			since := time.Since(jwtUser.InitiateTime)
-			//a.Logger.Info(since.String())
 			if since < time.Second*20 { //TODO: change it after the task
-				//a.Logger.Info("unneccery request")
 				return c.SendStatus(fiber.StatusAccepted)
 			}
 		}
@@ -179,7 +176,6 @@ func (a *Auth) updateToken(c fiber.Ctx) error { //TODO: in frontend side should 
 				a.Logger.Error("refresh token failed", zap.Error(err))
 				return c.SendStatus(fiber.StatusInternalServerError)
 			}
-			//a.Logger.Info("New refresh token", zap.String("token", newRefreshToken))
 			SetTokenCookie(c, newRefreshToken, TokenTypeRefresh)
 		}
 	}
@@ -206,12 +202,11 @@ func (a *Auth) LimitToAuthMiddleWare(c fiber.Ctx) error {
 	{
 		accessToken = c.Cookies("jwt_access_token")
 		refreshToken = c.Cookies("jwt_refresh_token")
-		notUser := len(refreshToken) == 0 || len(accessToken) == 0
+		notUser := len(refreshToken) == 0 && len(accessToken) == 0
 		if notUser == true {
 			return c.Next()
 		}
 	}
-
 	{
 		if len(refreshToken) == 0 {
 			return RemoveCookiesAndRedirectToSignIn(c)
@@ -229,24 +224,22 @@ func (a *Auth) LimitToAuthMiddleWare(c fiber.Ctx) error {
 				return c.SendStatus(fiber.StatusInternalServerError)
 			}
 			SetTokenCookie(c, newAccessToken, TokenTypeAccess)
-		}
-		accessJWTUser, err = a.JWTToken.AccessToken.VerifyParse(accessToken)
-		if err != nil {
-			a.Logger.Error("failed to parse access token", zap.String("Caution", "refresh token is fine but access token carpeted"), zap.Error(err))
-			return RemoveCookiesAndRedirectToSignIn(c)
-		}
-	}
-
-	{
-		if accessJWTUser.Email != refreshJWTUser.Email {
-			a.Logger.Error("Access Token failed match", zap.String("err", "refresh token email: "+refreshJWTUser.Email+" access token email: "+accessJWTUser.Email))
-			return RemoveCookiesAndRedirectToSignIn(c)
+		} else {
+			accessJWTUser, err = a.JWTToken.AccessToken.VerifyParse(accessToken)
+			if err != nil {
+				a.Logger.Error("failed to parse access token", zap.String("Caution", "refresh token is fine but access token carpeted"), zap.Error(err))
+				return RemoveCookiesAndRedirectToSignIn(c)
+			}
+			if accessJWTUser.Email != refreshJWTUser.Email {
+				a.Logger.Error("Access Token failed match", zap.String("err", "refresh token email: "+refreshJWTUser.Email+" access token email: "+accessJWTUser.Email))
+				return RemoveCookiesAndRedirectToSignIn(c)
+			}
 		}
 	}
 	a.Logger.Info("Middleware", zap.Any("user", refreshJWTUser)) // TODO: why does the middleware is being called for in and out requests.
-	c.Set("userFullName", refreshJWTUser.FullName)
-	c.Set("userEmail", refreshJWTUser.Email)
-	c.Set("userRole", refreshJWTUser.Role)
+	c.Locals("userFullName", refreshJWTUser.FullName)
+	c.Locals("userEmail", refreshJWTUser.Email)
+	c.Locals("userRole", refreshJWTUser.Role)
 	return c.Next()
 }
 
@@ -265,7 +258,7 @@ func SetTokenCookie(c fiber.Ctx, token string, token_type int) {
 
 	if token_type == TokenTypeRefresh {
 		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: turn it to Hour
-		path = "/user/update-token"
+		path = "/"                                                          //"/user/update-token"
 		name = "jwt_refresh_token"
 	} else {
 		expTime = time.Now().Add(time.Second * jwt.AccessTokenExpireAfter) //TODO: turn it to Min
