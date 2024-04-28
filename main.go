@@ -3,22 +3,36 @@ package main
 import (
 	"log"
 
+	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
+	"github.com/Milad75Rasouli/portfolio/internal/jwt"
+	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
 	"go.uber.org/zap"
 )
 
 func main() {
+	var (
+		logger    *zap.Logger
+		err       error
+		userStore store.User
+	)
+
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
+	sqlite := store.SqliteInit{Folder: "data"}
+	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	defer cancelDB()
+
+	userPassword := cipher.NewUserPassword(cfg.Cipher)
+
+	jwtToken := jwt.New(cfg.JWT)
+
 	engine := html.New("frontend/views/pages/", ".html")
-	var (
-		logger *zap.Logger
-		err    error
-	)
+
 	if cfg.Debug == true {
 		logger, err = zap.NewDevelopment()
 		engine.Reload(true)
@@ -30,10 +44,23 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer logger.Sync()
+
 	app := fiber.New(fiber.Config{
 		Immutable: true,
 		Views:     engine,
 	})
+
+	// app.Use(csrf.New(csrf.Config{
+	// 	KeyLookup:      "header:X-Csrf-Token",
+	// 	CookieName:     "_csrf",	// app.Use(csrf.New(csrf.Config{
+	// 	KeyLookup:      "header:X-Csrf-Token",
+	// 	CookieName:     "_csrf",
+	// 	CookieSameSite: "Strict",
+	// }))
+
+	// 	CookieSameSite: "Strict",
+	// }))
+
 	{
 		logger := logger.Named("http")
 		h := handler.Home{
@@ -45,11 +72,14 @@ func main() {
 		}
 
 		a := handler.Auth{
-			Logger: logger.Named("auth"),
+			Logger:       logger.Named("auth"),
+			UserStore:    userStore,
+			UserPassword: userPassword,
+			JWTToken:     jwtToken,
 		}
 
 		home := app.Group("/")
-		blog := app.Group("/blog")
+		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
 		auth := app.Group("/user")
 
 		h.Register(home)

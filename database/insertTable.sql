@@ -8,3 +8,13 @@ VALUES ('Database'), ('Message Broker'), ('Golang'), ('Programming'), ('Microser
 
 INSERT INTO post_category_relation (post_id, category_id)
 VALUES (1, 1), (1, 2), (1, 5),(2, 3),(2, 4);
+
+INSERT INTO user (full_name, email, password, is_github,online_at, modified_at) 
+VALUES(
+	'foo',
+	'bar@gmail.com',
+	'baz',
+	FALSE,
+	CURRENT_TIME,
+	CURRENT_TIME
+);

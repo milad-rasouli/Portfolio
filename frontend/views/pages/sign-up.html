@@ -104,25 +104,25 @@
       <div class="collapse navbar-collapse" id="secondNavbar">
         <ul class="navbar-nav me-auto mb-2 mb-md-0 no-wrap">
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" aria-current="page" href="#">Home</a>
+            <a class="nav-link link-dark rounded" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">About me</a>
+            <a class="nav-link link-dark rounded" href="/about-me">About me</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">Blogs</a>
+            <a class="nav-link link-dark rounded" href="/blog">Blogs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link link-dark rounded" href="#">Contact</a>
+            <a class="nav-link link-dark rounded" href="/contact">Contact</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle link-dark active rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">User Area</a>
             <ul class="dropdown-menu dropdown-menu-light">
-              <li><a class="dropdown-item" href="#">Sign in</a></li>
+              <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item rounded" href="#">Sign up</a></li>
+              <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Exit</a></li>
+              <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
             </ul>
           </li>
         </ul>
@@ -142,10 +142,10 @@
     </span>
     <hr class="text-dark">
     <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item"><a href="#Home" class="nav-link link-dark">Home</a></li>
-      <li><a href="#AboutMe" class="nav-link link-dark">About Me</a></li>
-      <li><a href="#Blog" class="nav-link link-dark">Blogs</a></li>
-      <li><a href="#Contact" class="nav-link link-dark">Contact</a></li>
+      <li class="nav-item"><a href="/" class="nav-link link-dark">Home</a></li>
+      <li><a href="/about-me" class="nav-link link-dark">About Me</a></li>
+      <li><a href="/blog" class="nav-link link-dark">Blogs</a></li>
+      <li><a href="/contact" class="nav-link link-dark">Contact</a></li>
       <li>
         <form class="d-flex mt-2 mb-2" role="search">
             <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search">
@@ -159,11 +159,11 @@
         <strong>User Area</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-light text-small shadow ">
-        <li><a class="dropdown-item" href="#">Sign in</a></li>
+        <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item rounded" href="#">Sign up</a></li>
+        <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Exit</a></li>
+        <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
       </ul>
     </div>
   </div>
@@ -198,7 +198,7 @@
                             <div id="password-match" class="mt-2"></div>
                         </div>
                         <button type="submit" class="btn btn-dark float-start">Sign up</button>
-                        <button type="button" class="btn btn-dark float-end">Sign Up with Github</button>
+                        <button type="button" class="btn btn-dark float-end">Sign up with Github</button>
                     </form>
                 </div>
             </div>
@@ -225,8 +225,8 @@
         } else if (strength >= 8) {
             progressBar.classList.add('progress-bar-strong');
         }
-        document.getElementById('password-error').textContent = strength >= 6 ? '' : 'Password must be at least 6 characters.';
-        document.getElementById('password-error').style.color = strength >= 6 ? 'green' : 'red';
+        document.getElementById('password-error').textContent = strength >= 8 ? '' : 'Password must be at least 8 characters.';
+        document.getElementById('password-error').style.color = strength >= 8 ? 'green' : 'red';
     });
 
     document.getElementById('confirm-password').addEventListener('input', function() {
@@ -239,8 +239,8 @@
         e.preventDefault();
         var password = document.getElementById('password').value;
         var confirmPassword = document.getElementById('confirm-password').value;
-        if (password.length < 6 || password !== confirmPassword) {
-            document.getElementById('password-error').textContent = 'Password must be at least 6 characters.';
+        if (password.length < 8 || password !== confirmPassword) {
+            document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
             document.getElementById('password-match').textContent = 'Passwords do not match';
             document.getElementById('password-error').style.color = 'red';
             document.getElementById('password-match').style.color = 'red';
@@ -253,12 +253,19 @@
         };
         fetch('/user/sign-up', {
             method: 'POST',
+            redirect:"follow",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response.redirected) {
+              window.location.href = response.url; // Redirect to the new URL
+          } else {
+              return response.json();
+          }
+        })
         .then(data => {
             if (data.message) {
                 var notification = document.getElementById('notification');

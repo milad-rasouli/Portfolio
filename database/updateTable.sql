@@ -10,3 +10,7 @@ UPDATE post_category_relation
 SET category_id = 4
 WHERE post_id = 1 AND category_id = 2;
 
+UPDATE user
+SET password='modified123', full_name='fullname modifted'
+WHERE id=1;
+
