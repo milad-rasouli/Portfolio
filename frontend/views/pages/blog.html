@@ -1,2 +1,109 @@
-<p>Here are you information Fullname={{.fullName}} Email={{.email}} Role={{.role}} </p>
-<p>You asked for {{.blogID}} blog</p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blogs</title>
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/static/css/homePage.css" rel="stylesheet">
+  </head>
+  <body>
+
+<div class="container">
+  <nav class="navbar navbar-expand-md border border-secondary navbar-dark bg-dark d-lg-none" aria-label="second navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand link-dark" href="#">
+        <div class="d-flex align-items-center form-check form-switch justify-content-center">
+          <input class="form-check-input nightModeButton" type="checkbox" role="switch" id="nightMode">
+          <label class="form-check-label text-dark" for="nightMode" style="font-size: 15px;">Night Mode</label>
+      </div>
+      </a>
+      <button class="navbar-toggler bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#secondNavbar" aria-controls="secondNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="secondNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 no-wrap">
+          <li class="nav-item">
+            <a class="nav-link link-dark rounded" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-dark rounded" href="/about-me">About me</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-dark rounded active" href="/blog">Blogs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-dark rounded" href="/contact">Contact</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle link-dark rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">User Area</a>
+            <ul class="dropdown-menu dropdown-menu-light">
+              <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
+            </ul>
+          </li>
+        </ul>
+        <form role="search">
+          <input class="form-control form-control-day border-secondary" type="search" placeholder="Search" aria-label="Search">
+        </form>
+      </div>
+    </div>
+  </nav>
+<main class="d-flex flex-nowrap row">
+  <div style="border-right: 1px solid;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-xl-2 col-lg-3 border-secondary d-none d-lg-flex">
+    <span class="mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <div class="d-flex align-items-center form-check form-switch justify-content-center">
+        <input class="form-check-input nightModeButton" type="checkbox" role="switch" id="nightMode">
+        <label class="form-check-label text-dark" for="nightMode">Night Mode</label>
+    </div>
+    </span>
+    <hr class="text-dark">
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item"><a href="/" class="nav-link link-dark">Home</a></li>
+      <li><a href="/about-me" class="nav-link link-dark">About Me</a></li>
+      <li><a href="/blog" class="nav-link link-dark active">Blogs</a></li>
+      <li><a href="/contact" class="nav-link link-dark">Contact</a></li>
+      <li>
+        <form class="d-flex mt-2 mb-2" role="search">
+            <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-dark" type="submit">Search</button>
+        </form>
+      </li>
+    </ul>
+    <hr class="text-dark">
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle rounded p-2" data-bs-toggle="dropdown" aria-expanded="false">
+        <strong>User Area</strong>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-light text-small shadow ">
+        <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item rounded" href="/user/sign-up">Sign up</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="b-content-divider b-content-divider-day b-content-vr col p-0">
+        <div class="container h-100">
+            <div class="row h-100 align-hv-center">
+                <div class="pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list">
+                    <p>Here are you information Fullname={{.fullName}} Email={{.email}} Role={{.role}} </p>
+                    <p>You asked for {{.blogID}} blog</p>
+                </div>
+            </div>
+            </div>
+        </div>
+  </div>
+</main>
+</div>
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/sidebars.js"></script>
+  <div id="notification" class="alert alert-danger"></div>
+  </body>
+</html>
