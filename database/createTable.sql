@@ -1,11 +1,3 @@
-CREATE TABLE IF NOT EXISTS post (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    body TEXT,
-    image_path TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    modified_at DATETIME
-);
 CREATE TABLE user (
     id INTEGER,
     full_name TEXT NOT NULL,
@@ -16,6 +8,14 @@ CREATE TABLE user (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_at DATETIME,
     PRIMARY KEY(id)
+);
+CREATE TABLE IF NOT EXISTS post (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    body TEXT,
+    image_path TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME
 );
 CREATE TABLE IF NOT EXISTS category (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

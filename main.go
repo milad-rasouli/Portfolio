@@ -8,6 +8,7 @@ import (
 	"github.com/Milad75Rasouli/portfolio/internal/handler"
 	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
+	sqlitedb "github.com/Milad75Rasouli/portfolio/internal/store/sqliteDB"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
 	"go.uber.org/zap"
@@ -23,7 +24,7 @@ func main() {
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
-	sqlite := store.SqliteInit{Folder: "data"}
+	sqlite := sqlitedb.SqliteInit{Folder: "data"}
 	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	defer cancelDB()
 
