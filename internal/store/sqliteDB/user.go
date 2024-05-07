@@ -13,8 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const timeLayout = "2006-01-02 15:04:05"
-
 type UserSqlite struct {
 	dbPool *sqlitex.Pool
 	logger *zap.Logger

@@ -6,13 +6,14 @@ import (
 	"os"
 	"time"
 
-	"crawshaw.io/sqlite"
 	"crawshaw.io/sqlite/sqlitex"
 	"github.com/Milad75Rasouli/portfolio/internal/db"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
+
+const timeLayout = "2006-01-02 15:04:05"
 
 type SqliteInit struct {
 	Folder string
@@ -51,57 +52,56 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 		}
 	}, nil
 }
-
 func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
 	defer cancel()
 	conn := dbPool.Get(ctx)
 	defer dbPool.Put(conn)
 
-	var (
-		stmt *sqlite.Stmt
-		err  error
-	)
-	stmt, err = conn.Prepare(`CREATE TABLE IF NOT EXISTS user (
-		id INTEGER,
-		full_name TEXT NOT NULL,
-		email INTEGER NOT NULL UNIQUE,
-		password TEXT NOT NULL,
-		is_github INTEGER DEFAULT 0,
-		online_at DATETIME,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		modified_at DATETIME,
-		PRIMARY KEY(id)
-		);`)
-	if err != nil {
-		return errors.Wrap(err, store.CannotCreateTableError.Error())
+	tables := []string{
+		`CREATE TABLE IF NOT EXISTS user (
+			id INTEGER,
+			full_name TEXT NOT NULL,
+			email INTEGER NOT NULL UNIQUE,
+			password TEXT NOT NULL,
+			is_github INTEGER DEFAULT 0,
+			online_at DATETIME,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			modified_at DATETIME,
+			PRIMARY KEY(id)
+		)`,
+		`CREATE TABLE IF NOT EXISTS post (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL,
+			body TEXT,
+			image_path TEXT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			modified_at DATETIME
+		)`,
+		`CREATE TABLE IF NOT EXISTS category (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL
+		)`,
+		`CREATE TABLE IF NOT EXISTS post_category_relation (
+			category_id INTEGER,
+			post_id INTEGER,
+			PRIMARY KEY(category_id, post_id),
+			FOREIGN KEY(category_id) REFERENCES category (id),
+			FOREIGN KEY(post_id) REFERENCES post (id)
+		)`,
 	}
 
-	// stmt, err = conn.Prepare(`CREATE TABLE IF NOT EXISTS post (
-	// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	// 	title TEXT NOT NULL,
-	// 	body TEXT,
-	// 	image_path TEXT,
-	// 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	// 	modified_at DATETIME
-	// );
-	// CREATE TABLE IF NOT EXISTS category (
-	// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	// 	name TEXT NOT NULL
-	// );
-	// CREATE TABLE IF NOT EXISTS post_category_relation (
-	// 	category_id INTEGER,
-	// 	post_id INTEGER,
-	// 	PRIMARY KEY(category_id, post_id),
-	// 	FOREIGN KEY(category_id) REFERENCES category (id),
-	// 	FOREIGN KEY(post_id) REFERENCES post (id)
-	// );`)
-
-	if err != nil {
-		return errors.Wrap(err, store.CannotCreateTableError.Error())
+	for _, table := range tables {
+		stmt, err := conn.Prepare(table)
+		if err != nil {
+			return errors.Wrap(err, store.CannotCreateTableError.Error())
+		}
+		defer stmt.Finalize()
+		_, err = stmt.Step()
+		if err != nil {
+			return err
+		}
 	}
-	defer stmt.Finalize()
-	_, err = stmt.Step()
 
-	return err
+	return nil
 }
