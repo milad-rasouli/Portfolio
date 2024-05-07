@@ -1,0 +1,49 @@
+name: ci
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+   # lint:
+   #   runs-on: ubuntu-latest
+   #   steps:
+   #     - name: lint the code
+   #       uses: actions/checkout@v4
+   #     - name: install golang
+   #       uses: actions/setup-go@v5 
+   #       with:
+   #         go-version-file: "go.mod"
+   #     - name: golangci-lint
+   #       uses: golangci/golangci-lint-action@v5
+   #       with:
+   #         version: latest
+   #         args: --enable-all --timeout=30m
+  test:
+    # needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: extractions/setup-just@v2
+      - name: get the code
+        uses: actions/checkout@v4
+      - name: install golang
+        uses: actions/setup-go@v5 
+        with:
+          go-version-file: "go.mod"
+      - name: run the tests
+        run: just test
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: extractions/setup-just@v2
+      - name: get the code
+        uses: actions/checkout@v4
+      - name: install golang
+        uses: actions/setup-go@v5 
+        with:
+          go-version-file: "go.mod"
+      - name: build
+        run: just build
+      - name: deploy
+        run: echo "deploying the project..."
