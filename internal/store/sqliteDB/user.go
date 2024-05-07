@@ -77,6 +77,7 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) 
 		if e == "SQLITE_CONSTRAINT_UNIQUE" {
 			return rowID, store.DuplicateUserError
 		}
+		return rowID, err
 	}
 	hasRow, err := stmtSelect.Step()
 	if err != nil {
