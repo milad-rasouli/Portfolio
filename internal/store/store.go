@@ -19,3 +19,14 @@ type User interface {
 	DeleteByID(context.Context, int64) error
 	UpdatePasswordFullName(context.Context, int64, string, string) error
 }
+
+type Blog interface {
+	CreateBlog(context.Context, model.Blog) (int64, error)
+	GetByID(context.Context, int64) (model.Blog, error)
+	GetAll(context.Context) ([]model.Blog, error)
+	DeleteByID(context.Context, int64) error
+}
+type Store interface {
+	// User
+	// Blog
+}

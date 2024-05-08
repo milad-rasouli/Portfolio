@@ -25,7 +25,7 @@ func main() {
 	log.Printf("Config:%+v", cfg)
 
 	sqlite := sqlitedb.SqliteInit{Folder: "data"}
-	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	userStore, _, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	defer cancelDB()
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)

@@ -27,7 +27,7 @@ func TestUserCRUD(t *testing.T) {
 	}
 
 	d := SqliteInit{Folder: "data"}
-	userDB, cancel, err := d.Init(true, db.Config{}, nil)
+	userDB, _, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -109,7 +109,7 @@ func TestUserCRUD(t *testing.T) {
 
 func BenchmarkCreateUser(b *testing.B) {
 	d := SqliteInit{Folder: "data"}
-	userDB, cancel, err := d.Init(true, db.Config{}, nil)
+	userDB, _, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(b, err)
 	defer cancel()
 

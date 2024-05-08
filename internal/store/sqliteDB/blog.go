@@ -24,7 +24,7 @@ func NewBlogSqlite(dbPool *sqlitex.Pool, logger *zap.Logger) *BlogSqlite {
 	}
 }
 
-func (b BlogSqlite) parseToUser(stmt *sqlite.Stmt) (model.Blog, error) {
+func (b BlogSqlite) parseToBlog(stmt *sqlite.Stmt) (model.Blog, error) {
 	var (
 		blog model.Blog
 		err  error
@@ -112,7 +112,7 @@ func (b *BlogSqlite) GetByID(ctx context.Context, id int64) (model.Blog, error) 
 	if err != nil {
 		return blog, err
 	}
-	blog, err = b.parseToUser(stmt)
+	blog, err = b.parseToBlog(stmt)
 	return blog, err
 }
 
@@ -135,7 +135,7 @@ func (b *BlogSqlite) GetAll(ctx context.Context) ([]model.Blog, error) {
 		if hasRow == false {
 			break
 		}
-		swapUser, err = b.parseToUser(stmt)
+		swapUser, err = b.parseToBlog(stmt)
 		if err != nil {
 			return blog, errors.Errorf("getting the blog from database error %s", err.Error())
 		}

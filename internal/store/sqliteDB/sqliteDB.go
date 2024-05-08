@@ -19,8 +19,9 @@ type SqliteInit struct {
 	Folder string
 }
 
-func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, func(), error) {
+func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, *BlogSqlite, func(), error) {
 	var userDB *UserSqlite
+	var blogDB *BlogSqlite
 
 	os.Mkdir(d.Folder, 0777)
 	cfg := config
@@ -38,14 +39,15 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	}
 	dbPool, err := db.New(cfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	err = CreateSqliteTable(dbPool, cfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	userDB = NewUserSqlite(dbPool, logger)
-	return userDB, func() {
+	blogDB = NewBlogSqlite(dbPool, logger)
+	return userDB, blogDB, func() {
 		err := dbPool.Close()
 		if err != nil {
 			log.Printf("Error closing database connection: %v", err)
