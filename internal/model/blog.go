@@ -15,3 +15,8 @@ type Category struct {
 	ID   int64
 	Name string
 }
+
+type Relation struct {
+	CategoryID int64
+	PostID     int64
+}

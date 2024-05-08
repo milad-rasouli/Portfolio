@@ -61,6 +61,16 @@ func (b BlogSqlite) parseToCategory(stmt *sqlite.Stmt) (model.Category, error) {
 	return blog, err
 }
 
+func (b BlogSqlite) parseToCategoryRelation(stmt *sqlite.Stmt) (model.Relation, error) {
+	var (
+		blog model.Relation
+		err  error
+	)
+	blog.PostID = stmt.GetInt64("post_id")
+	blog.CategoryID = stmt.GetInt64("category_id")
+	return blog, err
+}
+
 func (b *BlogSqlite) CreateBlog(ctx context.Context, blog model.Blog) (int64, error) {
 	var rowID int64
 	conn := b.dbPool.Get(ctx)
@@ -301,6 +311,131 @@ func (u *BlogSqlite) UpdateCategoryByID(ctx context.Context, blog model.Category
 	hasRow, err = stmt.Step()
 	if hasRow {
 		return store.BlogNotFoundError
+	}
+	return err
+}
+
+/******************* Post & Category Relations *******************/
+
+func (b *BlogSqlite) CreateCategoryRelation(ctx context.Context, Relation model.Relation) error {
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
+
+	stmt, err := conn.Prepare(`INSERT INTO post_category_relation 
+		(category_id, post_id) VALUES ($1,$2);`)
+	if err != nil {
+		return errors.Errorf("unable to create the new category relation %s", err.Error())
+	}
+	defer stmt.Finalize()
+
+	stmt.SetInt64("$1", Relation.CategoryID)
+	stmt.SetInt64("$2", Relation.PostID)
+
+	_, err = stmt.Step()
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (b *BlogSqlite) GetCategoryRelationAllByPostID(ctx context.Context, id int64) ([]model.Relation, error) {
+	var relation []model.Relation
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
+	stmt, err := conn.Prepare(`SELECT * FROM post_category_relation where post_id=$1;`)
+	if err != nil {
+		return relation, errors.Errorf("unable to get all category relation %s", err.Error())
+	}
+	defer stmt.Finalize()
+	stmt.SetInt64("$1", id)
+	var times int
+	for {
+		var (
+			swapCategoryRelation model.Relation
+			hasRow               bool
+		)
+		hasRow, err = stmt.Step()
+		if hasRow == false {
+			break
+		}
+		times++
+		swapCategoryRelation, err = b.parseToCategoryRelation(stmt)
+		if err != nil {
+			return relation, errors.Errorf("getting the category from database error %s", err.Error())
+		}
+		relation = append(relation, swapCategoryRelation)
+	}
+
+	if times == 0 {
+		return relation, store.CategoryRelationNotFoundError
+	}
+	return relation, err
+}
+
+func (b *BlogSqlite) GetCategoryRelationAllByCategoryID(ctx context.Context, id int64) ([]model.Relation, error) {
+	var relation []model.Relation
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
+	stmt, err := conn.Prepare(`SELECT * FROM post_category_relation where category_id=$1;`)
+	if err != nil {
+		return relation, errors.Errorf("unable to get all category relation %s", err.Error())
+	}
+	defer stmt.Finalize()
+	stmt.SetInt64("$1", id)
+
+	var times int
+	for {
+		var (
+			swapCategoryRelation model.Relation
+			hasRow               bool
+		)
+		hasRow, err = stmt.Step()
+		if hasRow == false {
+			break
+		}
+		times++
+		swapCategoryRelation, err = b.parseToCategoryRelation(stmt)
+		if err != nil {
+			return relation, errors.Errorf("getting the category from database error %s", err.Error())
+		}
+		relation = append(relation, swapCategoryRelation)
+	}
+	if times == 0 {
+		return relation, store.CategoryRelationNotFoundError
+	}
+	return relation, err
+}
+
+func (u *BlogSqlite) DeleteCategoryRelationAllByPostID(ctx context.Context, id int64) error {
+	conn := u.dbPool.Get(ctx)
+	defer u.dbPool.Put(conn)
+	stmt, err := conn.Prepare(`DELETE FROM post_category_relation WHERE post_id=$1;`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Finalize()
+	stmt.SetInt64("$1", id)
+	var hasRow bool
+	hasRow, err = stmt.Step()
+	if hasRow == false {
+		return store.CategoryNotFoundError
+	}
+	return err
+}
+
+func (u *BlogSqlite) DeleteCategoryRelationAllByCategoryID(ctx context.Context, id int64) error {
+	conn := u.dbPool.Get(ctx)
+	defer u.dbPool.Put(conn)
+	stmt, err := conn.Prepare(`DELETE FROM post_category_relation WHERE category_id=$1;`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Finalize()
+	stmt.SetInt64("$1", id)
+	var hasRow bool
+	hasRow, err = stmt.Step()
+	if hasRow == true {
+		return store.CategoryNotFoundError
 	}
 	return err
 }
