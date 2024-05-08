@@ -2,6 +2,7 @@ package sqlitedb
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -36,61 +37,46 @@ func TestBlogCRUD(t *testing.T) {
 	}
 
 	{
-		fetchedBlog, err := blogDB.GetByID(context.TODO(), blog.ID)
+		fetchedBlog, err := blogDB.GetBlogByID(context.TODO(), blog.ID)
 		if err != nil {
 			t.Error(err)
 		}
 		assert.Equal(t, blog, fetchedBlog, "blog and fetchUser should be equal ")
+		fmt.Printf("GetBlogByID: %+v\n", fetchedBlog)
 	}
 
-	// {
-	// 	type caseType struct {
-	// 		Password   string
-	// 		FullName   string
-	// 		ID         int64
-	// 		testTarget func(model.User, caseType) bool
-	// 	}
-	// 	cases := []caseType{{
+	{
+		UpdateTest := func(base model.Blog, expected model.Blog) (result bool) {
+			result = (base.Body == expected.Body) && (base.Title == expected.Title) &&
+				(base.Caption == expected.Caption) && (base.ImagePath == expected.ImagePath)
+			return result
+		}
+		updatedBlog := model.Blog{
+			ID:        1,
+			Title:     "bar barrrr",
+			Body:      "bazzz bazzz",
+			Caption:   "fooo fooo",
+			ImagePath: "foo/bbbbarrr",
+		}
+		err = blogDB.UpdateBlogByID(context.TODO(), updatedBlog)
+		assert.NoError(t, err, "unable to update blog")
+		expectedBlog, err := blogDB.GetBlogByID(context.TODO(), updatedBlog.ID)
+		assert.NoError(t, err, "unable to read user")
+		fmt.Printf("UpdateBlogByID: %+v GetBlogByID: %+v\n", updatedBlog, expectedBlog)
+		assert.True(t, UpdateTest(updatedBlog, expectedBlog), "parameters do not match")
 
-	// 		Password: "password1234567890",
-	// 		FullName: "fullname1234567890",
-	// 		ID:       1,
-	// 		testTarget: func(u model.User, c caseType) bool {
-	// 			return u.Password == c.Password && u.FullName == c.FullName
-	// 		},
-	// 	}, {
-	// 		Password: "0987654321password",
-	// 		ID:       1,
-	// 		testTarget: func(u model.User, c caseType) bool {
-	// 			return u.Password == c.Password
-	// 		},
-	// 	}, {
-	// 		FullName: "0987654321Fullname",
-	// 		ID:       1,
-	// 		testTarget: func(u model.User, c caseType) bool {
-	// 			return u.FullName == c.FullName
-	// 		},
-	// 	},
-	// 	}
-
-	// 	for _, item := range cases {
-	// 		err = userDB.UpdatePasswordFullName(context.TODO(), item.ID, item.Password, item.FullName)
-	// 		assert.NoError(t, err, "unable to update user")
-	// 		expectedUser, err := userDB.GetByID(context.TODO(), item.ID)
-	// 		assert.NoError(t, err, "unable to read user")
-	// 		assert.True(t, item.testTarget(expectedUser, item), "parameters do not match")
-	// 	}
-	// }
+	}
 
 	{
-		_, err = blogDB.GetByID(context.TODO(), 5)
+		_, err = blogDB.GetBlogByID(context.TODO(), 5)
 		assert.Error(t, err)
+
 	}
 
 	{
-		err := blogDB.DeleteByID(context.TODO(), blog.ID)
+		err := blogDB.DeleteBlogByID(context.TODO(), blog.ID)
 		assert.NoError(t, err, err)
-		_, err = blogDB.GetByID(context.TODO(), blog.ID)
+		_, err = blogDB.GetBlogByID(context.TODO(), blog.ID)
 		assert.Error(t, err)
 	}
 
