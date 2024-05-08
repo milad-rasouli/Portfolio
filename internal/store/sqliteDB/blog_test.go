@@ -41,7 +41,7 @@ func TestBlogCRUD(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, blog, fetchedBlog, "blog and fetchUser should be equal ")
+		assert.Equal(t, blog, fetchedBlog, "blog and fetchedBlog should be equal ")
 		fmt.Printf("GetBlogByID: %+v\n", fetchedBlog)
 	}
 
@@ -77,6 +77,67 @@ func TestBlogCRUD(t *testing.T) {
 		err := blogDB.DeleteBlogByID(context.TODO(), blog.ID)
 		assert.NoError(t, err, err)
 		_, err = blogDB.GetBlogByID(context.TODO(), blog.ID)
+		assert.Error(t, err)
+	}
+
+}
+
+func TestCategoryCRUD(t *testing.T) {
+	var blogDB *BlogSqlite
+	category := model.Category{
+		ID:   1,
+		Name: "database",
+	}
+
+	d := SqliteInit{Folder: "data"}
+	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	assert.NoError(t, err)
+	defer cancel()
+
+	{
+		_, err = blogDB.CreateCategory(context.TODO(), category)
+		if err != nil {
+			t.Error(err)
+		}
+	}
+
+	{
+		fetchedCategory, err := blogDB.GetCategoryByID(context.TODO(), category.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, category, fetchedCategory, "category and fetchCategory should be equal ")
+		fmt.Printf("GetCategoryByID: %+v\n", fetchedCategory)
+	}
+
+	{
+		UpdateTest := func(base model.Category, expected model.Category) (result bool) {
+			result = base.Name == expected.Name
+			return result
+		}
+		updatedCategory := model.Category{
+			ID:   1,
+			Name: "foo",
+		}
+		err = blogDB.UpdateCategoryByID(context.TODO(), updatedCategory)
+		assert.NoError(t, err, "unable to update blog")
+		expectedCategory, err := blogDB.GetCategoryByID(context.TODO(), updatedCategory.ID)
+		assert.NoError(t, err, "unable to read user")
+		fmt.Printf("UpdateCategoryByID: %+v GetCategoryByID: %+v\n", updatedCategory, expectedCategory)
+		assert.True(t, UpdateTest(updatedCategory, expectedCategory), "parameters do not match")
+
+	}
+
+	{
+		_, err = blogDB.GetCategoryByID(context.TODO(), 5)
+		assert.Error(t, err)
+
+	}
+
+	{
+		err := blogDB.DeleteBlogByID(context.TODO(), category.ID)
+		assert.NoError(t, err, err)
+		_, err = blogDB.GetBlogByID(context.TODO(), category.ID)
 		assert.Error(t, err)
 	}
 

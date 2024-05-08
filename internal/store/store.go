@@ -12,6 +12,7 @@ var UserNotFountError = errors.New("could not find the user")
 var CannotCreateTableError = errors.New("Cannot create tables")
 
 var BlogNotFoundError = errors.New("could not find the target blog")
+var CategoryNotFoundError = errors.New("could not find the target category")
 
 type User interface {
 	Create(context.Context, model.User) (int64, error)

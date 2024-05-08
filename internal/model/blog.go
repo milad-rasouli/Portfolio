@@ -11,3 +11,7 @@ type Blog struct {
 	CreatedAt  time.Time
 	ModifiedAt time.Time
 }
+type Category struct {
+	ID   int64
+	Name string
+}
