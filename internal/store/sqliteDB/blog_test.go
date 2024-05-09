@@ -223,3 +223,81 @@ func TestRelation(t *testing.T) {
 		fmt.Printf("DeleteAllByPostID:GetAllByPostID: %+v\n", fetchedRelation)
 	}
 }
+
+func TestGeneral(t *testing.T) {
+	var blogDB *BlogSqlite
+
+	d := SqliteInit{Folder: "data"}
+	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	assert.NoError(t, err)
+	defer cancel()
+
+	{
+		ti, err := time.Parse(timeLayout, time.Now().Format(timeLayout))
+		assert.NoError(t, err)
+
+		blogs := [...]model.Blog{
+			{
+				Title:      "foo in action",
+				Body:       "bar bar bar",
+				Caption:    "baz baz",
+				CreatedAt:  ti,
+				ModifiedAt: ti,
+			},
+			{
+				Title:      "bar in action",
+				Body:       "baz bar bar",
+				Caption:    "bar baz",
+				CreatedAt:  ti,
+				ModifiedAt: ti,
+			},
+			{
+				Title:      "baz in action",
+				Body:       "foo bar bar",
+				Caption:    "bar baz",
+				CreatedAt:  ti,
+				ModifiedAt: ti,
+			},
+		}
+		for i := 0; i < len(blogs); i++ {
+			id, err := blogDB.CreateBlog(context.TODO(), blogs[i])
+			assert.NoError(t, err)
+			blogs[i].ID = id
+		}
+		category := [...]model.Category{
+			{
+				Name: "database",
+			}, {
+				Name: "redis",
+			}, {
+				Name: "message broker",
+			}, {
+				Name: "algorithm",
+			}, {
+				Name: "postgresql",
+			},
+		}
+		for i := 0; i < len(category); i++ {
+			id, err := blogDB.CreateCategory(context.TODO(), category[i])
+			assert.NoError(t, err)
+			category[i].ID = id
+		}
+
+		categoryRelation := []model.Relation{
+			{PostID: 1, CategoryID: 2},
+			{PostID: 1, CategoryID: 1},
+			{PostID: 1, CategoryID: 3},
+			{PostID: 2, CategoryID: 4},
+			{PostID: 2, CategoryID: 5},
+			{PostID: 2, CategoryID: 1},
+			{PostID: 3, CategoryID: 1},
+			{PostID: 3, CategoryID: 5},
+		}
+		for i := 0; i < len(category); i++ {
+			err := blogDB.CreateCategoryRelation(context.TODO(), categoryRelation[i])
+			assert.NoError(t, err)
+		}
+		fmt.Printf("TestGeneral:%+v\n", category)
+	}
+
+}

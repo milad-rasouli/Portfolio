@@ -476,7 +476,7 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 	var (
 		blogWithCategory []model.BlogWithCategory
 	)
-	temp := make(map[model.Blog][]model.Category)
+	//temp := make(map[model.Blog][]model.Category)
 	conn := b.dbPool.Get(ctx)
 	defer b.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`SELECT p.id as id,p.title as title,
@@ -501,9 +501,8 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 		if err != nil {
 			return blogWithCategory, errors.Errorf("getting the blogWithCategory from database error %s", err.Error())
 		}
-		
+		blogWithCategory = append(blogWithCategory, swapBlog)
 	}
-	// blogWithCategory = append(blogWithCategory, swapBlog)
 	return blogWithCategory, err
 
 }
