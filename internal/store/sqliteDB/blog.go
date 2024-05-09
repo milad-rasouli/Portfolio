@@ -417,7 +417,7 @@ func (u *BlogSqlite) DeleteCategoryRelationAllByPostID(ctx context.Context, id i
 	stmt.SetInt64("$1", id)
 	var hasRow bool
 	hasRow, err = stmt.Step()
-	if hasRow == false {
+	if hasRow == true {
 		return store.CategoryNotFoundError
 	}
 	return err

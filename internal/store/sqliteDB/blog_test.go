@@ -214,12 +214,12 @@ func TestRelation(t *testing.T) {
 		fmt.Printf("DeleteAllByCategoryID:GetAllByCategoryID: %+v\n", fetchedRelation)
 	}
 
-	// {
-	// 	var fetchedRelation []model.Relation
-	// 	err := blogDB.DeleteCategoryRelationAllByPostID(context.TODO(), relation2.PostID)
-	// 	assert.NoError(t, err, err)
-	// 	fetchedRelation, err = blogDB.GetCategoryRelationAllByPostID(context.TODO(), relation2.PostID)
-	// 	assert.Error(t, err)
-	// 	fmt.Printf("DeleteAllByPostID:GetAllByPostID: %+v\n", fetchedRelation)
-	// }
+	{
+		var fetchedRelation []model.Relation
+		err := blogDB.DeleteCategoryRelationAllByPostID(context.TODO(), relation2.PostID)
+		assert.NoError(t, err, err)
+		fetchedRelation, err = blogDB.GetCategoryRelationAllByPostID(context.TODO(), relation2.PostID)
+		assert.Error(t, err)
+		fmt.Printf("DeleteAllByPostID:GetAllByPostID: %+v\n", fetchedRelation)
+	}
 }
