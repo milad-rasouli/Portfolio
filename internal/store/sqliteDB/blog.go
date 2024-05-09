@@ -51,6 +51,37 @@ func (b BlogSqlite) parseToBlog(stmt *sqlite.Stmt) (model.Blog, error) {
 	return blog, err
 }
 
+func (b BlogSqlite) parseToBlogWithCategory(stmt *sqlite.Stmt) (model.BlogWithCategory, error) {
+	var (
+		blog     model.BlogWithCategory
+		category model.Category
+		err      error
+	)
+	blog.ID = stmt.GetInt64("id")
+	blog.Title = stmt.GetText("title")
+	blog.Body = stmt.GetText("body")
+	blog.Caption = stmt.GetText("caption")
+	blog.ImagePath = stmt.GetText("image_path")
+	category.ID = stmt.GetInt64("category_id")
+	category.Name = stmt.GetText("category")
+	blog.Category = append(blog.Category, category)
+	blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
+	if err != nil {
+		return blog, err
+	}
+	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
+
+	if err != nil {
+		return blog, err
+	}
+	blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
+	if err != nil {
+		return blog, err
+	}
+	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
+	return blog, err
+}
+
 func (b BlogSqlite) parseToCategory(stmt *sqlite.Stmt) (model.Category, error) {
 	var (
 		blog model.Category
@@ -406,9 +437,9 @@ func (b *BlogSqlite) GetCategoryRelationAllByCategoryID(ctx context.Context, id 
 	return relation, err
 }
 
-func (u *BlogSqlite) DeleteCategoryRelationAllByPostID(ctx context.Context, id int64) error {
-	conn := u.dbPool.Get(ctx)
-	defer u.dbPool.Put(conn)
+func (b *BlogSqlite) DeleteCategoryRelationAllByPostID(ctx context.Context, id int64) error {
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`DELETE FROM post_category_relation WHERE post_id=$1;`)
 	if err != nil {
 		return err
@@ -423,9 +454,9 @@ func (u *BlogSqlite) DeleteCategoryRelationAllByPostID(ctx context.Context, id i
 	return err
 }
 
-func (u *BlogSqlite) DeleteCategoryRelationAllByCategoryID(ctx context.Context, id int64) error {
-	conn := u.dbPool.Get(ctx)
-	defer u.dbPool.Put(conn)
+func (b *BlogSqlite) DeleteCategoryRelationAllByCategoryID(ctx context.Context, id int64) error {
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`DELETE FROM post_category_relation WHERE category_id=$1;`)
 	if err != nil {
 		return err
@@ -438,4 +469,41 @@ func (u *BlogSqlite) DeleteCategoryRelationAllByCategoryID(ctx context.Context, 
 		return store.CategoryNotFoundError
 	}
 	return err
+}
+
+/******************* practical part *******************/
+func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogWithCategory, error) {
+	var (
+		blogWithCategory []model.BlogWithCategory
+	)
+	temp := make(map[model.Blog][]model.Category)
+	conn := b.dbPool.Get(ctx)
+	defer b.dbPool.Put(conn)
+	stmt, err := conn.Prepare(`SELECT p.id as id,p.title as title,
+	p.body as body,p.caption as caption,p.image_path as image_path,
+	c.id as category_id, c.name as categoty FROM post as p
+	LEFT JOIN post_category_relation as pc ON pc.post_id = p.id
+	INNER JOIN category as c ON pc.category_id = c.id;`)
+	if err != nil {
+		return blogWithCategory, errors.Errorf("unable to get all blogWithCategory %s", err.Error())
+	}
+	defer stmt.Finalize()
+	for {
+		var (
+			swapBlog model.BlogWithCategory
+			hasRow   bool
+		)
+		hasRow, err = stmt.Step()
+		if hasRow == false {
+			break // TODO: return a notFoundError in case of having no item
+		}
+		swapBlog, err = b.parseToBlogWithCategory(stmt)
+		if err != nil {
+			return blogWithCategory, errors.Errorf("getting the blogWithCategory from database error %s", err.Error())
+		}
+		
+	}
+	// blogWithCategory = append(blogWithCategory, swapBlog)
+	return blogWithCategory, err
+
 }

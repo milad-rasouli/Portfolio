@@ -20,3 +20,7 @@ type Relation struct {
 	CategoryID int64
 	PostID     int64
 }
+type BlogWithCategory struct {
+	Blog
+	Category []Category
+}

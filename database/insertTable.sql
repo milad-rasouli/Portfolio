@@ -1,7 +1,7 @@
 -- Insert sample data
-INSERT INTO post (title, body, image_path)
-VALUES ('Redis In ACTION', 'dummy dummy text', 'dummy image path'),
-       ('Golang In ACTION', 'dummy dummy text', 'dummy image path');
+INSERT INTO post (title, body,caption, image_path)
+VALUES ('Redis In ACTION','dummy body', 'dummy dummy text', 'dummy image path'),
+       ('Golang In ACTION','dummy body', 'dummy dummy text', 'dummy image path');
 
 INSERT INTO category (name)
 VALUES ('Database'), ('Message Broker'), ('Golang'), ('Programming'), ('Microservices');
