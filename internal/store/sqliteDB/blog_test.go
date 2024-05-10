@@ -261,9 +261,11 @@ func TestGeneral(t *testing.T) {
 		}
 		for i := 0; i < len(blogs); i++ {
 			id, err := blogDB.CreateBlog(context.TODO(), blogs[i])
-			assert.NoError(t, err)
+			assert.NoError(t, err, blogs[i])
 			blogs[i].ID = id
 		}
+		fmt.Printf("TestGeneral:CreateBlog%+v\n", blogs)
+
 		category := [...]model.Category{
 			{
 				Name: "database",
@@ -279,9 +281,10 @@ func TestGeneral(t *testing.T) {
 		}
 		for i := 0; i < len(category); i++ {
 			id, err := blogDB.CreateCategory(context.TODO(), category[i])
-			assert.NoError(t, err)
+			assert.NoError(t, err, category[i])
 			category[i].ID = id
 		}
+		fmt.Printf("TestGeneral:CreateCategory%+v\n", category)
 
 		categoryRelation := []model.Relation{
 			{PostID: 1, CategoryID: 2},
@@ -293,11 +296,14 @@ func TestGeneral(t *testing.T) {
 			{PostID: 3, CategoryID: 1},
 			{PostID: 3, CategoryID: 5},
 		}
-		for i := 0; i < len(category); i++ {
+		for i := 0; i < len(categoryRelation); i++ {
 			err := blogDB.CreateCategoryRelation(context.TODO(), categoryRelation[i])
-			assert.NoError(t, err)
+			assert.NoError(t, err, categoryRelation[i])
 		}
-		fmt.Printf("TestGeneral:%+v\n", category)
+
+		postWithCategory, err := blogDB.GetAllPostsWithCategory(context.Background())
+		assert.NoError(t, err)
+		fmt.Printf("TestGeneral:GetAllPostsWithCategory%+v\n", postWithCategory)
 	}
 
 }

@@ -21,6 +21,6 @@ type Relation struct {
 	PostID     int64
 }
 type BlogWithCategory struct {
-	Blog
+	Blog     Blog
 	Category []Category
 }

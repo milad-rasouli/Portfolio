@@ -40,14 +40,6 @@ func (b BlogSqlite) parseToBlog(stmt *sqlite.Stmt) (model.Blog, error) {
 	}
 	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
 
-	if err != nil {
-		return blog, err
-	}
-	blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
-	if err != nil {
-		return blog, err
-	}
-	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
 	return blog, err
 }
 
@@ -57,28 +49,21 @@ func (b BlogSqlite) parseToBlogWithCategory(stmt *sqlite.Stmt) (model.BlogWithCa
 		category model.Category
 		err      error
 	)
-	blog.ID = stmt.GetInt64("id")
-	blog.Title = stmt.GetText("title")
-	blog.Body = stmt.GetText("body")
-	blog.Caption = stmt.GetText("caption")
-	blog.ImagePath = stmt.GetText("image_path")
+	blog.Blog.ID = stmt.GetInt64("id")
+	blog.Blog.Title = stmt.GetText("title")
+	blog.Blog.Body = stmt.GetText("body")
+	blog.Blog.Caption = stmt.GetText("caption")
+	blog.Blog.ImagePath = stmt.GetText("image_path")
 	category.ID = stmt.GetInt64("category_id")
 	category.Name = stmt.GetText("category")
 	blog.Category = append(blog.Category, category)
-	blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
-	if err != nil {
-		return blog, err
-	}
-	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
+	blog.Blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
 
 	if err != nil {
 		return blog, err
 	}
-	blog.CreatedAt, err = time.Parse(timeLayout, stmt.GetText("created_at"))
-	if err != nil {
-		return blog, err
-	}
-	blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
+	blog.Blog.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
+
 	return blog, err
 }
 
@@ -128,6 +113,9 @@ func (b *BlogSqlite) CreateBlog(ctx context.Context, blog model.Blog) (int64, er
 	_, err = stmt.Step()
 	if err != nil {
 		return rowID, err
+	}
+	if conn.Changes() == 0 {
+		return rowID, store.BlogCreateError
 	}
 	hasRow, err := stmtSelect.Step()
 	if err != nil {
@@ -252,6 +240,9 @@ func (b *BlogSqlite) CreateCategory(ctx context.Context, category model.Category
 	if err != nil {
 		return rowID, err
 	}
+	if conn.Changes() == 0 {
+		return rowID, store.CategoryCreateError
+	}
 	hasRow, err := stmtSelect.Step()
 	if err != nil {
 		return rowID, err
@@ -366,10 +357,14 @@ func (b *BlogSqlite) CreateCategoryRelation(ctx context.Context, Relation model.
 	if err != nil {
 		return err
 	}
+	if conn.Changes() == 0 {
+		return store.CategoryRelationCreateError
+	}
+
 	return err
 }
-
 func (b *BlogSqlite) GetCategoryRelationAllByPostID(ctx context.Context, id int64) ([]model.Relation, error) {
+
 	var relation []model.Relation
 	conn := b.dbPool.Get(ctx)
 	defer b.dbPool.Put(conn)
@@ -476,18 +471,20 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 	var (
 		blogWithCategory []model.BlogWithCategory
 	)
-	//temp := make(map[model.Blog][]model.Category)
 	conn := b.dbPool.Get(ctx)
 	defer b.dbPool.Put(conn)
-	stmt, err := conn.Prepare(`SELECT p.id as id,p.title as title,
+	stmt, err := conn.Prepare(`SELECT p.id as id,p.title as title, 
 	p.body as body,p.caption as caption,p.image_path as image_path,
-	c.id as category_id, c.name as categoty FROM post as p
+	p.created_at as created_at, p.modified_at as modified_at ,
+	c.id as category_id , c.name as category FROM post as p
 	LEFT JOIN post_category_relation as pc ON pc.post_id = p.id
 	INNER JOIN category as c ON pc.category_id = c.id;`)
 	if err != nil {
 		return blogWithCategory, errors.Errorf("unable to get all blogWithCategory %s", err.Error())
 	}
 	defer stmt.Finalize()
+
+	temp := make(map[model.Blog][]model.Category)
 	for {
 		var (
 			swapBlog model.BlogWithCategory
@@ -501,7 +498,16 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 		if err != nil {
 			return blogWithCategory, errors.Errorf("getting the blogWithCategory from database error %s", err.Error())
 		}
-		blogWithCategory = append(blogWithCategory, swapBlog)
+		category, ok := temp[swapBlog.Blog]
+		if ok == false {
+			temp[swapBlog.Blog] = swapBlog.Category
+		} else {
+			category = append(category, swapBlog.Category...)
+			temp[swapBlog.Blog] = category
+		}
+	}
+	for b, c := range temp {
+		blogWithCategory = append(blogWithCategory, model.BlogWithCategory{Blog: b, Category: c})
 	}
 	return blogWithCategory, err
 
