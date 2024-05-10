@@ -1,21 +1,17 @@
-package store
+package sqlitedb
 
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 	"time"
 
 	"crawshaw.io/sqlite"
 	"crawshaw.io/sqlite/sqlitex"
-	"github.com/Milad75Rasouli/portfolio/internal/db"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
+	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
-
-const timeLayout = "2006-01-02 15:04:05"
 
 type UserSqlite struct {
 	dbPool *sqlitex.Pool
@@ -27,30 +23,6 @@ func NewUserSqlite(dbPool *sqlitex.Pool, logger *zap.Logger) *UserSqlite {
 		dbPool: dbPool,
 		logger: logger,
 	}
-}
-func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
-	defer cancel()
-	conn := dbPool.Get(ctx)
-	defer dbPool.Put(conn)
-	stmt, err := conn.Prepare(`CREATE TABLE IF NOT EXISTS user (
-		id INTEGER,
-		full_name TEXT NOT NULL,
-		email INTEGER NOT NULL UNIQUE,
-		password TEXT NOT NULL,
-		is_github INTEGER DEFAULT 0,
-		online_at DATETIME,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		modified_at DATETIME,
-		PRIMARY KEY(id)
-		);`)
-	if err != nil {
-		return errors.Wrap(err, CannotCreateTableError.Error())
-	}
-	defer stmt.Finalize()
-	_, err = stmt.Step()
-
-	return err
 }
 func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 	var (
@@ -73,7 +45,7 @@ func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 	usr.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
 	return usr, err
 }
-func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) {
+func (u *UserSqlite) CreateUser(ctx context.Context, usr model.User) (int64, error) {
 	var rowID int64
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -103,8 +75,9 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) 
 	if err != nil {
 		e := err.Error()[18:42]
 		if e == "SQLITE_CONSTRAINT_UNIQUE" {
-			return rowID, DuplicateUserError
+			return rowID, store.DuplicateUserError
 		}
+		return rowID, err
 	}
 	hasRow, err := stmtSelect.Step()
 	if err != nil {
@@ -116,7 +89,7 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) 
 	}
 	return rowID, err
 }
-func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, error) {
+func (u *UserSqlite) GetUserByEmail(ctx context.Context, email string) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -130,7 +103,7 @@ func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, 
 	var hasRow bool
 	hasRow, err = stmt.Step()
 	if hasRow == false {
-		return usr, UserNotFountError
+		return usr, store.UserNotFountError
 	}
 	if err != nil {
 		return usr, err
@@ -138,7 +111,7 @@ func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, 
 	usr, err = u.parseToUser(stmt)
 	return usr, err
 }
-func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) {
+func (u *UserSqlite) GetUserByID(ctx context.Context, id int64) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -152,7 +125,7 @@ func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) 
 	var hasRow bool
 	hasRow, err = stmt.Step()
 	if hasRow == false {
-		return usr, UserNotFountError
+		return usr, store.UserNotFountError
 	}
 	if err != nil {
 		return usr, err
@@ -160,7 +133,7 @@ func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) 
 	usr, err = u.parseToUser(stmt)
 	return usr, err
 }
-func (u *UserSqlite) GetAll(ctx context.Context) ([]model.User, error) {
+func (u *UserSqlite) GetAllUser(ctx context.Context) ([]model.User, error) {
 	var usr []model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -187,7 +160,7 @@ func (u *UserSqlite) GetAll(ctx context.Context) ([]model.User, error) {
 	}
 	return usr, err
 }
-func (u *UserSqlite) DeleteByID(ctx context.Context, id int64) error {
+func (u *UserSqlite) DeleteUserByID(ctx context.Context, id int64) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`DELETE FROM user WHERE id=$1;`)
@@ -199,7 +172,7 @@ func (u *UserSqlite) DeleteByID(ctx context.Context, id int64) error {
 	_, err = stmt.Step()
 	return err
 }
-func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, password string, fullname string) error {
+func (u *UserSqlite) UpdateUserByPasswordFullName(ctx context.Context, id int64, password string, fullname string) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
 	var s string
@@ -224,45 +197,7 @@ func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, passw
 	var hasRow bool
 	hasRow, err = stmt.Step()
 	if hasRow {
-		return UserNotFountError
+		return store.UserNotFountError
 	}
 	return err
-}
-
-type SqliteInit struct {
-	Folder string
-}
-
-func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, func(), error) {
-	var userDB *UserSqlite
-
-	os.Mkdir(d.Folder, 0777)
-	cfg := config
-	if isTestMode == true {
-		cfg = db.Config{
-			IsSqlite:          true,
-			ConnectionTimeout: time.Millisecond * 200,
-		}
-	}
-	dbPool, err := db.New(cfg)
-	if err != nil {
-		return nil, nil, err
-	}
-	err = CreateSqliteTable(dbPool, cfg)
-	if err != nil {
-		return nil, nil, err
-	}
-	userDB = NewUserSqlite(dbPool, logger)
-	return userDB, func() {
-		err := dbPool.Close()
-		if err != nil {
-			log.Printf("Error closing database connection: %v", err)
-		}
-		if isTestMode == true {
-			err = os.RemoveAll(d.Folder)
-			if err != nil {
-				log.Printf("Error removing database folder: %v", err)
-			}
-		}
-	}, nil
 }

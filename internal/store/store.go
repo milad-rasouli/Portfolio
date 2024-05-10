@@ -11,11 +11,42 @@ var DuplicateUserError = errors.New("the user is already exist")
 var UserNotFountError = errors.New("could not find the user")
 var CannotCreateTableError = errors.New("Cannot create tables")
 
+var BlogNotFoundError = errors.New("could not find the target blog")
+var BlogCreateError = errors.New("could not create the blog")
+var CategoryNotFoundError = errors.New("could not find the target category")
+var CategoryCreateError = errors.New("could not create category")
+var CategoryRelationNotFoundError = errors.New("could not find the target category relation")
+var CategoryRelationCreateError = errors.New("could not create the category relation")
+
 type User interface {
-	Create(context.Context, model.User) (int64, error)
-	GetByEmail(context.Context, string) (model.User, error)
-	GetByID(context.Context, int64) (model.User, error)
-	GetAll(context.Context) ([]model.User, error)
-	DeleteByID(context.Context, int64) error
-	UpdatePasswordFullName(context.Context, int64, string, string) error
+	CreateUser(context.Context, model.User) (int64, error)
+	GetUserByEmail(context.Context, string) (model.User, error)
+	GetUserByID(context.Context, int64) (model.User, error)
+	GetAllUser(context.Context) ([]model.User, error)
+	DeleteUserByID(context.Context, int64) error
+	UpdateUserByPasswordFullName(context.Context, int64, string, string) error
+}
+
+type Blog interface {
+	CreateBlog(context.Context, model.Blog) (int64, error)
+	GetBlogByID(context.Context, int64) (model.Blog, error)
+	GetAllBlog(context.Context) ([]model.Blog, error)
+	DeleteBlogByID(context.Context, int64) error
+	UpdateBlogByID(context.Context, model.Blog) error
+	CreateCategory(context.Context, model.Category) (int64, error)
+	GetCategoryByID(context.Context, int64) (model.Category, error)
+	GetAllCategory(context.Context) ([]model.Category, error)
+	DeleteCategoryByID(context.Context, int64) error
+	UpdateCategoryByID(context.Context, model.Category) error
+	CreateCategoryRelation(context.Context, model.Relation) error
+	GetCategoryRelationAllByPostID(context.Context, int64) ([]model.Relation, error)
+	GetCategoryRelationAllByCategoryID(context.Context, int64) ([]model.Relation, error)
+	DeleteCategoryRelationAllByPostID(context.Context, int64) error
+	DeleteCategoryRelationAllByCategoryID(context.Context, int64) error
+	GetAllPostsWithCategory(context.Context) ([]model.BlogWithCategory, error)
+}
+
+type Store interface {
+	User
+	Blog
 }

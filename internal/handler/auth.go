@@ -48,7 +48,7 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 		OnlineAt:  now,
 		CreatedAt: now,
 	}
-	validUser.ID, err = a.UserStore.Create(c.Context(), validUser)
+	validUser.ID, err = a.UserStore.CreateUser(c.Context(), validUser)
 	if errors.Is(err, store.DuplicateUserError) {
 		return Message(c, errors.New("user is duplicated"))
 	} else if err != nil {
@@ -82,7 +82,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 	}
 
 	{
-		UserFromDB, err = a.UserStore.GetByEmail(c.Context(), user.Email)
+		UserFromDB, err = a.UserStore.GetUserByEmail(c.Context(), user.Email)
 		if err != nil {
 			return Message(c, WrongPasswordOrEmail)
 		}
