@@ -24,3 +24,10 @@ type BlogWithCategory struct {
 	Blog     Blog
 	Category []Category
 }
+type Comment struct {
+	UserID    int64
+	BlogID    int64
+	Message   string
+	Confirmed bool
+	CreatedAt string
+}
