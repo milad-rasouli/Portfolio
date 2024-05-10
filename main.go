@@ -18,14 +18,14 @@ func main() {
 	var (
 		logger    *zap.Logger
 		err       error
-		userStore store.User
+		userStore store.Store
 	)
 
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
 	sqlite := sqlitedb.SqliteInit{Folder: "data"}
-	userStore, _, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	defer cancelDB()
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)

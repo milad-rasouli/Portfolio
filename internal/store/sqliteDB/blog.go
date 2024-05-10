@@ -467,6 +467,8 @@ func (b *BlogSqlite) DeleteCategoryRelationAllByCategoryID(ctx context.Context, 
 }
 
 /******************* practical part *******************/
+
+// This won't return blog.body
 func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogWithCategory, error) {
 	var (
 		blogWithCategory []model.BlogWithCategory
@@ -474,11 +476,11 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 	conn := b.dbPool.Get(ctx)
 	defer b.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`SELECT p.id as id,p.title as title, 
-	p.body as body,p.caption as caption,p.image_path as image_path,
+	p.caption as caption,p.image_path as image_path,
 	p.created_at as created_at, p.modified_at as modified_at ,
 	c.id as category_id , c.name as category FROM post as p
 	LEFT JOIN post_category_relation as pc ON pc.post_id = p.id
-	INNER JOIN category as c ON pc.category_id = c.id;`)
+	LEFT JOIN category as c ON pc.category_id = c.id;`)
 	if err != nil {
 		return blogWithCategory, errors.Errorf("unable to get all blogWithCategory %s", err.Error())
 	}
@@ -510,5 +512,4 @@ func (b *BlogSqlite) GetAllPostsWithCategory(ctx context.Context) ([]model.BlogW
 		blogWithCategory = append(blogWithCategory, model.BlogWithCategory{Blog: b, Category: c})
 	}
 	return blogWithCategory, err
-
 }

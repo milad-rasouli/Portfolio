@@ -45,7 +45,7 @@ func (u UserSqlite) parseToUser(stmt *sqlite.Stmt) (model.User, error) {
 	usr.ModifiedAt, err = time.Parse(timeLayout, stmt.GetText("modified_at"))
 	return usr, err
 }
-func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) {
+func (u *UserSqlite) CreateUser(ctx context.Context, usr model.User) (int64, error) {
 	var rowID int64
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -89,7 +89,7 @@ func (u *UserSqlite) Create(ctx context.Context, usr model.User) (int64, error) 
 	}
 	return rowID, err
 }
-func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, error) {
+func (u *UserSqlite) GetUserByEmail(ctx context.Context, email string) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -111,7 +111,7 @@ func (u *UserSqlite) GetByEmail(ctx context.Context, email string) (model.User, 
 	usr, err = u.parseToUser(stmt)
 	return usr, err
 }
-func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) {
+func (u *UserSqlite) GetUserByID(ctx context.Context, id int64) (model.User, error) {
 	var usr model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -133,7 +133,7 @@ func (u *UserSqlite) GetByID(ctx context.Context, id int64) (model.User, error) 
 	usr, err = u.parseToUser(stmt)
 	return usr, err
 }
-func (u *UserSqlite) GetAll(ctx context.Context) ([]model.User, error) {
+func (u *UserSqlite) GetAllUser(ctx context.Context) ([]model.User, error) {
 	var usr []model.User
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
@@ -160,7 +160,7 @@ func (u *UserSqlite) GetAll(ctx context.Context) ([]model.User, error) {
 	}
 	return usr, err
 }
-func (u *UserSqlite) DeleteByID(ctx context.Context, id int64) error {
+func (u *UserSqlite) DeleteUserByID(ctx context.Context, id int64) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
 	stmt, err := conn.Prepare(`DELETE FROM user WHERE id=$1;`)
@@ -172,7 +172,7 @@ func (u *UserSqlite) DeleteByID(ctx context.Context, id int64) error {
 	_, err = stmt.Step()
 	return err
 }
-func (u *UserSqlite) UpdatePasswordFullName(ctx context.Context, id int64, password string, fullname string) error {
+func (u *UserSqlite) UpdateUserByPasswordFullName(ctx context.Context, id int64, password string, fullname string) error {
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
 	var s string

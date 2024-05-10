@@ -13,7 +13,7 @@ import (
 )
 
 func TestUserCRUD(t *testing.T) {
-	var userDB *UserSqlite
+	var userDB *StoreSqlite
 	ti, err := time.Parse(timeLayout, time.Now().Format(timeLayout))
 	user := model.User{
 		ID:         1,
@@ -27,19 +27,19 @@ func TestUserCRUD(t *testing.T) {
 	}
 
 	d := SqliteInit{Folder: "data"}
-	userDB, _, cancel, err := d.Init(true, db.Config{}, nil)
+	userDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
 	{
-		_, err = userDB.Create(context.TODO(), user)
+		_, err = userDB.CreateUser(context.TODO(), user)
 		if err != nil {
 			t.Error(err)
 		}
 	}
 
 	{
-		fetchedUser, err := userDB.GetByID(context.TODO(), user.ID)
+		fetchedUser, err := userDB.GetUserByID(context.TODO(), user.ID)
 		if err != nil {
 			t.Error(err)
 		}
@@ -47,7 +47,7 @@ func TestUserCRUD(t *testing.T) {
 	}
 
 	{
-		fetchedUser, err := userDB.GetByEmail(context.TODO(), user.Email)
+		fetchedUser, err := userDB.GetUserByEmail(context.TODO(), user.Email)
 		if err != nil {
 			t.Error(err)
 		}
@@ -85,23 +85,23 @@ func TestUserCRUD(t *testing.T) {
 		}
 
 		for _, item := range cases {
-			err = userDB.UpdatePasswordFullName(context.TODO(), item.ID, item.Password, item.FullName)
+			err = userDB.UpdateUserByPasswordFullName(context.TODO(), item.ID, item.Password, item.FullName)
 			assert.NoError(t, err, "unable to update user")
-			expectedUser, err := userDB.GetByID(context.TODO(), item.ID)
+			expectedUser, err := userDB.GetUserByID(context.TODO(), item.ID)
 			assert.NoError(t, err, "unable to read user")
 			assert.True(t, item.testTarget(expectedUser, item), "parameters do not match")
 		}
 	}
 
 	{
-		_, err = userDB.GetByID(context.TODO(), 5)
+		_, err = userDB.GetUserByID(context.TODO(), 5)
 		assert.Error(t, err)
 	}
 
 	{
-		err := userDB.DeleteByID(context.TODO(), user.ID)
+		err := userDB.DeleteUserByID(context.TODO(), user.ID)
 		assert.NoError(t, err, err)
-		_, err = userDB.GetByID(context.TODO(), user.ID)
+		_, err = userDB.GetUserByID(context.TODO(), user.ID)
 		assert.Error(t, err)
 	}
 
@@ -109,7 +109,7 @@ func TestUserCRUD(t *testing.T) {
 
 func BenchmarkCreateUser(b *testing.B) {
 	d := SqliteInit{Folder: "data"}
-	userDB, _, cancel, err := d.Init(true, db.Config{}, nil)
+	userDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(b, err)
 	defer cancel()
 
@@ -129,7 +129,7 @@ func BenchmarkCreateUser(b *testing.B) {
 		}
 
 		start := time.Now()
-		_, err = userDB.Create(context.TODO(), user)
+		_, err = userDB.CreateUser(context.TODO(), user)
 		assert.NoError(b, err)
 		elapsed := time.Since(start)
 

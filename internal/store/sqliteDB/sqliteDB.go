@@ -15,11 +15,23 @@ import (
 
 const timeLayout = "2006-01-02 15:04:05"
 
+type StoreSqlite struct {
+	*UserSqlite
+	*BlogSqlite
+}
+
+func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite) *StoreSqlite {
+	return &StoreSqlite{
+		UserSqlite: userDB,
+		BlogSqlite: blogDB,
+	}
+}
+
 type SqliteInit struct {
 	Folder string
 }
 
-func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*UserSqlite, *BlogSqlite, func(), error) {
+func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*StoreSqlite, func(), error) {
 	var userDB *UserSqlite
 	var blogDB *BlogSqlite
 
@@ -39,21 +51,24 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	}
 	dbPool, err := db.New(cfg)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 	err = CreateSqliteTable(dbPool, cfg)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 	userDB = NewUserSqlite(dbPool, logger)
 	blogDB = NewBlogSqlite(dbPool, logger)
-	return userDB, blogDB, func() {
+	store := NewStoreSqlite(userDB, blogDB)
+
+	return store, func() {
 		err := dbPool.Close()
 		if err != nil {
 			log.Printf("Error closing database connection: %v", err)
 		}
 	}, nil
 }
+
 func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
 	defer cancel()

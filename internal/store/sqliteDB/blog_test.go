@@ -12,7 +12,7 @@ import (
 )
 
 func TestBlogCRUD(t *testing.T) {
-	var blogDB *BlogSqlite
+	var blogDB *StoreSqlite
 	ti, err := time.Parse(timeLayout, time.Now().Format(timeLayout))
 	blog := model.Blog{
 		ID:         1,
@@ -25,7 +25,7 @@ func TestBlogCRUD(t *testing.T) {
 	}
 
 	d := SqliteInit{Folder: "data"}
-	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	blogDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -83,14 +83,14 @@ func TestBlogCRUD(t *testing.T) {
 }
 
 func TestCategoryCRUD(t *testing.T) {
-	var blogDB *BlogSqlite
+	var blogDB *StoreSqlite
 	category := model.Category{
 		ID:   1,
 		Name: "database",
 	}
 
 	d := SqliteInit{Folder: "data"}
-	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	blogDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -144,7 +144,7 @@ func TestCategoryCRUD(t *testing.T) {
 }
 
 func TestRelation(t *testing.T) {
-	var blogDB *BlogSqlite
+	var blogDB *StoreSqlite
 	relation := model.Relation{
 		PostID:     1,
 		CategoryID: 2,
@@ -156,7 +156,7 @@ func TestRelation(t *testing.T) {
 	}
 
 	d := SqliteInit{Folder: "data"}
-	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	blogDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -225,10 +225,10 @@ func TestRelation(t *testing.T) {
 }
 
 func TestGeneral(t *testing.T) {
-	var blogDB *BlogSqlite
+	var blogDB *StoreSqlite
 
 	d := SqliteInit{Folder: "data"}
-	_, blogDB, cancel, err := d.Init(true, db.Config{}, nil)
+	blogDB, cancel, err := d.Init(true, db.Config{}, nil)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -264,7 +264,6 @@ func TestGeneral(t *testing.T) {
 			assert.NoError(t, err, blogs[i])
 			blogs[i].ID = id
 		}
-		fmt.Printf("TestGeneral:CreateBlog%+v\n", blogs)
 
 		category := [...]model.Category{
 			{
@@ -284,7 +283,6 @@ func TestGeneral(t *testing.T) {
 			assert.NoError(t, err, category[i])
 			category[i].ID = id
 		}
-		fmt.Printf("TestGeneral:CreateCategory%+v\n", category)
 
 		categoryRelation := []model.Relation{
 			{PostID: 1, CategoryID: 2},
@@ -300,10 +298,14 @@ func TestGeneral(t *testing.T) {
 			err := blogDB.CreateCategoryRelation(context.TODO(), categoryRelation[i])
 			assert.NoError(t, err, categoryRelation[i])
 		}
+		// err = blogDB.DeleteBlogByID(context.TODO(), 1)
+		// assert.NoError(t, err)
+		err = blogDB.DeleteCategoryRelationAllByPostID(context.TODO(), 1)
+		assert.NoError(t, err)
 
 		postWithCategory, err := blogDB.GetAllPostsWithCategory(context.Background())
 		assert.NoError(t, err)
-		fmt.Printf("TestGeneral:GetAllPostsWithCategory%+v\n", postWithCategory)
+		fmt.Printf("TestGeneral:GetAllPostsWithCategory %+v\n", postWithCategory)
 	}
 
 }
