@@ -16,16 +16,16 @@ import (
 
 func main() {
 	var (
-		logger    *zap.Logger
-		err       error
-		userStore store.Store
+		logger *zap.Logger
+		err    error
+		db     store.Store
 	)
 
 	cfg := config.New()
 	log.Printf("Config:%+v", cfg)
 
 	sqlite := sqlitedb.SqliteInit{Folder: "data"}
-	userStore, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	db, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	defer cancelDB()
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)
@@ -74,18 +74,25 @@ func main() {
 
 		a := handler.Auth{
 			Logger:       logger.Named("auth"),
-			UserStore:    userStore,
+			UserStore:    db,
 			UserPassword: userPassword,
 			JWTToken:     jwtToken,
+		}
+
+		cp := handler.ControlPanel{
+			Logger: logger.Named("control-panel"),
+			DB:     db,
 		}
 
 		home := app.Group("/")
 		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
 		auth := app.Group("/user")
+		controlPanel := app.Group("/admin") //TODO: add an auth middleware for this path with only admin access
 
 		h.Register(home)
 		b.Register(blog)
 		a.Register(auth)
+		cp.Register(controlPanel)
 	}
 
 	app.Static("/static", "./frontend/static")
