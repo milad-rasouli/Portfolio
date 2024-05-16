@@ -8,6 +8,7 @@ import (
 
 	"crawshaw.io/sqlite/sqlitex"
 	"github.com/Milad75Rasouli/portfolio/internal/db"
+	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -57,15 +58,22 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	err = CreateSqliteTable(dbPool, cfg)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	userDB = NewUserSqlite(dbPool, logger)
 	blogDB = NewBlogSqlite(dbPool, logger)
 	contactDB = NewContactSqlite(dbPool, logger)
 	store := NewStoreSqlite(userDB, blogDB, contactDB)
 
+	store.CreateContact(context.Background(), model.Contact{
+		Message: "sdlknclsdkv",
+		Subject: "ldjsznvdfvn",
+		Email:   "lsdkvnldsvnl",
+	})
 	return store, func() {
 		err := dbPool.Close()
 		if err != nil {
@@ -112,7 +120,7 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 			FOREIGN KEY(category_id) REFERENCES category (id),
 			FOREIGN KEY(post_id) REFERENCES post (id)
 		)`,
-		`CREATE TABLE contact (
+		`CREATE TABLE IF NOT EXISTS contact (
 			id INTEGER,
 			subject TEXT NOT NULL,
 			email INTEGER NOT NULL,

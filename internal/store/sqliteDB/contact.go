@@ -99,7 +99,7 @@ func (u *ContactSqlite) GetAllContact(ctx context.Context) ([]model.Contact, err
 	var contact []model.Contact
 	conn := u.dbPool.Get(ctx)
 	defer u.dbPool.Put(conn)
-	stmt, err := conn.Prepare(`SELECT * FROM user;`)
+	stmt, err := conn.Prepare(`SELECT * FROM contact;`)
 	if err != nil {
 		return contact, errors.Errorf("unable to get all users %s", err.Error())
 	}

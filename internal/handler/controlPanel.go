@@ -2,7 +2,10 @@ package handler
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
+	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
@@ -15,7 +18,19 @@ type ControlPanel struct {
 
 func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 	// show a report to the users
-	return c.Render("control-panel", fiber.Map{})
+	var (
+		err     error
+		contact []model.Contact
+	)
+	contact, err = cp.DB.GetAllContact(c.Context())
+	if err != nil {
+		cp.Logger.Error("GetAllContact error", zap.Error(err))
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	fmt.Printf("all contact: %+v\n", contact)
+	return c.Render("control-panel", fiber.Map{
+		"contact": contact,
+	})
 }
 func (cp *ControlPanel) GetCreateORModifyBlog(c fiber.Ctx) error {
 	blogID := c.Params("blogID")
@@ -63,9 +78,17 @@ func (cp *ControlPanel) PostDeleteContact(c fiber.Ctx) error {
 		Data string `json:"data"`
 	}{}
 	err := c.Bind().Body(&data)
-
 	if err != nil {
 		cp.Logger.Error("invalid json", zap.Error(err))
+		return Message(c, errors.New("unable to parse input"))
+	}
+	id, err := strconv.ParseInt(data.Data, 10, 64)
+	if err != nil {
+		cp.Logger.Error("invalid id", zap.Error(err))
+		return Message(c, errors.New("invalid id for deleting the contact message"))
+	}
+	err = cp.DB.DeleteContactByID(c.Context(), id)
+	if err != nil {
 		return Message(c, errors.New("unable to delete the contact message"))
 	}
 	return Message(c, errors.New("delete contact message "+data.Data))

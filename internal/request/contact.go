@@ -13,8 +13,8 @@ type Contact struct {
 
 func (c Contact) Validate() error {
 	return validation.ValidateStruct(&c,
-		validation.Field(&c.Subject, validation.Required, validation.Length(3, 100), is.Alphanumeric),
+		validation.Field(&c.Subject, validation.Required, validation.Length(3, 100)),
 		validation.Field(&c.Email, validation.Required, is.Email),
-		validation.Field(&c.Message, validation.Length(5, 500), is.Alphanumeric),
+		validation.Field(&c.Message, validation.Length(5, 500)),
 	)
 }

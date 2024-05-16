@@ -45,7 +45,6 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 		if err != nil {
 			contact.Logger.Info("invalid contact fields", zap.Error(err))
 			return postContactRedirect(c, contactInvalidInputFields)
-			// return c.Redirect().To("/contact?status=3")
 		}
 	}
 
@@ -57,7 +56,6 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 		if err != nil {
 			contact.Logger.Error("create contact", zap.Error(err))
 			return postContactRedirect(c, contactDatabaseError)
-			// return c.Redirect().To("/contact?status=2")
 		}
 	}
 

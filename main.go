@@ -26,6 +26,9 @@ func main() {
 
 	sqlite := sqlitedb.SqliteInit{Folder: "data"}
 	db, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer cancelDB()
 
 	userPassword := cipher.NewUserPassword(cfg.Cipher)
@@ -42,7 +45,7 @@ func main() {
 		engine.Reload(false)
 	}
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 	defer logger.Sync()
 
@@ -76,6 +79,11 @@ func main() {
 			Logger:       logger.Named("contact"),
 			ContactStore: db,
 		}
+		// db.CreateContact(context.Background(), model.Contact{
+		// 	Message: "sdlknclsdkv",
+		// 	Subject: "ldjsznvdfvn",
+		// 	Email:   "lsdkvnldsvnl",
+		// })
 		a := handler.Auth{
 			Logger:       logger.Named("auth"),
 			UserStore:    db,
