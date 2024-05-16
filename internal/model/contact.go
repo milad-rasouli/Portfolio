@@ -1,7 +1,11 @@
 package model
 
-type contact struct {
-	Email   string
-	Subject string
-	Message string
+import "time"
+
+type Contact struct {
+	ID        int64
+	Subject   string
+	Email     string
+	Message   string
+	CreatedAt time.Time
 }

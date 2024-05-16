@@ -18,12 +18,14 @@ const timeLayout = "2006-01-02 15:04:05"
 type StoreSqlite struct {
 	*UserSqlite
 	*BlogSqlite
+	*ContactSqlite
 }
 
-func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite) *StoreSqlite {
+func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite, contactDB *ContactSqlite) *StoreSqlite {
 	return &StoreSqlite{
-		UserSqlite: userDB,
-		BlogSqlite: blogDB,
+		UserSqlite:    userDB,
+		BlogSqlite:    blogDB,
+		ContactSqlite: contactDB,
 	}
 }
 
@@ -32,9 +34,11 @@ type SqliteInit struct {
 }
 
 func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*StoreSqlite, func(), error) {
-	var userDB *UserSqlite
-	var blogDB *BlogSqlite
-
+	var (
+		userDB    *UserSqlite
+		blogDB    *BlogSqlite
+		contactDB *ContactSqlite
+	)
 	os.Mkdir(d.Folder, 0777)
 	cfg := config
 	if isTestMode == true {
@@ -59,7 +63,8 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	}
 	userDB = NewUserSqlite(dbPool, logger)
 	blogDB = NewBlogSqlite(dbPool, logger)
-	store := NewStoreSqlite(userDB, blogDB)
+	contactDB = NewContactSqlite(dbPool, logger)
+	store := NewStoreSqlite(userDB, blogDB, contactDB)
 
 	return store, func() {
 		err := dbPool.Close()
@@ -107,6 +112,14 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 			FOREIGN KEY(category_id) REFERENCES category (id),
 			FOREIGN KEY(post_id) REFERENCES post (id)
 		)`,
+		`CREATE TABLE contact (
+			id INTEGER,
+			subject TEXT NOT NULL,
+			email INTEGER NOT NULL,
+			message TEXT NOT NULL,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY(id)
+		);`,
 	}
 
 	for _, table := range tables {

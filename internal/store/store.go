@@ -46,6 +46,12 @@ type Blog interface {
 	GetAllPostsWithCategory(context.Context) ([]model.BlogWithCategory, error)
 }
 
+type Contact interface {
+	CreateContact(context.Context, model.Contact) (int64, error)
+	GetContactByID(context.Context, int64) (model.Contact, error)
+	GetAllContact(context.Context) ([]model.Contact, error)
+	DeleteContactByID(context.Context, int64) error
+}
 type Store interface {
 	User
 	Blog
