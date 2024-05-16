@@ -2,6 +2,7 @@ package sqlitedb
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"crawshaw.io/sqlite"
@@ -40,8 +41,8 @@ func (c *ContactSqlite) CreateContact(ctx context.Context, contact model.Contact
 	conn := c.dbPool.Get(ctx)
 	defer c.dbPool.Put(conn)
 
-	stmt, err := conn.Prepare(`INSERT INTO contact (subject, email, message, created_at)
-	VALUES($1,$2,$3,$4);`)
+	stmt, err := conn.Prepare(`INSERT INTO contact (subject, email, message)
+	VALUES($1,$2,$3);`)
 	if err != nil {
 		return rowID, errors.Errorf("unable to create the new contact message %s", err.Error())
 	}
@@ -56,8 +57,8 @@ func (c *ContactSqlite) CreateContact(ctx context.Context, contact model.Contact
 	stmt.SetText("$1", contact.Subject)
 	stmt.SetText("$2", contact.Email)
 	stmt.SetText("$3", contact.Message)
-	stmt.SetText("$4", contact.CreatedAt.Format(timeLayout))
 
+	fmt.Println("createContact: here")
 	_, err = stmt.Step()
 	if err != nil {
 		return rowID, err

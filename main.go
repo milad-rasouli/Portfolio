@@ -73,7 +73,8 @@ func main() {
 		}
 
 		c := handler.Contact{
-			Logger: logger.Named("contact"),
+			Logger:       logger.Named("contact"),
+			ContactStore: db,
 		}
 		a := handler.Auth{
 			Logger:       logger.Named("auth"),

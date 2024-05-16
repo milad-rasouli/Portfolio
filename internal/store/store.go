@@ -55,4 +55,5 @@ type Contact interface {
 type Store interface {
 	User
 	Blog
+	Contact
 }
