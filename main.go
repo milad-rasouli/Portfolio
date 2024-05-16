@@ -79,11 +79,6 @@ func main() {
 			Logger:       logger.Named("contact"),
 			ContactStore: db,
 		}
-		// db.CreateContact(context.Background(), model.Contact{
-		// 	Message: "sdlknclsdkv",
-		// 	Subject: "ldjsznvdfvn",
-		// 	Email:   "lsdkvnldsvnl",
-		// })
 		a := handler.Auth{
 			Logger:       logger.Named("auth"),
 			UserStore:    db,

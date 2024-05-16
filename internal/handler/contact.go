@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/request"
@@ -40,6 +41,7 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 		contactRequest.Subject = c.FormValue("subject")
 		contactRequest.Email = c.FormValue("email")
 		contactRequest.Message = c.FormValue("message")
+
 		fmt.Printf("contactRequested: %+v\n", contactRequest) // TODO: DELETE THIS LINE
 		err = contactRequest.Validate()
 		if err != nil {
@@ -52,6 +54,7 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 		contactModel.Subject = contactRequest.Subject
 		contactModel.Email = contactRequest.Email
 		contactModel.Message = contactRequest.Message
+		contactModel.CreatedAt = time.Now()
 		_, err = contact.ContactStore.CreateContact(c.Context(), contactModel)
 		if err != nil {
 			contact.Logger.Error("create contact", zap.Error(err))

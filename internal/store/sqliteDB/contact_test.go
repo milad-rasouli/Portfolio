@@ -16,6 +16,7 @@ func TestContactCRUD(t *testing.T) {
 	ti, err := time.Parse(timeLayout, time.Now().Format(timeLayout))
 	contact := model.Contact{
 		ID:        1,
+		Subject:   "foo",
 		Email:     "bar@baz.com",
 		Message:   "foo bar baz boo faa bar baz",
 		CreatedAt: ti,
