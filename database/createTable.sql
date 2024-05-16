@@ -29,3 +29,11 @@ CREATE TABLE IF NOT EXISTS post_category_relation (
     FOREIGN KEY(category_id) REFERENCES category (id),
     FOREIGN KEY(post_id) REFERENCES post (id)
 );
+CREATE TABLE contact (
+    id INTEGER,
+    subject TEXT NOT NULL,
+    email INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(id)
+);

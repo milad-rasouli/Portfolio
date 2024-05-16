@@ -62,12 +62,20 @@
                       <h3>Contact</h3>
                     </button>
                   </h2>
-                  <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushItems">
+                  <div id="flush-collapseThree" class="accordion-collapse collapse show" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushItems">
                     <div class="accordion-body">
-                        <ol class="list-group list-group-numbered">
-                            <li class="list-group-item"><p><strong>Email:</strong> wwonano@email.com</p><p><strong>Subject:</strong> Hello World</p><p><strong>Message:</strong> Hi my friend it's a while since i didn't see you so i miss you so much take care!</p><button class="contact-delete-btn btn btn-outline-danger float-end" data="1">Delete</button></li>
-                            <li class="list-group-item"><p><strong>Email:</strong> wwonano@email.com</p><p><strong>Subject:</strong> Hello World</p><p><strong>Message:</strong> Hi my friend it's a while since i didn't see you so i miss you so much take care!</p><button class="contact-delete-btn btn btn-outline-danger float-end" data="2">Delete</button></li>
-                            <li class="list-group-item"><p><strong>Email:</strong> wwonano@email.com</p><p><strong>Subject:</strong> Hello World</p><p><strong>Message:</strong> Hi my friend it's a while since i didn't see you so i miss you so much take care!</p><button class="contact-delete-btn btn btn-outline-danger float-end" data="3">Delete</button></li>
+                        <ol class="list-group">
+                          <ol class="list-group">
+                            {{range .contact}}
+                            <li class="list-group-item">
+                                <p><strong>Email:</strong> {{.Email}}</p>
+                                <p><strong>Subject:</strong> {{.Subject}}</p>
+                                <p><strong>Message:</strong> {{.Message}}</p>
+                                <p><strong>Time:</strong> {{.CreatedAt}}</p>
+                                <button class="contact-delete-btn btn btn-outline-danger float-end" data="{{.ID}}">Delete</button>
+                            </li>
+                            {{end}}
+                        </ol>
                         </ol>
                     </div>
                   </div>
@@ -95,7 +103,7 @@
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="flush-headingFive">
-                      <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
                         <h3>About Me</h3>
                       </button>
                     </h2>
