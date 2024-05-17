@@ -96,13 +96,13 @@
                 <div class="col-xl-8 col-lg-10 col-md-12 align-hv-center">
                     <div class="the-content justify-content-center align-items-center">
                         <p class="title">
-                            Milad Rasouli
+                            {{.name}}
                         </p>
                         <p class="interval-text">
-                            I Am a Happy Backend Developer
+                           {{.slogan}}
                         </p>
-                        <p class="summary summary-day">I started my journey 3 years ago and since that I've participated in many diffrent projects and gained a lot of experiences.</p>
-                        <button class="btn btn-dark">My Github</button>
+                        <p class="summary summary-day">{{.shortIntro}}</p>
+                        <a href="{{.githubUrl}}" class="btn btn-dark">My Github</a>
                         <button class="btn btn-outline-dark">Here</button>
                     </div>
                 </div>

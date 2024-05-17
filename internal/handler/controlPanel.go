@@ -23,11 +23,19 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 		err     error
 		contact []model.Contact
 		aboutMe model.AboutMe
+		home    model.Home
 	)
 	{
 		contact, err = cp.DB.GetAllContact(c.Context())
 		if err != nil {
 			cp.Logger.Error("GetAllContact error", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	}
+	{
+		home, err = cp.DB.GetHome(c.Context())
+		if err != nil {
+			cp.Logger.Error("GetHome error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
@@ -39,8 +47,9 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 		}
 	}
 	return c.Render("control-panel", fiber.Map{
-		"contact": contact,
+		"contact":        contact,
 		"aboutMeContent": template.HTML(aboutMe.Content),
+		"home":           home,
 	})
 }
 func (cp *ControlPanel) GetCreateORModifyBlog(c fiber.Ctx) error {
@@ -55,8 +64,8 @@ func (cp *ControlPanel) PostDeleteBlog(c fiber.Ctx) error {
 	data := struct {
 		Data string `json:"data"`
 	}{}
-	err := c.Bind().Body(&data)
 
+	err := c.Bind().Body(&data)
 	if err != nil {
 		cp.Logger.Error("invalid json", zap.Error(err))
 		return Message(c, errors.New("unable to delete the Blog"))
@@ -76,8 +85,8 @@ func (cp *ControlPanel) PostDeleteUser(c fiber.Ctx) error {
 	data := struct {
 		Data string `json:"data"`
 	}{}
-	err := c.Bind().Body(&data)
 
+	err := c.Bind().Body(&data)
 	if err != nil {
 		cp.Logger.Error("invalid json", zap.Error(err))
 		return Message(c, errors.New("unable to delete the user"))
@@ -88,6 +97,7 @@ func (cp *ControlPanel) PostDeleteContact(c fiber.Ctx) error {
 	data := struct {
 		Data string `json:"data"`
 	}{}
+
 	err := c.Bind().Body(&data)
 	if err != nil {
 		cp.Logger.Error("invalid json", zap.Error(err))
@@ -106,18 +116,49 @@ func (cp *ControlPanel) PostDeleteContact(c fiber.Ctx) error {
 }
 
 func (cp *ControlPanel) PostModifyHome(c fiber.Ctx) error {
-	return c.JSON("modify home")
+	var (
+		homeRequest request.Home
+		home        model.Home
+		err         error
+	)
+	{
+		err = c.Bind().Body(&homeRequest)
+		if err != nil {
+			cp.Logger.Error("home parse error", zap.Error(err))
+			return Message(c, err)
+		}
+		err = homeRequest.Validate()
+		if err != nil {
+			return Message(c, err)
+		}
+	}
+	{
+		home.Name = homeRequest.Name
+		home.ShortIntro = homeRequest.ShortIntro
+		home.Slogan = homeRequest.Slogan
+		home.GithubUrl = homeRequest.GithubUrl
+		err = cp.DB.UpdateHome(c.Context(), home)
+		if err != nil {
+			return Message(c, err)
+		}
+	}
+	return Message(c, errors.New("updated home"))
 }
 
 func (cp *ControlPanel) PostModifyAboutMe(c fiber.Ctx) error {
 	var (
 		aboutMeRequest request.AboutMe
 		aboutMe        model.AboutMe
+		err            error
 	)
 
 	{
-		c.Bind().Body(&aboutMeRequest)
-		err := aboutMeRequest.Validate()
+		err = c.Bind().Body(&aboutMeRequest)
+		if err != nil {
+			cp.Logger.Error("about me parse error", zap.Error(err))
+			return Message(c, err)
+		}
+		err = aboutMeRequest.Validate()
 		if err != nil {
 			return Message(c, err)
 		}

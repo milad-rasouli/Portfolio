@@ -68,7 +68,8 @@ func main() {
 	{
 		logger := logger.Named("http")
 		h := handler.Home{
-			Logger: logger.Named("home"),
+			Logger:    logger.Named("home"),
+			HomeStore: db,
 		}
 		am := handler.AboutMe{
 			Logger:       logger.Named("aboutMe"),

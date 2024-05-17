@@ -17,14 +17,16 @@ const timeLayout = "2006-01-02 15:04:05"
 
 type StoreSqlite struct {
 	*UserSqlite
+	*HomeSqlite
 	*BlogSqlite
 	*ContactSqlite
 	*AboutMeSqlite
 }
 
-func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite, contactDB *ContactSqlite, aboutMe *AboutMeSqlite) *StoreSqlite {
+func NewStoreSqlite(userDB *UserSqlite, homeDB *HomeSqlite, blogDB *BlogSqlite, contactDB *ContactSqlite, aboutMe *AboutMeSqlite) *StoreSqlite {
 	return &StoreSqlite{
 		UserSqlite:    userDB,
+		HomeSqlite:    homeDB,
 		BlogSqlite:    blogDB,
 		ContactSqlite: contactDB,
 		AboutMeSqlite: aboutMe,
@@ -38,6 +40,7 @@ type SqliteInit struct {
 func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger) (*StoreSqlite, func(), error) {
 	var (
 		userDB    *UserSqlite
+		homeDB    *HomeSqlite
 		blogDB    *BlogSqlite
 		aboutMeDB *AboutMeSqlite
 		contactDB *ContactSqlite
@@ -67,10 +70,11 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	}
 
 	userDB = NewUserSqlite(dbPool, logger)
+	homeDB = NewHomeSqlite(dbPool, logger)
 	blogDB = NewBlogSqlite(dbPool, logger)
 	contactDB = NewContactSqlite(dbPool, logger)
 	aboutMeDB = NewAboutMeSqlite(dbPool, logger)
-	store := NewStoreSqlite(userDB, blogDB, contactDB, aboutMeDB)
+	store := NewStoreSqlite(userDB, homeDB, blogDB, contactDB, aboutMeDB)
 
 	return store, func() {
 		err := dbPool.Close()
@@ -129,6 +133,14 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 		`CREATE TABLE IF NOT EXISTS about_me (
 			id INTEGER,
 			content TEXT NOT NULL,
+			PRIMARY KEY(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS home (
+			id INTEGER,
+			name TEXT NOT NULL,
+			slogan TEXT NOT NULL,
+			short_intro TEXT NOT NULL,
+			github_url TEXT NOT NULL,
 			PRIMARY KEY(id)
 		);`,
 	}
