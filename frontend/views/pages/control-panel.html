@@ -88,18 +88,19 @@
                       <h3>Home</h3>
                     </button>
                   </h2>
-                  <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushItems">
+                  <div id="flush-collapseFour" class="accordion-collapse collapse show" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushItems">
                     <div class="accordion-body">
-                        <!-- Name, Slogan, ShortIntro -->
-                        <form action="/admin/modify-home">
-                            <label for="home-name" class="form-lable">Full Name:</label>
-                            <input type="text" name="name" id="home" class="form-control text-light">
-                            <label for="home-slogan" class="form-lable">Slogan:</label>
-                            <textarea id="home-slogan" class="form-control text-light"></textarea>
-                            <label for="home-short-intro" class="form-lable">Short Intro:</label>
-                            <textarea id="home-short-intro" class="form-control text-light"></textarea>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
+                        <form id="home-form">
+                          <label for="home-name" class="form-label">Full Name:</label>
+                          <input value="{{.home.Name}}" minlength="4" maxlength="99" type="text" name="name" id="home-name" class="form-control text-light">
+                          <label for="home-slogan" class="form-label">Slogan:</label>
+                          <textarea minlength="11" maxlength="254" rows="2" name="slogan" style="resize: none;" id="home-slogan" class="form-control text-light">{{.home.Slogan}}</textarea>
+                          <label for="home-short-intro" class="form-label">Short Intro:</label>
+                          <textarea minlength="11" maxlength="254" rows="2" name="short_intro" style="resize: none;" id="home-short-intro" class="form-control text-light">{{.home.ShortIntro}}</textarea>
+                          <label for="home-github-url" class="form-label">Github URL:</label>
+                          <input value="{{.home.GithubUrl}}" minlength="1" type="text" name="github_url" id="home-github-url" class="form-control text-light">
+                          <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                      </form>
                     </div>
                   </div>
                 </div>
@@ -109,10 +110,9 @@
                         <h3>About Me</h3>
                       </button>
                     </h2>
-                    <div id="flush-collapseFive" class="accordion-collapse collapse show" aria-labelledby="flush-headingFive" data-bs-parent="#accordionFlushItems">
+                    <div id="flush-collapseFive" class="accordion-collapse collapse" aria-labelledby="flush-headingFive" data-bs-parent="#accordionFlushItems">
                       <div class="accordion-body">
                         <form id="about-me-form">
-                          <label for="about-me-content" class="form-label">Content:</label>
                           <textarea type="text" name="content" id="about-me-content" class="form-control text-light">{{.aboutMeContent}}</textarea>
                           <button type="submit" id="about-me-submit" class="btn btn-primary mt-2">Submit</button>
                         </form>
@@ -245,9 +245,8 @@
     });
 
     document.getElementById('about-me-form').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault(); 
 
-    // Use TinyMCE's API to get the content of the editor
     var content = tinymce.get('about-me-content').getContent();
     var data = { content: content };
     console.log("about me content: " + data.content);
@@ -272,12 +271,47 @@
       });
     });
 
-  </script>
 
-  <script>
-    tinymce.init({
-        selector: '#about-me-content'
+    document.getElementById('home-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = {
+        name: document.getElementById('home-name').value,
+        slogan: document.getElementById('home-slogan').value,
+        short_intro: document.getElementById('home-short-intro').value,
+        github_url: document.getElementById('home-github-url').value
+    };
+
+    // Send the JSON object to the server using fetch
+    fetch('/admin/modify-home', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+      if (data && data.message !== undefined) {
+              ToggleNotification(data.message);
+          } else {
+              // Handle the case where there is no message in the response
+          }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
     });
+  });
+
+
+  tinymce.init({
+      selector: '#about-me-content'
+  });
   </script>
   </body>
 </html>
