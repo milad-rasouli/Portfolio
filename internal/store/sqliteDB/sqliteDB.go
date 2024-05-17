@@ -126,7 +126,7 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY(id)
 		);`,
-		`CREATE TABLE about_me (
+		`CREATE TABLE IF NOT EXISTS about_me (
 			id INTEGER,
 			content TEXT NOT NULL,
 			PRIMARY KEY(id)

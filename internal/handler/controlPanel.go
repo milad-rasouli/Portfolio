@@ -2,7 +2,7 @@ package handler
 
 import (
 	"errors"
-	"fmt"
+	"html/template"
 	"strconv"
 
 	"github.com/Milad75Rasouli/portfolio/internal/model"
@@ -22,14 +22,25 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 	var (
 		err     error
 		contact []model.Contact
+		aboutMe model.AboutMe
 	)
-	contact, err = cp.DB.GetAllContact(c.Context())
-	if err != nil {
-		cp.Logger.Error("GetAllContact error", zap.Error(err))
-		return c.SendStatus(fiber.StatusInternalServerError)
+	{
+		contact, err = cp.DB.GetAllContact(c.Context())
+		if err != nil {
+			cp.Logger.Error("GetAllContact error", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	}
+	{
+		aboutMe, err = cp.DB.GetAboutMe(c.Context())
+		if err != nil {
+			cp.Logger.Error("AgetAboutMe error", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
 	}
 	return c.Render("control-panel", fiber.Map{
 		"contact": contact,
+		"aboutMeContent": template.HTML(aboutMe.Content),
 	})
 }
 func (cp *ControlPanel) GetCreateORModifyBlog(c fiber.Ctx) error {
@@ -99,9 +110,22 @@ func (cp *ControlPanel) PostModifyHome(c fiber.Ctx) error {
 }
 
 func (cp *ControlPanel) PostModifyAboutMe(c fiber.Ctx) error {
-	var am request.AboutMe
-	c.Bind().Body(&am)
-	fmt.Printf("about me content %+v", am)
+	var (
+		aboutMeRequest request.AboutMe
+		aboutMe        model.AboutMe
+	)
+
+	{
+		c.Bind().Body(&aboutMeRequest)
+		err := aboutMeRequest.Validate()
+		if err != nil {
+			return Message(c, err)
+		}
+	}
+	{
+		aboutMe.Content = aboutMeRequest.Content
+		cp.DB.UpdateAboutMe(c.Context(), aboutMe)
+	}
 	return Message(c, errors.New("updated about-me!"))
 }
 

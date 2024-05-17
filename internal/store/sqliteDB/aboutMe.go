@@ -35,7 +35,6 @@ func (am AboutMeSqlite) parseToAboutMe(stmt *sqlite.Stmt) model.AboutMe {
 	var (
 		aboutMe model.AboutMe
 	)
-	aboutMe.ID = stmt.GetInt64("id")
 	aboutMe.Content = stmt.GetText("content")
 	return aboutMe
 }

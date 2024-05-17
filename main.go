@@ -71,7 +71,8 @@ func main() {
 			Logger: logger.Named("home"),
 		}
 		am := handler.AboutMe{
-			Logger: logger.Named("aboutMe"),
+			Logger:       logger.Named("aboutMe"),
+			AboutMeStore: db,
 		}
 		b := handler.Blog{
 			Logger: logger.Named("blog"),

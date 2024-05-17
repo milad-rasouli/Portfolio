@@ -16,7 +16,6 @@ func TestAboutMeCRUD(t *testing.T) {
 	)
 
 	aboutMe := model.AboutMe{
-		ID:      1,
 		Content: "this is a very long text.",
 	}
 
@@ -38,7 +37,6 @@ func TestAboutMeCRUD(t *testing.T) {
 
 	{
 		aboutMe2 := model.AboutMe{
-			ID:      1,
 			Content: "this is a very long text 1. this is a very long text 2. this is a very long text 3.",
 		}
 		err = aboutMeDB.UpdateAboutMe(context.TODO(), aboutMe2)
