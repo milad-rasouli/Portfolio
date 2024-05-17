@@ -9,6 +9,7 @@ import (
 
 var DuplicateUserError = errors.New("the user is already exist")
 var UserNotFountError = errors.New("could not find the user")
+var AboutMeNotFountError = errors.New("could not find about me")
 var CannotCreateTableError = errors.New("Cannot create tables")
 
 var BlogNotFoundError = errors.New("could not find the target blog")
@@ -52,8 +53,13 @@ type Contact interface {
 	GetAllContact(context.Context) ([]model.Contact, error)
 	DeleteContactByID(context.Context, int64) error
 }
+type AboutMe interface {
+	UpdateAboutMe(context.Context, model.AboutMe) error
+	GetAboutMe(context.Context) (model.AboutMe, error)
+}
 type Store interface {
 	User
 	Blog
+	AboutMe
 	Contact
 }

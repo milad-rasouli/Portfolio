@@ -37,3 +37,8 @@ CREATE TABLE contact (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
 );
+CREATE TABLE about_me (
+    id INTEGER,
+    content TEXT NOT NULL,
+    PRIMARY KEY(id)
+);
