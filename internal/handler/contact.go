@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Milad75Rasouli/portfolio/internal/model"
@@ -23,10 +22,8 @@ type Contact struct {
 }
 
 func (contact *Contact) GetContact(c fiber.Ctx) error {
-	// var message string
 	status := c.Query("status")
 	contact.Logger.Info("status is " + status)
-	// message = "I got your message. I will reply it soon!"
 
 	return c.Render("contact", fiber.Map{"status": status})
 }
@@ -42,7 +39,6 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 		contactRequest.Email = c.FormValue("email")
 		contactRequest.Message = c.FormValue("message")
 
-		fmt.Printf("contactRequested: %+v\n", contactRequest) // TODO: DELETE THIS LINE
 		err = contactRequest.Validate()
 		if err != nil {
 			contact.Logger.Info("invalid contact fields", zap.Error(err))
@@ -65,9 +61,9 @@ func (contact *Contact) PostContact(c fiber.Ctx) error {
 	return postContactRedirect(c, contactCreatedSuccessfully)
 }
 
-func (h *Contact) Register(g fiber.Router) {
-	g.Get("/", h.GetContact)
-	g.Post("/", h.PostContact)
+func (contact *Contact) Register(g fiber.Router) {
+	g.Get("/", contact.GetContact)
+	g.Post("/", contact.PostContact)
 }
 
 func postContactRedirect(c fiber.Ctx, status string) error {

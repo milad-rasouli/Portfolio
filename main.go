@@ -70,11 +70,12 @@ func main() {
 		h := handler.Home{
 			Logger: logger.Named("home"),
 		}
-
+		am := handler.AboutMe{
+			Logger: logger.Named("aboutMe"),
+		}
 		b := handler.Blog{
 			Logger: logger.Named("blog"),
 		}
-
 		c := handler.Contact{
 			Logger:       logger.Named("contact"),
 			ContactStore: db,
@@ -92,12 +93,14 @@ func main() {
 		}
 
 		home := app.Group("/")
+		aboutMe := app.Group("about-me")
 		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
 		contact := app.Group("/contact")
 		auth := app.Group("/user")
 		controlPanel := app.Group("/admin") //TODO: add an auth middleware for this path with only admin access
 
 		h.Register(home)
+		am.Register(aboutMe)
 		b.Register(blog)
 		c.Register(contact)
 		a.Register(auth)

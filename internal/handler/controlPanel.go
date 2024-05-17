@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Milad75Rasouli/portfolio/internal/model"
+	"github.com/Milad75Rasouli/portfolio/internal/request"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
@@ -27,7 +28,6 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 		cp.Logger.Error("GetAllContact error", zap.Error(err))
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	fmt.Printf("all contact: %+v\n", contact)
 	return c.Render("control-panel", fiber.Map{
 		"contact": contact,
 	})
@@ -99,7 +99,10 @@ func (cp *ControlPanel) PostModifyHome(c fiber.Ctx) error {
 }
 
 func (cp *ControlPanel) PostModifyAboutMe(c fiber.Ctx) error {
-	return c.JSON("modify home")
+	var am request.AboutMe
+	c.Bind().Body(&am)
+	fmt.Printf("about me content %+v", am)
+	return Message(c, errors.New("updated about-me!"))
 }
 
 func (cp *ControlPanel) Register(g fiber.Router) {
