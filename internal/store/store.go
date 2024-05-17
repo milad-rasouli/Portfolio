@@ -28,6 +28,10 @@ type User interface {
 	UpdateUserByPasswordFullName(context.Context, int64, string, string) error
 }
 
+type Home interface {
+	UpdateHome(context.Context, model.Home) error
+	GetHome(context.Context) (model.Home, error)
+}
 type Blog interface {
 	CreateBlog(context.Context, model.Blog) (int64, error)
 	GetBlogByID(context.Context, int64) (model.Blog, error)
@@ -59,6 +63,7 @@ type AboutMe interface {
 }
 type Store interface {
 	User
+	Home
 	Blog
 	AboutMe
 	Contact

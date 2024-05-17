@@ -11,11 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// type AboutMe interface {
-// 	UpdateAboutMe(context.Context, model.AboutMe) error
-// 	GetAboutMe(context.Context) (model.AboutMe, error)
-// }
-
 const (
 	AboutMeID = 1
 )
@@ -41,7 +36,6 @@ func (am AboutMeSqlite) parseToAboutMe(stmt *sqlite.Stmt) model.AboutMe {
 func (am *AboutMeSqlite) createAboutMe(ctx context.Context, aboutMe model.AboutMe) error {
 	conn := am.dbPool.Get(ctx)
 	defer am.dbPool.Put(conn)
-	//TODO: Get the id 1 then create it
 	stmt, err := conn.Prepare(`INSERT INTO about_me (id, content)
 	VALUES($1,$2);`)
 	if err != nil {
@@ -49,13 +43,10 @@ func (am *AboutMeSqlite) createAboutMe(ctx context.Context, aboutMe model.AboutM
 	}
 	defer stmt.Finalize()
 
-	stmt.SetInt64("$1", 1)
+	stmt.SetInt64("$1", AboutMeID)
 	stmt.SetText("$2", aboutMe.Content)
 
 	_, err = stmt.Step()
-	if err != nil {
-		return err
-	}
 
 	return err
 }
@@ -73,11 +64,11 @@ func (am *AboutMeSqlite) GetAboutMe(ctx context.Context) (model.AboutMe, error) 
 
 	var hasRow bool
 	hasRow, err = stmt.Step()
-	if hasRow == false {
-		return aboutMe, store.UserNotFountError
-	}
 	if err != nil {
 		return aboutMe, err
+	}
+	if hasRow == false {
+		return aboutMe, store.UserNotFountError
 	}
 	aboutMe = am.parseToAboutMe(stmt)
 	return aboutMe, err
@@ -86,10 +77,9 @@ func (am *AboutMeSqlite) GetAboutMe(ctx context.Context) (model.AboutMe, error) 
 func (am *AboutMeSqlite) UpdateAboutMe(ctx context.Context, aboutMe model.AboutMe) error {
 	conn := am.dbPool.Get(ctx)
 	defer am.dbPool.Put(conn)
-	var s = `UPDATE about_me
+	stmt, err := conn.Prepare(`UPDATE about_me
 		SET content=$1
-		WHERE id=$2;`
-	stmt, err := conn.Prepare(s)
+		WHERE id=$2;`)
 	if err != nil {
 		return err
 	}

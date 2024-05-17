@@ -42,3 +42,11 @@ CREATE TABLE IF NOT EXISTS about_me (
     content TEXT NOT NULL,
     PRIMARY KEY(id)
 );
+CREATE TABLE IF NOT EXISTS home (
+    id INTEGER,
+    name TEXT NOT NULL,
+    slogan TEXT NOT NULL,
+    short_intro TEXT NOT NULL,
+    github_url TEXT NOT NULL,
+    PRIMARY KEY(id)
+);
