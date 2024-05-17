@@ -19,13 +19,15 @@ type StoreSqlite struct {
 	*UserSqlite
 	*BlogSqlite
 	*ContactSqlite
+	*AboutMeSqlite
 }
 
-func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite, contactDB *ContactSqlite) *StoreSqlite {
+func NewStoreSqlite(userDB *UserSqlite, blogDB *BlogSqlite, contactDB *ContactSqlite, aboutMe *AboutMeSqlite) *StoreSqlite {
 	return &StoreSqlite{
 		UserSqlite:    userDB,
 		BlogSqlite:    blogDB,
 		ContactSqlite: contactDB,
+		AboutMeSqlite: aboutMe,
 	}
 }
 
@@ -37,6 +39,7 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	var (
 		userDB    *UserSqlite
 		blogDB    *BlogSqlite
+		aboutMeDB *AboutMeSqlite
 		contactDB *ContactSqlite
 	)
 	os.Mkdir(d.Folder, 0777)
@@ -66,7 +69,8 @@ func (d *SqliteInit) Init(isTestMode bool, config db.Config, logger *zap.Logger)
 	userDB = NewUserSqlite(dbPool, logger)
 	blogDB = NewBlogSqlite(dbPool, logger)
 	contactDB = NewContactSqlite(dbPool, logger)
-	store := NewStoreSqlite(userDB, blogDB, contactDB)
+	aboutMeDB = NewAboutMeSqlite(dbPool, logger)
+	store := NewStoreSqlite(userDB, blogDB, contactDB, aboutMeDB)
 
 	return store, func() {
 		err := dbPool.Close()
@@ -120,6 +124,11 @@ func CreateSqliteTable(dbPool *sqlitex.Pool, cfg db.Config) error {
 			email INTEGER NOT NULL,
 			message TEXT NOT NULL,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS about_me (
+			id INTEGER,
+			content TEXT NOT NULL,
 			PRIMARY KEY(id)
 		);`,
 	}

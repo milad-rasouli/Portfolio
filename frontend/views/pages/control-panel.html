@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Control Panel</title>
-<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/homePage.css" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/ovfgusdx2prqe46v2kmzumih2aonskgx98650zxosrm8zwm8/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
   </head>
   <body>
     <div class="container">
@@ -58,11 +60,11 @@
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="flush-headingThree">
-                    <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
                       <h3>Contact</h3>
                     </button>
                   </h2>
-                  <div id="flush-collapseThree" class="accordion-collapse collapse show" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushItems">
+                  <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushItems">
                     <div class="accordion-body">
                         <ol class="list-group">
                           <ol class="list-group">
@@ -109,21 +111,10 @@
                     </h2>
                     <div id="flush-collapseFive" class="accordion-collapse collapse show" aria-labelledby="flush-headingFive" data-bs-parent="#accordionFlushItems">
                       <div class="accordion-body">
-                        <!--Name, Summary, Skill, Experience, Education, Projects -->
-                        <form action="/admin/modify-about-me">
-                            <label for="about-me-name" class="form-lable">Full Name:</label>
-                            <input type="text" name="name" id="about-me-name" class="form-control text-light">
-                            <label for="about-me-summary" class="form-lable">Summary:</label>
-                            <textarea id="about-me-summary" class="form-control text-light"></textarea>
-                            <label for="about-me-experience" class="form-lable">Experience:</label>
-                            <textarea id="about-me-projects" class="form-control text-light"></textarea>
-                            <label for="about-me-projects" class="form-lable">Projects:</label>
-                            <textarea id="about-me-experience" class="form-control text-light"></textarea>
-                            <label for="about-me-skill" class="form-lable">Skill:</label>
-                            <textarea id="about-me-skill" class="form-control text-light"></textarea>
-                            <label for="about-me-education" class="form-lable">Education:</label>
-                            <textarea id="about-me-education" class="form-control text-light"></textarea>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                        <form id="about-me-form">
+                          <label for="about-me-content" class="form-label">Content:</label>
+                          <textarea type="text" name="content" id="about-me-content" class="form-control text-light">{{.aboutMeContent}}</textarea>
+                          <button type="submit" id="about-me-submit" class="btn btn-primary mt-2">Submit</button>
                         </form>
                       </div>
                     </div>
@@ -138,7 +129,14 @@
   <div id="notification" class="alert alert-info"></div>
   <script>
     let blogDeleteButtons = document.querySelectorAll('.blog-delete-btn');
-
+    function ToggleNotification(message){
+      var notification = document.getElementById('notification');
+        notification.textContent =  message;
+        notification.style.display = 'block';
+          setTimeout(function() {
+          notification.style.display = 'none';
+        }, 5000);
+    }
     blogDeleteButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             event.preventDefault();
@@ -163,12 +161,7 @@
                 return response.json();
             }).then(data => {
                 if (data && data.message !== undefined) {
-                var notification = document.getElementById('notification');
-                notification.textContent = data.message;
-                notification.style.display = 'block';
-                setTimeout(function() {
-                    notification.style.display = 'none';
-                }, 5000);
+                ToggleNotification(data.message);
             } else {
                 // Handle success, such as redirecting to another page
             }
@@ -204,12 +197,7 @@
                 return response.json();
             }).then(data => {
                 if (data && data.message !== undefined) {
-                var notification = document.getElementById('notification');
-                notification.textContent = data.message;
-                notification.style.display = 'block';
-                setTimeout(function() {
-                    notification.style.display = 'none';
-                }, 5000);
+                ToggleNotification(data.message);
             } else {
                 // Handle success, such as redirecting to another page
             }
@@ -246,12 +234,7 @@
                 return response.json();
             }).then(data => {
                 if (data && data.message !== undefined) {
-                var notification = document.getElementById('notification');
-                notification.textContent = data.message;
-                notification.style.display = 'block';
-                setTimeout(function() {
-                    notification.style.display = 'none';
-                }, 5000);
+                ToggleNotification(data.message);
             } else {
                 // Handle success, such as redirecting to another page
             }
@@ -261,6 +244,40 @@
         });
     });
 
+    document.getElementById('about-me-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    // Use TinyMCE's API to get the content of the editor
+    var content = tinymce.get('about-me-content').getContent();
+    var data = { content: content };
+    console.log("about me content: " + data.content);
+
+    fetch('/admin/modify-about-me', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data && data.message !== undefined) {
+              ToggleNotification(data.message);
+          } else {
+              // Handle the case where there is no message in the response
+          }
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+    });
+
+  </script>
+
+  <script>
+    tinymce.init({
+        selector: '#about-me-content'
+    });
   </script>
   </body>
 </html>
