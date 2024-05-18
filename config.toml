@@ -1,4 +1,5 @@
 debug = true
+admin_email = "milad@gmail.com"
 
 [database]
 is_sqlite=true

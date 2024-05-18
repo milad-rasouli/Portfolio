@@ -83,6 +83,7 @@ func main() {
 			ContactStore: db,
 		}
 		a := handler.Auth{
+			AdminEmail:   cfg.AdminEmail,
 			Logger:       logger.Named("auth"),
 			UserStore:    db,
 			UserPassword: userPassword,
@@ -99,7 +100,7 @@ func main() {
 		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
 		contact := app.Group("/contact")
 		auth := app.Group("/user")
-		controlPanel := app.Group("/admin") //TODO: add an auth middleware for this path with only admin access
+		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare) //TODO: add an auth middleware for this path with only admin access
 
 		h.Register(home)
 		am.Register(aboutMe)

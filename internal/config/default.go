@@ -7,7 +7,8 @@ import (
 
 func Default() Config {
 	return Config{
-		Debug: false,
+		Debug:      false,
+		AdminEmail: "changeIt@ChangeIt.com",
 		Cipher: cipher.Config{
 			Paper:  "changeIt",
 			Time:   1,
