@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Debug    bool          `koanf:"debug"`
-	Database db.Config     `koanf:"database"`
-	Cipher   cipher.Config `koanf:"cipher"`
-	JWT      jwt.Config    `koanf:"jwt"`
+	Debug      bool          `koanf:"debug"`
+	AdminEmail string        `koanf:"admin_email"`
+	Database   db.Config     `koanf:"database"`
+	Cipher     cipher.Config `koanf:"cipher"`
+	JWT        jwt.Config    `koanf:"jwt"`
 }

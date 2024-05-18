@@ -22,6 +22,7 @@ const (
 var WrongPasswordOrEmail = errors.New("password or email is wrong")
 
 type Auth struct {
+	AdminEmail   string
 	Logger       *zap.Logger
 	UserStore    store.User
 	UserPassword *cipher.UserPassword
@@ -70,6 +71,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 		token      string
 		UserFromDB model.User
 		err        error
+		role       string
 	)
 	a.Logger.Info("user is trying to sign in1")
 
@@ -89,13 +91,17 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 		if a.UserPassword.ComparePasswords(UserFromDB.Password, user.Password, user.Email) == false {
 			return Message(c, WrongPasswordOrEmail)
 		}
+		role = "user"
+		if UserFromDB.Email == a.AdminEmail {
+			role = "admin"
+		}
 	}
 	a.Logger.Info("user is trying to sign in")
 	{
 		token, err = a.JWTToken.RefreshToken.Create(jwt.JWTUser{
 			FullName: UserFromDB.FullName,
 			Email:    UserFromDB.Email,
-			Role:     "admin", //TODO: implement for diffrent roles
+			Role:     role,
 		})
 		if err != nil {
 			a.Logger.Error("Refresh token failed", zap.Error(err))
@@ -109,7 +115,7 @@ func (a *Auth) PostSignIn(c fiber.Ctx) error {
 		token, err = a.JWTToken.AccessToken.Create(jwt.JWTUser{
 			FullName: UserFromDB.FullName,
 			Email:    UserFromDB.Email,
-			Role:     "admin", //TODO: implement for diffrent roles
+			Role:     role,
 		}) //TODO: Refactor the return arguments of the jwt package
 		if err != nil {
 			a.Logger.Error("access token failed", zap.Error(err))
@@ -215,7 +221,7 @@ func (a *Auth) LimitToAuthMiddleWare(c fiber.Ctx) error {
 		if err != nil {
 			return RemoveCookiesAndRedirectToSignIn(c)
 		}
-		fmt.Println(refreshJWTUser)
+		fmt.Println(refreshJWTUser) // TODO: Remove this line
 	}
 	{
 		if len(accessToken) == 0 {
@@ -237,6 +243,65 @@ func (a *Auth) LimitToAuthMiddleWare(c fiber.Ctx) error {
 		}
 	}
 	a.Logger.Info("Middleware", zap.Any("user", refreshJWTUser)) // TODO: why does the middleware is being called for in and out requests.
+	c.Locals("userFullName", refreshJWTUser.FullName)
+	c.Locals("userEmail", refreshJWTUser.Email)
+	c.Locals("userRole", refreshJWTUser.Role)
+	return c.Next()
+}
+
+func (a *Auth) LimitToAdminMiddleWare(c fiber.Ctx) error {
+	var (
+		refreshToken, accessToken string
+		refreshJWTUser            jwt.JWTUser
+		accessJWTUser             jwt.JWTUser
+		err                       error
+	)
+	{
+		accessToken = c.Cookies("jwt_access_token")
+		refreshToken = c.Cookies("jwt_refresh_token")
+		notUser := len(refreshToken) == 0 && len(accessToken) == 0
+		if notUser == true {
+			return RemoveCookiesAndRedirectToSignIn(c)
+		}
+	}
+	{
+		if len(refreshToken) == 0 {
+			return RemoveCookiesAndRedirectToSignIn(c)
+		}
+		refreshJWTUser, err = a.JWTToken.RefreshToken.VerifyParse(refreshToken)
+		if err != nil {
+			return RemoveCookiesAndRedirectToSignIn(c)
+		}
+		fmt.Println(refreshJWTUser) // TODO: Remove this line
+	}
+	{
+		if len(accessToken) == 0 {
+			newAccessToken, err := a.JWTToken.AccessToken.Create(refreshJWTUser)
+			if err != nil {
+				return c.SendStatus(fiber.StatusInternalServerError)
+			}
+			SetTokenCookie(c, newAccessToken, TokenTypeAccess)
+		} else {
+			accessJWTUser, err = a.JWTToken.AccessToken.VerifyParse(accessToken)
+			if err != nil {
+				a.Logger.Error("failed to parse access token", zap.String("Caution", "refresh token is fine but access token carpeted"), zap.Error(err))
+				return RemoveCookiesAndRedirectToSignIn(c)
+			}
+			if accessJWTUser.Email != refreshJWTUser.Email {
+				a.Logger.Error("Access Token failed match", zap.String("err", "refresh token email: "+refreshJWTUser.Email+" access token email: "+accessJWTUser.Email))
+				return RemoveCookiesAndRedirectToSignIn(c)
+			}
+		}
+	}
+	{
+		if accessJWTUser.Email != a.AdminEmail {
+			return RemoveCookiesAndRedirectToSignIn(c)
+		}
+		if accessJWTUser.Role != "admin" {
+			return RemoveCookiesAndRedirectToSignIn(c)
+		}
+	}
+	a.Logger.Info("Admin Middleware", zap.Any("admin", refreshJWTUser)) // TODO: why does the middleware is being called for in and out requests.
 	c.Locals("userFullName", refreshJWTUser.FullName)
 	c.Locals("userEmail", refreshJWTUser.Email)
 	c.Locals("userRole", refreshJWTUser.Role)
