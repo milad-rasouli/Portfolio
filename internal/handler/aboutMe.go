@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"html/template"
 
 	"github.com/Milad75Rasouli/portfolio/internal/store"
@@ -15,7 +16,7 @@ type AboutMe struct {
 
 func (am *AboutMe) GetAboutMe(c fiber.Ctx) error {
 	aboutMe, err := am.AboutMeStore.GetAboutMe(c.Context())
-	if err != nil {
+	if errors.Is(err, store.AboutMeNotFountError) == false && err != nil {
 		c.SendStatus(fiber.StatusInternalServerError)
 	}
 	return c.Render("about-me", fiber.Map{"content": template.HTML(aboutMe.Content)})

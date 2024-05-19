@@ -74,7 +74,7 @@ func (h *HomeSqlite) GetHome(ctx context.Context) (model.Home, error) {
 		return home, err
 	}
 	if hasRow == false {
-		return home, store.UserNotFountError
+		return home, store.HomeNotFountError
 	}
 	home = h.parseToHome(stmt)
 	return home, err

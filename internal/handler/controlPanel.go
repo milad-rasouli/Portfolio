@@ -27,21 +27,21 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 	)
 	{
 		contact, err = cp.DB.GetAllContact(c.Context())
-		if err != nil {
+		if errors.Is(err, store.ContactNotFountError) == false && err != nil {
 			cp.Logger.Error("GetAllContact error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
 	{
 		home, err = cp.DB.GetHome(c.Context())
-		if err != nil {
+		if errors.Is(err, store.HomeNotFountError) == false && err != nil {
 			cp.Logger.Error("GetHome error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
 	{
 		aboutMe, err = cp.DB.GetAboutMe(c.Context())
-		if err != nil {
+		if errors.Is(err, store.AboutMeNotFountError) == false && err != nil {
 			cp.Logger.Error("AgetAboutMe error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}

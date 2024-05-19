@@ -88,7 +88,7 @@ func (c *ContactSqlite) GetContactByID(ctx context.Context, id int64) (model.Con
 	var hasRow bool
 	hasRow, err = stmt.Step()
 	if hasRow == false {
-		return contact, store.UserNotFountError
+		return contact, store.ContactNotFountError
 	}
 	if err != nil {
 		return contact, err
@@ -105,7 +105,7 @@ func (u *ContactSqlite) GetAllContact(ctx context.Context) ([]model.Contact, err
 		return contact, errors.Errorf("unable to get all users %s", err.Error())
 	}
 	defer stmt.Finalize()
-
+	count := 0
 	for {
 		var (
 			swapContact model.Contact
@@ -119,7 +119,11 @@ func (u *ContactSqlite) GetAllContact(ctx context.Context) ([]model.Contact, err
 		if err != nil {
 			return contact, errors.Errorf("getting the users from database error %s", err.Error())
 		}
+		count++
 		contact = append(contact, swapContact)
+	}
+	if count == 0 {
+		return contact, store.ContactNotFountError
 	}
 	return contact, err
 }
