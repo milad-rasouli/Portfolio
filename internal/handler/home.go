@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
@@ -19,7 +21,8 @@ func (h *Home) home(c fiber.Ctx) error {
 	)
 	{
 		home, err = h.HomeStore.GetHome(c.Context())
-		if err != nil {
+		if errors.Is(err, store.HomeNotFountError) == false && err != nil {
+			h.Logger.Error("home error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}

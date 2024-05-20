@@ -221,7 +221,6 @@ func (a *Auth) LimitToAuthMiddleWare(c fiber.Ctx) error {
 		if err != nil {
 			return RemoveCookiesAndRedirectToSignIn(c)
 		}
-		fmt.Println(refreshJWTUser) // TODO: Remove this line
 	}
 	{
 		if len(accessToken) == 0 {

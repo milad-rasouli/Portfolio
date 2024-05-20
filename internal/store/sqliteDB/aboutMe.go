@@ -68,7 +68,7 @@ func (am *AboutMeSqlite) GetAboutMe(ctx context.Context) (model.AboutMe, error) 
 		return aboutMe, err
 	}
 	if hasRow == false {
-		return aboutMe, store.UserNotFountError
+		return aboutMe, store.AboutMeNotFountError
 	}
 	aboutMe = am.parseToAboutMe(stmt)
 	return aboutMe, err

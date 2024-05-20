@@ -9,6 +9,8 @@ import (
 
 var DuplicateUserError = errors.New("the user is already exist")
 var UserNotFountError = errors.New("could not find the user")
+var ContactNotFountError = errors.New("could not find Contact")
+var HomeNotFountError = errors.New("could not find home")
 var AboutMeNotFountError = errors.New("could not find about me")
 var CannotCreateTableError = errors.New("Cannot create tables")
 
