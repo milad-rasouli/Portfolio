@@ -1,5 +1,5 @@
 # sudo docker build -t portfolio:latest .
-
+# sudo docker run -v "$(pwd)"/config.toml:/app/config.toml -p 80:5001  ghcr.io/milad75rasouli/portfolio:latest
 FROM golang:1.22.1-alpine3.19 as build
 
 WORKDIR /app
