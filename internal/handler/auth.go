@@ -30,8 +30,10 @@ type Auth struct {
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
-	a.Logger.Info("sign up page is called!")
-	return c.Render("sign-up", fiber.Map{})
+	// return c.Render("sign-up", fiber.Map{})
+	return c.Render("sign-up", fiber.Map{
+		"title": "Sign Up",
+	}, "layout")
 }
 
 func (a *Auth) PostSignUp(c fiber.Ctx) error {
@@ -61,8 +63,9 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) GetSignIn(c fiber.Ctx) error {
-	a.Logger.Info("sign in page is called!")
-	return c.Render("sign-in", fiber.Map{})
+	return c.Render("sign-in", fiber.Map{
+		"title": "Sign In",
+	}, "layout")
 }
 
 func (a *Auth) PostSignIn(c fiber.Ctx) error {
