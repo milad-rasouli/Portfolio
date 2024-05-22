@@ -111,5 +111,6 @@ func main() {
 	}
 
 	app.Static("/static", "./frontend/static")
+
 	log.Fatalln(app.Listen(":5001"))
 }

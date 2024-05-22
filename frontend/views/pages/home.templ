@@ -1,0 +1,27 @@
+package pages
+
+import "github.com/Milad75Rasouli/portfolio/internal/model"
+import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
+import "fmt"
+templ Home(home model.Home){
+    @layouts.Base("Milad Rasouli",fmt.Sprintf(`
+    <div class="b-content-divider b-content-divider-day b-content-vr col">
+            <div class="container h-100">
+                <div class="row h-100">
+                    <div class="col-xl-2 col-lg-1 col-md-0"></div>
+                    <div class="col-xl-8 col-lg-10 col-md-12 align-hv-center">
+                        <div class="the-content justify-content-center align-items-center">
+                            <p class="title">%s</p>
+                            <p class="interval-text">%s</p>
+                            <p class="summary summary-day">%s</p>
+                            <a href="%s" class="btn btn-dark">My Github</a>
+                            <!-- <button class="btn btn-outline-dark">Here</button> -->
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-1 col-md-0"></div>
+                </div>
+            </div>
+    </div>
+    `,home.Name,home.Slogan,home.ShortIntro,home.GithubUrl))
+}
+

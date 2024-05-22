@@ -1,4 +1,5 @@
 build:
+    templ generate 
     CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildvcs=false -trimpath -ldflags="-w -s" -o ./bin/portfolio ./main.go
 run: build
     mkdir -p data
