@@ -41,7 +41,7 @@ templ Base(title string, content string){
             <li class="nav-item">
               <a class="nav-link link-dark rounded" href="/contact">Contact</a>
             </li>
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle link-dark active rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">Admin Area</a>
               <ul class="dropdown-menu dropdown-menu-light">
                 <li><a class="dropdown-item" href="/user/sign-in">Sign in</a></li>
@@ -50,11 +50,11 @@ templ Base(title string, content string){
                 <li><hr class="dropdown-divider"/></li>
                 <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
               </ul>
-            </li>
+            </li> -->
           </ul>
-          <form role="search">
+          <!-- <form role="search">
             <input class="form-control form-control-day border-secondary" type="search" placeholder="Search" aria-label="Search"/>
-          </form>
+          </form> -->
         </div>
       </div>
     </nav>
@@ -72,14 +72,14 @@ templ Base(title string, content string){
           <li><a href="/about-me" class="nav-link link-dark">About Me</a></li>
           <li><a href="/blog" class="nav-link link-dark">Blogs</a></li>
           <li><a href="/contact" class="nav-link link-dark">Contact</a></li>
-          <li>
+          <!-- <li>
           <form class="d-flex mt-2 mb-2" role="search">
               <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search"/>
               <button class="btn btn-dark" type="submit">Search</button>
           </form>
-          </li>       
+          </li> -->
       </ul>
-      <hr class="text-dark"/>
+      <!-- <hr class="text-dark"/>
       <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle active rounded p-2" data-bs-toggle="dropdown" aria-expanded="false">
           <strong>Admin Area</strong>
@@ -91,7 +91,7 @@ templ Base(title string, content string){
           <li><hr class="dropdown-divider"/></li>
           <li><a class="dropdown-item" href="/user/sign-out">Exit</a></li>
         </ul>
-      </div>
+      </div> -->
     </div>
     @templ.FromGoHTML(template.Must(template.New("example").Parse(content)),"")
   </main>

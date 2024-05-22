@@ -31,33 +31,34 @@ func Blog(blogID string, email string, role string) templ.Component {
   <div class="container h-100">
       <div class="row h-100 align-hv-center">
           <div class="overflow-auto pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list">
-            <h1>Title</h1>   
-            <p>Here are you information Email=%s Role=%s </p>
+            <h1>This page is in development</h1>
+            <!-- <h1>Title</h1>   
             <p>You asked for %s blog</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
-            <p>dsf</p>
+            <p>Here are you information Email=%s Role=%s </p> -->
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
+            <p>.</p>
           </div>
       </div>
       </div>

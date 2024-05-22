@@ -45,6 +45,9 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 	if err != nil {
 		return Message(c, err) // TODO: retrieve meaningful message based on the error
 	}
+	if user.Email != a.AdminEmail {
+		return Message(c, errors.New("Only admin can sign up!"))
+	}
 	now := time.Now()
 	validUser := model.User{
 		FullName:  user.FullName,

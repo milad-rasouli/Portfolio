@@ -31,7 +31,9 @@ func BlogList() templ.Component {
         <div class="h-100 align-hv-center">
             <div class="pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list overflow-auto">
               <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-md-2 row-cols-lg-2 g-4">
-                <div class="col">
+            <h1>This page is in development</h1>
+                
+                <!-- <div class="col">
                   <div class="card bg-light text-dark border-light">
                     <img src="/static/img/blog.png" class="card-img-top" alt="...">
                     <div class="card-body">
@@ -106,7 +108,7 @@ func BlogList() templ.Component {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
               </div>
             </div>

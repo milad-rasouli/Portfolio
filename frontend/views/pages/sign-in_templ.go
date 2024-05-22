@@ -47,7 +47,7 @@ func SignIn() templ.Component {
                         </div>
                         <div class="mt-2">  
                             <button type="submit" class="btn btn-dark float-start">Sign in</button>
-                            <button type="button" class="btn btn-dark float-end">Sign in with Github</button>
+                            <!-- <button type="button" class="btn btn-dark float-end">Sign in with Github</button> -->
                         </div>
                     </form>
                 </div>

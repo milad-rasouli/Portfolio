@@ -57,7 +57,7 @@ func SignUp() templ.Component {
                     <div id="password-match" class="mt-2"></div>
                 </div>
                 <button type="submit" class="btn btn-dark float-start">Sign up</button>
-                <button type="button" class="btn btn-dark float-end">Sign up with Github</button>
+                <!-- <button type="button" class="btn btn-dark float-end">Sign up with Github</button> -->
             </form>
         </div>
     </div>
