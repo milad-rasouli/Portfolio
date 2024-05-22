@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"context"
+
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/gofiber/fiber/v3"
@@ -12,9 +15,10 @@ type Blog struct {
 }
 
 func (b *Blog) list(c fiber.Ctx) error {
-	b.Logger.Info("blog list page is called!")
-
-	return c.Render("blogs-list", fiber.Map{})
+	base := pages.BlogList()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (b *Blog) blog(c fiber.Ctx) error {
