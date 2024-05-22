@@ -1,0 +1,73 @@
+package pages
+
+import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
+
+var title = "Sgin In"
+templ SignIn(){
+    @layouts.Base(title,`<div class="container h-100">
+    <div class="row h-100 align-hv-center">
+        <div class="main-form text-start">
+            <div class="card-header text-center border-bottom border-3 border-light">
+                <h1>Sign In</h1>
+            </div>
+            <div class="card-body">
+                <form id="signin-form" action="/sign-in" method="post">
+                    <div class="form-group mt-2">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control form-control-day bg-light border-secondary text-dark" id="email" name="email" placeholder="Email" required/>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control form-control-day bg-light border-secondary text-dark" id="password" name="password" placeholder="Password" required/>
+                    </div>
+                    <div class="mt-2">  
+                        <button type="submit" class="btn btn-dark float-start">Sign in</button>
+                        <button type="button" class="btn btn-dark float-end">Sign in with Github</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+    document.getElementById('signin-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+        fetch('/user/sign-in', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url; // Redirect to the new URL
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            if (data && data.message !== undefined) {
+                var notification = document.getElementById('notification');
+                notification.textContent = data.message;
+                notification.style.display = 'block';
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 5000);
+            } else {
+                // Handle success, such as redirecting to another page
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+    </script>`)
+}
+
+
+

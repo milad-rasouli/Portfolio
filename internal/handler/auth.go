@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
@@ -63,9 +65,10 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) GetSignIn(c fiber.Ctx) error {
-	return c.Render("sign-in", fiber.Map{
-		"title": "Sign In",
-	}, "layout")
+	base := pages.SignIn()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (a *Auth) PostSignIn(c fiber.Ctx) error {
