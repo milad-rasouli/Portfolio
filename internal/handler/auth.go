@@ -32,10 +32,10 @@ type Auth struct {
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
-	// return c.Render("sign-up", fiber.Map{})
-	return c.Render("sign-up", fiber.Map{
-		"title": "Sign Up",
-	}, "layout")
+	base := pages.SignUp()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (a *Auth) PostSignUp(c fiber.Ctx) error {
