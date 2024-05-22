@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"context"
 	"errors"
 
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
 	"github.com/gofiber/fiber/v3"
@@ -26,12 +28,16 @@ func (h *Home) home(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
-	return c.Render("home", fiber.Map{
-		"name":       home.Name,
-		"slogan":     home.Slogan,
-		"shortIntro": home.ShortIntro,
-		"githubUrl":  home.GithubUrl,
-	})
+	base := pages.Home(home)
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
+	// return c.Render("home", fiber.Map{
+	// 	"name":       home.Name,
+	// 	"slogan":     home.Slogan,
+	// 	"shortIntro": home.ShortIntro,
+	// 	"githubUrl":  home.GithubUrl,
+	// })
 }
 
 func (h *Home) Register(g fiber.Router) {

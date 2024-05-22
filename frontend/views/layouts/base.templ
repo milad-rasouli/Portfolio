@@ -93,11 +93,7 @@ templ Base(title string, content string){
         </ul>
       </div>
     </div>
-    <div class="b-content-divider b-content-divider-day b-content-vr col">
-          <div class="container h-100">
-            @templ.FromGoHTML(template.Must(template.New("example").Parse(content)),"")
-          </div>
-    </div>
+    @templ.FromGoHTML(template.Must(template.New("example").Parse(content)),"")
   </main>
   </div>
       <script src="/static/js/bootstrap.bundle.min.js"></script>

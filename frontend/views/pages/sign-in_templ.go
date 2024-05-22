@@ -12,8 +12,6 @@ import "bytes"
 
 import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
 
-var title = "Sgin In"
-
 func SignIn() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -27,30 +25,36 @@ func SignIn() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base(title, `<div class="container h-100">
-    <div class="row h-100 align-hv-center">
-        <div class="main-form text-start">
-            <div class="card-header text-center border-bottom border-3 border-light">
-                <h1>Sign In</h1>
-            </div>
-            <div class="card-body">
-                <form id="signin-form" action="/sign-in" method="post">
-                    <div class="form-group mt-2">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control form-control-day bg-light border-secondary text-dark" id="email" name="email" placeholder="Email" required/>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control form-control-day bg-light border-secondary text-dark" id="password" name="password" placeholder="Password" required/>
-                    </div>
-                    <div class="mt-2">  
-                        <button type="submit" class="btn btn-dark float-start">Sign in</button>
-                        <button type="button" class="btn btn-dark float-end">Sign in with Github</button>
-                    </div>
-                </form>
+		templ_7745c5c3_Err = layouts.Base("Sgin In", `
+    <div class="b-content-divider b-content-divider-day b-content-vr col">
+        <div class="container h-100">
+
+        <div class="container h-100">
+        <div class="row h-100 align-hv-center">
+            <div class="main-form text-start">
+                <div class="card-header text-center border-bottom border-3 border-light">
+                    <h1>Sign In</h1>
+                </div>
+                <div class="card-body">
+                    <form id="signin-form" action="/sign-in" method="post">
+                        <div class="form-group mt-2">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control form-control-day bg-light border-secondary text-dark" id="email" name="email" placeholder="Email" required/>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control form-control-day bg-light border-secondary text-dark" id="password" name="password" placeholder="Password" required/>
+                        </div>
+                        <div class="mt-2">  
+                            <button type="submit" class="btn btn-dark float-start">Sign in</button>
+                            <button type="button" class="btn btn-dark float-end">Sign in with Github</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+        </div>
+        </div>
     </div>
     <script>
     document.getElementById('signin-form').addEventListener('submit', function(e) {
