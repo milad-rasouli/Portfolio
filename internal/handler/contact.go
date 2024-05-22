@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"context"
 	"time"
 
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/request"
 	"github.com/Milad75Rasouli/portfolio/internal/store"
@@ -24,8 +26,11 @@ type Contact struct {
 func (contact *Contact) GetContact(c fiber.Ctx) error {
 	status := c.Query("status")
 	contact.Logger.Info("status is " + status)
-
-	return c.Render("contact", fiber.Map{"status": status})
+	base := pages.Contact(status)
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
+	//return c.Render("contact", fiber.Map{"status": status})
 }
 
 func (contact *Contact) PostContact(c fiber.Ctx) error {
