@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	crawshaw.io/sqlite v0.3.2
+	github.com/a-h/templ v0.2.697
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/gofiber/fiber/v3 v3.0.0-beta.2
 	github.com/gofiber/template/html/v2 v2.1.1
@@ -15,12 +16,12 @@ require (
 	github.com/knadh/koanf/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0
+	go.uber.org/automaxprocs v1.5.3
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.22.0
 )
 
 require (
-	github.com/a-h/templ v0.2.697 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

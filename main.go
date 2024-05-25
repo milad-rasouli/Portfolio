@@ -11,6 +11,7 @@ import (
 	sqlitedb "github.com/Milad75Rasouli/portfolio/internal/store/sqliteDB"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
+	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
 
@@ -50,8 +51,9 @@ func main() {
 	defer logger.Sync()
 
 	app := fiber.New(fiber.Config{
-		Immutable: true,
-		Views:     engine,
+		// Immutable: true,
+		AppName: "Milad Rasouli Portfolio",
+		Views:   engine,
 	})
 
 	// app.Use(csrf.New(csrf.Config{
