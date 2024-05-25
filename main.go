@@ -11,6 +11,7 @@ import (
 	sqlitedb "github.com/Milad75Rasouli/portfolio/internal/store/sqliteDB"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
+	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
 
