@@ -9,11 +9,13 @@ COPY ./go.sum .
 RUN export GOPROXY=direct
 RUN go mod download
 COPY . /app
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildvcs=false -trimpath -ldflags="-w -s" -o ./bin/portfolio ./main.go
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildvcs=false -trimpath -ldflags="-w -s" -o ./portfolio ./main.go
 
-FROM alpine:3.19.1
-WORKDIR /app
-COPY --from=build /app/bin/portfolio /app
-COPY --from=build /app/frontend /app/frontend
-EXPOSE 5000
+# FROM alpine:3.19.1
+# WORKDIR /app
+# COPY --from=build /app/bin/portfolio /app
+# COPY --from=build /app/frontend /app/frontend
+# EXPOSE 5000
+# ENTRYPOINT ["/app/portfolio"]
 ENTRYPOINT ["/app/portfolio"]
+
