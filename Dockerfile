@@ -13,7 +13,7 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildvcs=false -trimpath -ld
 
 FROM alpine:3.19.1
 WORKDIR /app
-COPY --from=build /app/bin/portfolio /app
+COPY --from=build /app/portfolio /app
 COPY --from=build /app/frontend /app/frontend
 COPY ./config.toml /app
 EXPOSE 5000
