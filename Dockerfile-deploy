@@ -1,0 +1,6 @@
+# sudo docker build -t portfolio-c:latest -f ./Dockerfile-deploy .  
+# sudo docker run -p 80:5001 portfolio-c:latest 
+
+FROM ghcr.io/milad75rasouli/portfolio:latest
+COPY ./config.toml /app/config.toml
+ns1.arvanexample.ir

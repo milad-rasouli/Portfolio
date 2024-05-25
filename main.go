@@ -50,8 +50,9 @@ func main() {
 	defer logger.Sync()
 
 	app := fiber.New(fiber.Config{
-		Immutable: true,
-		Views:     engine,
+		// Immutable: true,
+		AppName: "Milad Rasouli Portfolio",
+		Views:   engine,
 	})
 
 	// app.Use(csrf.New(csrf.Config{
