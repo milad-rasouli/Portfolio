@@ -91,19 +91,26 @@ func main() {
 			UserPassword: userPassword,
 			JWTToken:     jwtToken,
 		}
+		m := handler.MetricsMiddleware{
+
+			Logger: logger.Named("metrics"),
+		}
+		// m := handler.NewMetricsMiddleware(logger.Named("metrics"))
 
 		cp := handler.ControlPanel{
 			Logger: logger.Named("control-panel"),
 			DB:     db,
 		}
 
-		home := app.Group("/")
-		aboutMe := app.Group("about-me")
-		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
-		contact := app.Group("/contact")
-		auth := app.Group("/user")
-		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare) //TODO: add an auth middleware for this path with only admin access
+		metrics := app.Group("/metrics")
+		home := app.Group("/", m.Middleware)
+		aboutMe := app.Group("/about-me", m.Middleware)
+		blog := app.Group("/blog", a.LimitToAuthMiddleWare, m.Middleware)
+		contact := app.Group("/contact", m.Middleware)
+		auth := app.Group("/user", m.Middleware)
+		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
 
+		m.Register(metrics)
 		h.Register(home)
 		am.Register(aboutMe)
 		b.Register(blog)
