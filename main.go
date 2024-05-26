@@ -91,11 +91,8 @@ func main() {
 			UserPassword: userPassword,
 			JWTToken:     jwtToken,
 		}
-		m := handler.MetricsMiddleware{
-
-			Logger: logger.Named("metrics"),
-		}
-		// m := handler.NewMetricsMiddleware(logger.Named("metrics"))
+		// m := handler.MetricsMiddleware{}
+		m := handler.NewMetricsMiddleware(logger.Named("metrics"))
 
 		cp := handler.ControlPanel{
 			Logger: logger.Named("control-panel"),

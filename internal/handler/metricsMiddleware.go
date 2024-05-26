@@ -75,7 +75,7 @@ func NewMetricsMiddleware(logger *zap.Logger) *MetricsMiddleware {
 			Name:      "home",
 		}),
 		reqCounterContact: promauto.NewCounter(prometheus.CounterOpts{
-			Namespace: "home_request_counter",
+			Namespace: "contact_request_counter",
 			Name:      "home",
 		}),
 		reqCounterUser: promauto.NewCounter(prometheus.CounterOpts{
