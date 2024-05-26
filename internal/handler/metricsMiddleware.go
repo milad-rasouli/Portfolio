@@ -142,30 +142,40 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterAboutMe.Inc()
 		}
+		m.Logger.Info("metricsMiddleware: about-me")
+
 	case strings.HasPrefix(path, "/blog/") || path == "/blog":
 		m.reqCounterBlog.Inc()
 		m.reqLatencyBlog.Observe(duration)
 		if err != nil {
 			m.errCounterBlog.Inc()
 		}
+		m.Logger.Info("metricsMiddleware: blog")
+
 	case path == "/":
 		m.reqCounterHome.Inc()
 		m.reqLatencyHome.Observe(duration)
 		if err != nil {
 			m.errCounterHome.Inc()
 		}
+		m.Logger.Info("metricsMiddleware: home") //TODO: remove this line
+
 	case strings.HasPrefix(path, "/contact/") || path == "/contact":
 		m.reqCounterContact.Inc()
 		m.reqLatencyContact.Observe(duration)
 		if err != nil {
 			m.errCounterContact.Inc()
 		}
+		m.Logger.Info("metricsMiddleware: contact")
+
 	case strings.HasPrefix(path, "/user/") || path == "/user":
 		m.reqCounterUser.Inc()
 		m.reqLatencyUser.Observe(duration)
 		if err != nil {
 			m.errCounterUser.Inc()
 		}
+		m.Logger.Info("metricsMiddleware: user")
+
 	case strings.HasPrefix(path, "/admin/") || path == "/admin":
 		m.reqCounterAdmin.Inc()
 		m.reqLatencyAdmin.Observe(duration)
@@ -177,5 +187,5 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 
 }
 func (m *MetricsMiddleware) Register(metrics fiber.Router) {
-	metrics.Get("/", m.GetMetrics)
+	metrics.Get("/", m.GetMetrics) //TODO: use go http library and diffrent port from app
 }
