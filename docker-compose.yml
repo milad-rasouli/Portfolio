@@ -1,8 +1,44 @@
-version: '3.8'
+version: "3.8"
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
 services:
-  portfolio:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # portfolio:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 5001:5001
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: prom/prometheus
+    network_mode: host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
     ports:
-      - 5000:5000
+      - "3000:3000"
+    network_mode: host
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Set your desired admin password
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_COOKIE_SAMESITE=None
+      - GF_SECURITY_COOKIE_SECURE=false
+      - GF_SECURITY_LOGIN_REMEMBER_DAYS=7
+    depends_on:
+      - prometheus
