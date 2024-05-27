@@ -330,7 +330,7 @@ func SetTokenCookie(c fiber.Ctx, token string, token_type int) {
 	)
 
 	if token_type == TokenTypeRefresh {
-		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: turn it to Hour
+		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: take it from the config and turn it to Hour
 		path = "/"                                                          //"/user/update-token"
 		name = "jwt_refresh_token"
 	} else {
