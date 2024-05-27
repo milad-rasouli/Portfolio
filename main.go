@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
@@ -11,6 +12,7 @@ import (
 	sqlitedb "github.com/Milad75Rasouli/portfolio/internal/store/sqliteDB"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
@@ -98,7 +100,6 @@ func main() {
 			DB:     db,
 		}
 
-		metrics := app.Group("/metrics")
 		home := app.Group("/", m.Middleware)
 		aboutMe := app.Group("/about-me", m.Middleware)
 		blog := app.Group("/blog", a.LimitToAuthMiddleWare, m.Middleware)
@@ -106,7 +107,6 @@ func main() {
 		auth := app.Group("/user", m.Middleware)
 		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
 
-		m.Register(metrics)
 		h.Register(home)
 		am.Register(aboutMe)
 		b.Register(blog)
@@ -117,5 +117,9 @@ func main() {
 
 	app.Static("/static", "./frontend/static")
 
+	go func() {
+		http.Handle("GET /metrics", promhttp.Handler())
+		http.ListenAndServe(":5000", nil)
+	}()
 	log.Fatalln(app.Listen(":5001"))
 }

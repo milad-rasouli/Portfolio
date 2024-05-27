@@ -16,6 +16,9 @@ WORKDIR /app
 COPY --from=build /app/portfolio /app
 COPY --from=build /app/frontend /app/frontend
 COPY ./config.toml /app
+# api port
+EXPOSE 5001
+# metrics port 
 EXPOSE 5000
 ENTRYPOINT ["/app/portfolio"]
 # ENTRYPOINT ["/app/portfolio"]
