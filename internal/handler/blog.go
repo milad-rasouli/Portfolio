@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"context"
+
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/gofiber/fiber/v3"
@@ -12,16 +15,17 @@ type Blog struct {
 }
 
 func (b *Blog) list(c fiber.Ctx) error {
-	b.Logger.Info("blog list page is called!")
-
-	return c.Render("blogs-list", fiber.Map{})
+	base := pages.BlogList()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (b *Blog) blog(c fiber.Ctx) error {
 	var (
-		fullName = c.Locals("userFullName")
-		role     = c.Locals("userRole")
-		email    = c.Locals("userEmail")
+		//fullName = c.Locals("userFullName")
+		role  = c.Locals("userRole")
+		email = c.Locals("userEmail")
 	)
 	b.Logger.Info("blog page is called!")
 	param := c.Params("blogID")
@@ -34,12 +38,18 @@ func (b *Blog) blog(c fiber.Ctx) error {
 		b.Logger.Error(err.Error())
 		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
-	return c.Render("blog", fiber.Map{
-		"blogID":   param,
-		"fullName": fullName,
-		"email":    email,
-		"role":     role,
-	})
+	e, _ := email.(string)
+	r, _ := role.(string)
+	base := pages.Blog(param, e, r)
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
+	// return c.Render("blog", fiber.Map{
+	// 	"blogID":   param,
+	// 	"fullName": fullName,
+	// 	"email":    email,
+	// 	"role":     role,
+	// })
 }
 
 func (b *Blog) Register(g fiber.Router) {

@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/jwt"
 	"github.com/Milad75Rasouli/portfolio/internal/model"
@@ -30,8 +32,10 @@ type Auth struct {
 }
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
-	a.Logger.Info("sign up page is called!")
-	return c.Render("sign-up", fiber.Map{})
+	base := pages.SignUp()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (a *Auth) PostSignUp(c fiber.Ctx) error {
@@ -40,6 +44,9 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 	err := user.Validate()
 	if err != nil {
 		return Message(c, err) // TODO: retrieve meaningful message based on the error
+	}
+	if user.Email != a.AdminEmail {
+		return Message(c, errors.New("Only admin can sign up!"))
 	}
 	now := time.Now()
 	validUser := model.User{
@@ -61,8 +68,10 @@ func (a *Auth) PostSignUp(c fiber.Ctx) error {
 }
 
 func (a *Auth) GetSignIn(c fiber.Ctx) error {
-	a.Logger.Info("sign in page is called!")
-	return c.Render("sign-in", fiber.Map{})
+	base := pages.SignIn()
+	base.Render(context.Background(), c.Response().BodyWriter())
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func (a *Auth) PostSignIn(c fiber.Ctx) error {
@@ -321,7 +330,7 @@ func SetTokenCookie(c fiber.Ctx, token string, token_type int) {
 	)
 
 	if token_type == TokenTypeRefresh {
-		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: turn it to Hour
+		expTime = time.Now().Add(time.Second * jwt.RefreshTokenExpireAfter) //TODO: take it from the config and turn it to Hour
 		path = "/"                                                          //"/user/update-token"
 		name = "jwt_refresh_token"
 	} else {

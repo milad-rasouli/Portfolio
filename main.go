@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
@@ -11,6 +12,8 @@ import (
 	sqlitedb "github.com/Milad75Rasouli/portfolio/internal/store/sqliteDB"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/template/html/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
 
@@ -50,8 +53,9 @@ func main() {
 	defer logger.Sync()
 
 	app := fiber.New(fiber.Config{
-		Immutable: true,
-		Views:     engine,
+		// Immutable: true,
+		AppName: "Milad Rasouli Portfolio",
+		Views:   engine,
 	})
 
 	// app.Use(csrf.New(csrf.Config{
@@ -89,18 +93,19 @@ func main() {
 			UserPassword: userPassword,
 			JWTToken:     jwtToken,
 		}
+		m := handler.NewMetricsMiddleware(logger.Named("metrics"))
 
 		cp := handler.ControlPanel{
 			Logger: logger.Named("control-panel"),
 			DB:     db,
 		}
 
-		home := app.Group("/")
-		aboutMe := app.Group("about-me")
-		blog := app.Group("/blog", a.LimitToAuthMiddleWare)
-		contact := app.Group("/contact")
-		auth := app.Group("/user")
-		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare) //TODO: add an auth middleware for this path with only admin access
+		home := app.Group("/", m.Middleware)
+		aboutMe := app.Group("/about-me", m.Middleware)
+		blog := app.Group("/blog", a.LimitToAuthMiddleWare, m.Middleware)
+		contact := app.Group("/contact", m.Middleware)
+		auth := app.Group("/user", m.Middleware)
+		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
 
 		h.Register(home)
 		am.Register(aboutMe)
@@ -111,5 +116,10 @@ func main() {
 	}
 
 	app.Static("/static", "./frontend/static")
+
+	go func() {
+		http.Handle("GET /metrics", promhttp.Handler())
+		http.ListenAndServe(":5000", nil)
+	}()
 	log.Fatalln(app.Listen(":5001"))
 }
