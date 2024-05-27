@@ -11,6 +11,6 @@ scrape_configs:
     follow_redirects: true
 
     static_configs:
-      - targets: ['localhost:5001']
+      - targets: ['localhost:5000']
 
   
