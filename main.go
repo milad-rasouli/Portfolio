@@ -106,6 +106,7 @@ func main() {
 		contact := app.Group("/contact", m.Middleware)
 		auth := app.Group("/user", m.Middleware)
 		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
+		app.Get("/health", handler.GetHealth)
 
 		h.Register(home)
 		am.Register(aboutMe)
