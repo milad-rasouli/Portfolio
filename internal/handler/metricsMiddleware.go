@@ -131,7 +131,6 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterAboutMe.Inc()
 		}
-		m.Logger.Info("metricsMiddleware: about-me")
 
 	case strings.HasPrefix(path, "/blog/") || path == "/blog":
 		m.reqCounterBlog.Inc()
@@ -139,7 +138,6 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterBlog.Inc()
 		}
-		m.Logger.Info("metricsMiddleware: blog")
 
 	case path == "/":
 		m.reqCounterHome.Inc()
@@ -147,7 +145,6 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterHome.Inc()
 		}
-		m.Logger.Info("metricsMiddleware: home") //TODO: remove this line
 
 	case strings.HasPrefix(path, "/contact/") || path == "/contact":
 		m.reqCounterContact.Inc()
@@ -155,7 +152,6 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterContact.Inc()
 		}
-		m.Logger.Info("metricsMiddleware: contact")
 
 	case strings.HasPrefix(path, "/user/") || path == "/user":
 		m.reqCounterUser.Inc()
@@ -163,7 +159,6 @@ func (m *MetricsMiddleware) Middleware(c fiber.Ctx) error {
 		if err != nil {
 			m.errCounterUser.Inc()
 		}
-		m.Logger.Info("metricsMiddleware: user")
 
 	case strings.HasPrefix(path, "/admin/") || path == "/admin":
 		m.reqCounterAdmin.Inc()
