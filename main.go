@@ -1,8 +1,12 @@
 package main
 
 import (
-	"log"
+	"context"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/Milad75Rasouli/portfolio/internal/cipher"
 	"github.com/Milad75Rasouli/portfolio/internal/config"
@@ -25,12 +29,11 @@ func main() {
 	)
 
 	cfg := config.New()
-	log.Printf("Config:%+v", cfg)
 
 	sqlite := sqlitedb.SqliteInit{Folder: "data"}
 	db, cancelDB, err := sqlite.Init(false, cfg.Database, logger)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("sqlite init error", zap.Error(err))
 	}
 	defer cancelDB()
 
@@ -47,8 +50,10 @@ func main() {
 		logger, err = zap.NewProduction()
 		engine.Reload(false)
 	}
+	logger.Info("Configuration", zap.Any("config.toml", cfg))
+
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("zap error", zap.Error(err))
 	}
 	defer logger.Sync()
 
@@ -117,10 +122,30 @@ func main() {
 	}
 
 	app.Static("/static", "./frontend/static")
-
 	go func() {
 		http.Handle("GET /metrics", promhttp.Handler())
 		http.ListenAndServe(":5000", nil)
 	}()
-	log.Fatalln(app.Listen(":5001"))
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	serverErrors := make(chan error, 1)
+	go func() {
+		serverErrors <- app.Listen(":5001")
+	}()
+
+	select {
+	case err := <-serverErrors:
+		logger.Fatal("listening and serving error", zap.Error(err))
+
+	case <-stop:
+		logger.Info("main : Start shutdown")
+		const timeout = 5 * time.Second
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		if err := app.ShutdownWithContext(ctx); err != nil {
+			logger.Fatal("graceful shutdown did not complete in the timeout", zap.Any("timeout", timeout), zap.Error(err))
+		}
+	}
+
 }
