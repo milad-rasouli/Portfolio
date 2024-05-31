@@ -6,8 +6,7 @@
     <title>Control Panel</title>
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/homePage.css" rel="stylesheet">
-    <script src="https://cdn.tiny.cloud/1/ovfgusdx2prqe46v2kmzumih2aonskgx98650zxosrm8zwm8/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-
+    <script src="/static/tinymce/tinymce.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -249,8 +248,7 @@
 
     var content = tinymce.get('about-me-content').getContent();
     var data = { content: content };
-    console.log("about me content: " + data.content);
-
+    
     fetch('/admin/modify-about-me', {
         method: 'POST',
         headers: {
