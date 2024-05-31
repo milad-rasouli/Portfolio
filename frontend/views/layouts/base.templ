@@ -59,7 +59,7 @@ templ Base(title string,item_list int, content string){
         </div>
       </div>
     </nav>
-  <main class="d-flex flex-nowrap row">
+  <div class="d-flex flex-nowrap row">
     <div style="border-right: 1px solid;" class="side-nav bg-light d-flex flex-column flex-shrink-0 p-3 bg-light col col-xl-2 col-lg-3 border-secondary d-none d-lg-flex">
       <span class="mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
       <div class="d-flex align-items-center form-check form-switch justify-content-center">
@@ -95,7 +95,7 @@ templ Base(title string,item_list int, content string){
       </div> -->
     </div>
     @templ.FromGoHTML(template.Must(template.New("example").Parse(content)),"")
-  </main>
+  </div>
   </div>
       <script src="/static/js/bootstrap.bundle.min.js"></script>
       <script src="/static/js/sidebars.js">
