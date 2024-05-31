@@ -79,6 +79,38 @@ git clone https://github.com/milad75rasouli/portfolio
 just run
 ```
 
+## K8S
+
+1. Run minikube:
+
+```bash
+minikube start
+```
+
+> [!TIP]
+> You might need to send the image to minikube:
+> ` eval $(minikube docker-env)`
+
+2. Apply the file:
+
+```bash
+kubectl apply -f deployment.yml
+```
+
+> [!TIP]
+> See your services:
+> ` kubectl get services`
+> See your pods;
+> `kubectl get pods`
+
+3. Expose the service to see the website:
+
+```bash
+minikube service portfolio-service
+```
+
+Then go to the shown address in your browser.
+
 ## Contribution
 
 I'd be happy if you contribute to this project. Please feel free to open issues and send pull requests.
