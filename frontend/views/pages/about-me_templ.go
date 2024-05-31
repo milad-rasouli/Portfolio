@@ -26,7 +26,7 @@ func AboutMe(content string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base("Sign Up", fmt.Sprintf(`<div class="b-content-divider b-content-divider-day b-content-vr col p-0">
+		templ_7745c5c3_Err = layouts.Base("Sign Up", 1, fmt.Sprintf(`<div class="b-content-divider b-content-divider-day b-content-vr col p-0">
   <div class="container h-100">
       <div class="h-100 align-hv-center">
           <div class="pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list overflow-auto">
