@@ -2,7 +2,7 @@ package layouts
 
 import "html/template"
 
-templ Base(title string, content string){
+templ Base(title string,item_list int, content string){
   <!doctype html>
   <html lang="en">
     <head>
@@ -31,16 +31,16 @@ templ Base(title string, content string){
         <div class="collapse navbar-collapse" id="secondNavbar">
           <ul class="navbar-nav me-auto mb-2 mb-md-0 no-wrap">
             <li class="nav-item">
-              <a class="nav-link link-dark rounded" aria-current="page" href="/">Home</a>
+              <a class="home-list nav-link link-dark rounded" aria-current="page" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link link-dark rounded" href="/about-me">About me</a>
+              <a class="aboutMe-list nav-link link-dark rounded" href="/about-me">About me</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link link-dark rounded" href="/blog">Blogs</a>
+              <a class="blog-list nav-link link-dark rounded" href="/blog">Blogs</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link link-dark rounded" href="/contact">Contact</a>
+              <a class="contact-list nav-link link-dark rounded" href="/contact">Contact</a>
             </li>
             <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle link-dark active rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">Admin Area</a>
@@ -69,10 +69,10 @@ templ Base(title string, content string){
       </span>
       <hr class="text-dark"/>
       <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item"><a href="/" class="nav-link link-dark">Home</a></li>
-          <li><a href="/about-me" class="nav-link link-dark">About Me</a></li>
-          <li><a href="/blog" class="nav-link link-dark">Blogs</a></li>
-          <li><a href="/contact" class="nav-link link-dark">Contact</a></li>
+          <li class="nav-item"><a href="/" class="home-list nav-link link-dark">Home</a></li>
+          <li><a href="/about-me" class="aboutMe-list nav-link link-dark">About Me</a></li>
+          <li><a href="/blog" class="blog-list nav-link link-dark">Blogs</a></li>
+          <li><a href="/contact" class="contact-list nav-link link-dark">Contact</a></li>
           <!-- <li>
           <form class="d-flex mt-2 mb-2" role="search">
               <input class="form-control form-control-day me-2 bg-light border-secondary text-dark" type="search" placeholder="Search" aria-label="Search"/>
@@ -98,8 +98,20 @@ templ Base(title string, content string){
   </main>
   </div>
       <script src="/static/js/bootstrap.bundle.min.js"></script>
-      <script src="/static/js/sidebars.js"></script>
+      <script src="/static/js/sidebars.js">
+      </script>
+      @ActiveList(item_list)
       </body>
   </html>
 }
 
+script ActiveList(index int){
+  const list=[".home-list",".aboutMe-list",".blog-list",".contact-list",".signIn-list",".signUp-list"]
+  const elements = document.querySelectorAll(list[index])
+  if (elements==undefined){
+    return
+  }
+  elements.forEach(element=>{
+    element.classList.add("active");
+  });
+}

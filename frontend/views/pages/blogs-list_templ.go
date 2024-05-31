@@ -25,7 +25,7 @@ func BlogList() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base("Blog List", `
+		templ_7745c5c3_Err = layouts.Base("Blog List", 2, `
   <div class="b-content-divider b-content-divider-day b-content-vr col p-0">
     <div class="container h-100">
         <div class="h-100 align-hv-center">

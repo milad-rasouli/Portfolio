@@ -27,7 +27,7 @@ func Home(home model.Home) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base("Milad Rasouli", fmt.Sprintf(`
+		templ_7745c5c3_Err = layouts.Base("Milad Rasouli", 0, fmt.Sprintf(`
     <div class="b-content-divider b-content-divider-day b-content-vr col">
             <div class="container h-100">
                 <div class="row h-100">

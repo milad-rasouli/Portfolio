@@ -120,10 +120,10 @@ function moveToDayMode(){
   localStorage.setItem('theme', 'day');
   currentMode = "day-mode";
 }
+
 window.onload = ()=>{
   ReadNightMode();
   ActiveNightMode();
-
   const textElement = document.querySelector('.interval-text');
   if(textElement==undefined){
     return;

@@ -26,7 +26,7 @@ func Blog(blogID string, email string, role string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base("Blog", fmt.Sprintf(`
+		templ_7745c5c3_Err = layouts.Base("Blog", 2, fmt.Sprintf(`
 <div class="b-content-divider b-content-divider-day b-content-vr col p-0">
   <div class="container h-100">
       <div class="row h-100 align-hv-center">
