@@ -2,3 +2,10 @@ docker-compose.yml
 Dockerfile
 justfile
 bin
+.git
+.github
+.vscode
+README.md
+deployment.tml
+prometheus.yml
+
