@@ -1,0 +1,3 @@
+[submodule "frontend/static/tinymce"]
+	path = frontend/static/tinymce
+	url = https://github.com/Milad75Rasouli/tinymce
