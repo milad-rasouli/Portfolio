@@ -8,4 +8,5 @@ bin
 README.md
 deployment.tml
 prometheus.yml
+.gitmodules
 
