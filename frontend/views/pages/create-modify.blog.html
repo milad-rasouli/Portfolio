@@ -15,8 +15,10 @@
           <div class="col-md-1"></div>  
           <div class="col-md-10 col-12">
             <form id="admin-blog-form">
-                <label for="admin-blog-title" class="form-lable mt-2">Title:</label>
-                <input type="text" name="title" id="admin-blog-title" class="form-control text-light mb-2">
+              <label for="admin-blog-title" class="form-lable mt-2">Title:</label>
+              <input type="text" name="title" id="admin-blog-title" class="form-control text-light mb-2">
+              <label for="admin-blog-caption" class="form-lable mt-2">Caption:</label>
+              <input type="text" name="title" id="admin-blog-caption" class="form-control text-light mb-2">
                 <textarea type="text" name="content" id="admin-blog-content" class="form-control text-light">{{.aboutMeContent}}</textarea>
                 <button type="submit" id="about-me-submit" class="btn btn-primary mt-2">Submit</button>
             </form>
@@ -28,12 +30,21 @@
   <script src="/static/js/sidebars.js"></script>
   <div id="notification" class="alert alert-info"></div>
   <script>
+    function ToggleNotification(message){
+      var notification = document.getElementById('notification');
+        notification.textContent =  message;
+        notification.style.display = 'block';
+          setTimeout(function() {
+          notification.style.display = 'none';
+        }, 5000);
+    }
     document.getElementById('admin-blog-form').addEventListener('submit', function(e) {
     e.preventDefault(); 
 
     var data = { 
       title: document.querySelector("#admin-blog-title").value,
-      content: tinymce.get('admin-blog-content').getContent() 
+      caption: document.querySelector("#admin-blog-caption").value,
+      body: tinymce.get('admin-blog-content').getContent() 
     };
     console.log(JSON.stringify(data))
     fetch('/admin/create-blog', { // TODO: change for modify-blog

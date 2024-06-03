@@ -4,6 +4,7 @@ import (
 	"errors"
 	"html/template"
 	"strconv"
+	"time"
 
 	"github.com/Milad75Rasouli/portfolio/internal/model"
 	"github.com/Milad75Rasouli/portfolio/internal/request"
@@ -18,7 +19,6 @@ type ControlPanel struct {
 }
 
 func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
-	// show a report to the users
 	var (
 		err     error
 		contact []model.Contact
@@ -42,7 +42,7 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 	{
 		aboutMe, err = cp.DB.GetAboutMe(c.Context())
 		if errors.Is(err, store.AboutMeNotFountError) == false && err != nil {
-			cp.Logger.Error("AgetAboutMe error", zap.Error(err))
+			cp.Logger.Error("AboutMe error", zap.Error(err))
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
@@ -77,13 +77,30 @@ func (cp *ControlPanel) PostCreateBlog(c fiber.Ctx) error {
 		blog request.Blog
 		err  error
 	)
-	c.Bind().Body(&blog)
-	err = blog.Validate()
-	if err != nil {
-		cp.Logger.Error("create post error", zap.Error(err))
+	{
+		c.Bind().Body(&blog)
+		err = blog.Validate()
+		if err != nil {
+			cp.Logger.Error("create post error", zap.Error(err))
+		}
+		cp.Logger.Info("create post", zap.Any("data", blog))
 	}
-	cp.Logger.Info("create post", zap.Any("data", blog))
-	return c.JSON("create blog")
+	{
+		dbBlog := model.Blog{
+			Title:      blog.Title,
+			Body:       blog.Body,
+			Caption:    blog.Caption,
+			CreatedAt:  time.Now(),
+			ModifiedAt: time.Now(),
+		}
+		_, err = cp.DB.CreateBlog(c.Context(), dbBlog)
+		if err != nil {
+			cp.Logger.Error("create blog error", zap.Error(err))
+			Message(c, err)
+		}
+		cp.Logger.Info("create blog successfully")
+	}
+	return Message(c, errors.New("created blog"))
 }
 
 func (cp *ControlPanel) PostModifyBlog(c fiber.Ctx) error {
