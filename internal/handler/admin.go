@@ -55,11 +55,10 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 func (cp *ControlPanel) GetCreateORModifyBlog(c fiber.Ctx) error {
 	blogID := c.Params("blogID")
 	if blogID == "new" {
-		return c.JSON("create blog " + blogID)
+		return c.Render("create-modify.blog", fiber.Map{})
 	}
 	return c.JSON("modify blog " + blogID)
 }
-
 func (cp *ControlPanel) PostDeleteBlog(c fiber.Ctx) error {
 	data := struct {
 		Data string `json:"data"`
@@ -74,6 +73,16 @@ func (cp *ControlPanel) PostDeleteBlog(c fiber.Ctx) error {
 }
 
 func (cp *ControlPanel) PostCreateBlog(c fiber.Ctx) error {
+	var (
+		blog request.Blog
+		err  error
+	)
+	c.Bind().Body(&blog)
+	err = blog.Validate()
+	if err != nil {
+		cp.Logger.Error("create post error", zap.Error(err))
+	}
+	cp.Logger.Info("create post", zap.Any("data", blog))
 	return c.JSON("create blog")
 }
 

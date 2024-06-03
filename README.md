@@ -59,9 +59,10 @@ Portfolio aims for you to have your personal weblog. It contains the following p
 - Clone the project
 
 ```bash
-git clone https://github.com/milad75rasouli/portfolio
+git clone --recursive https://github.com/milad75rasouli/portfolio
 ```
-
+> [!NOTE]
+> if you clone the project without its submodules please run this you get them ```git submodule update --init --recursive ```
 - Get the packages:
 
 ```bash

@@ -110,7 +110,8 @@ func main() {
 		blog := app.Group("/blog", a.LimitToAuthMiddleWare, m.Middleware)
 		contact := app.Group("/contact", m.Middleware)
 		auth := app.Group("/user", m.Middleware)
-		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
+		// controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
+		controlPanel := app.Group("/admin", m.Middleware) // TODO: uncomment out the above line and remove this line
 		app.Get("/health", handler.GetHealth)
 
 		h.Register(home)
