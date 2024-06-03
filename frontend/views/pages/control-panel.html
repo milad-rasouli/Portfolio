@@ -35,13 +35,9 @@
                     <div class="accordion-body">
                         <a class="btn btn-outline-success mb-2" href="/admin/create-modify-blog/new">New</a>
                         <ol class="list-group list-group-numbered">
-                            <!-- <li class="list-group-item"></li> -->
-                            <li class="list-group-item">Blog 1 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="1">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/1">Modify</a></li>
-                            <li class="list-group-item">Blog 2 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="2">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/2">Modify</a></li>
-                            <li class="list-group-item">Blog 3 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="3">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/3">Modify</a></li>
-                            <li class="list-group-item">Blog 4 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="4">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/4">Modify</a></li>
-                            <li class="list-group-item">Blog 5 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="5">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/5">Modify</a></li>
-                            <li class="list-group-item">Blog 6 title<button class="blog-delete-btn btn btn-outline-danger float-end" data="6">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/6">Modify</a></li>
+                          {{range .blog}}
+                              <li class="list-group-item">{{.Title}}<button class="blog-delete-btn btn btn-outline-danger float-end" data="{{.ID}}">Delete</button><a class="float-end btn btn-link" href="/admin/create-modify-blog/{{.ID}}">Modify</a></li>
+                          {{end}}
                         </ol>
                     </div>
                   </div>

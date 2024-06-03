@@ -46,7 +46,6 @@
       caption: document.querySelector("#admin-blog-caption").value,
       body: tinymce.get('admin-blog-content').getContent() 
     };
-    console.log(JSON.stringify(data))
     fetch('/admin/create-blog', { // TODO: change for modify-blog
         method: 'POST',
         headers: {

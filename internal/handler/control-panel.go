@@ -24,7 +24,15 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 		contact []model.Contact
 		aboutMe model.AboutMe
 		home    model.Home
+		blog    []model.Blog
 	)
+	{
+		blog, err = cp.DB.GetAllBlog(c.Context())
+		if errors.Is(err, store.BlogNotFoundError) == false && err != nil {
+			cp.Logger.Error("GetAllBlog error", zap.Error(err))
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	}
 	{
 		contact, err = cp.DB.GetAllContact(c.Context())
 		if errors.Is(err, store.ContactNotFountError) == false && err != nil {
@@ -50,24 +58,42 @@ func (cp *ControlPanel) GetControlPanel(c fiber.Ctx) error {
 		"contact":        contact,
 		"aboutMeContent": template.HTML(aboutMe.Content),
 		"home":           home,
+		"blog":           blog,
 	})
 }
 func (cp *ControlPanel) GetCreateORModifyBlog(c fiber.Ctx) error {
 	blogID := c.Params("blogID")
 	if blogID == "new" {
-		return c.Render("create-modify.blog", fiber.Map{})
+		return c.Render("create-modify-blog", fiber.Map{})
 	}
 	return c.JSON("modify blog " + blogID)
 }
 func (cp *ControlPanel) PostDeleteBlog(c fiber.Ctx) error {
-	data := struct {
-		Data string `json:"data"`
-	}{}
-
-	err := c.Bind().Body(&data)
-	if err != nil {
-		cp.Logger.Error("invalid json", zap.Error(err))
-		return Message(c, errors.New("unable to delete the Blog"))
+	var (
+		err  error
+		data = struct {
+			Data string `json:"data"`
+		}{}
+		id int64
+	)
+	{
+		err = c.Bind().Body(&data)
+		if err != nil {
+			cp.Logger.Error("delete blog bind error", zap.Error(err))
+			return Message(c, errors.New("unable to bind the Blog"))
+		}
+	}
+	{
+		id, err = strconv.ParseInt(data.Data, 10, 64)
+		if err != nil {
+			cp.Logger.Error("delete blog parse error", zap.Error(err))
+			return Message(c, errors.New("unable to parse data"))
+		}
+		err = cp.DB.DeleteBlogByID(c.Context(), id)
+		if err != nil {
+			cp.Logger.Error("delete blog error", zap.Error(err))
+			return Message(c, errors.New("unable to delete the Blog"))
+		}
 	}
 	return Message(c, errors.New("delete user "+data.Data))
 }
