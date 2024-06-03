@@ -10,16 +10,20 @@
   </head>
   <body>
     <div class="container">
-
+      <div class="row pt-1 pb-1"> 
+        <div class="col-10"></div>
+        <div class="col-1"><a href="/admin" class="btn btn-primary">Back</a></div>
+        <div class="col-1"></div>
+      </div>
         <div class="row">
           <div class="col-md-1"></div>  
           <div class="col-md-10 col-12">
             <form id="admin-blog-form">
               <label for="admin-blog-title" class="form-lable mt-2">Title:</label>
-              <input type="text" name="title" id="admin-blog-title" class="form-control text-light mb-2">
+              <input type="text" name="title" value="{{.Blog.Title}}" id="admin-blog-title" class="form-control text-light mb-2">
               <label for="admin-blog-caption" class="form-lable mt-2">Caption:</label>
-              <input type="text" name="title" id="admin-blog-caption" class="form-control text-light mb-2">
-                <textarea type="text" name="content" id="admin-blog-content" class="form-control text-light">{{.aboutMeContent}}</textarea>
+              <input type="text" name="title" value="{{.Blog.Caption}}" id="admin-blog-caption" class="form-control text-light mb-2">
+                <textarea type="text" name="content" id="admin-blog-content" class="form-control text-light">{{.Blog.Body}}</textarea>
                 <button type="submit" id="about-me-submit" class="btn btn-primary mt-2">Submit</button>
             </form>
           </div>  
@@ -46,7 +50,7 @@
       caption: document.querySelector("#admin-blog-caption").value,
       body: tinymce.get('admin-blog-content').getContent() 
     };
-    fetch('/admin/create-blog', { // TODO: change for modify-blog
+    fetch('{{.FetchURL}}', { // TODO: change for modify-blog
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
