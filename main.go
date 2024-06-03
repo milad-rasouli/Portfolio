@@ -85,7 +85,8 @@ func main() {
 			AboutMeStore: db,
 		}
 		b := handler.Blog{
-			Logger: logger.Named("blog"),
+			Logger:    logger.Named("blog"),
+			BlogStore: db,
 		}
 		c := handler.Contact{
 			Logger:       logger.Named("contact"),
