@@ -2,43 +2,17 @@ package pages
 
 import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
 import "fmt"
-templ Blog(blogID string ,email string, role string){
+templ Blog(title, body string){
     @layouts.Base("Blog",2,fmt.Sprintf(`
 <div class="b-content-divider b-content-divider-day b-content-vr col p-0">
   <div class="container h-100">
       <div class="row h-100 align-hv-center">
           <div class="overflow-auto pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list">
-            <h1>This page is in development</h1>
-            <!-- <h1>Title</h1>   
-            <p>You asked for %s blog</p>
-            <p>Here are you information Email=%s Role=%s </p> -->
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
+            <h1>%s</h1>
+            %s
           </div>
       </div>
       </div>
   </div>
-</div>`,email,role,blogID))
+</div>`,title,body))
 }

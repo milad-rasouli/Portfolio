@@ -13,7 +13,7 @@ import "bytes"
 import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
 import "fmt"
 
-func Blog(blogID string, email string, role string) templ.Component {
+func Blog(title, body string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -31,39 +31,13 @@ func Blog(blogID string, email string, role string) templ.Component {
   <div class="container h-100">
       <div class="row h-100 align-hv-center">
           <div class="overflow-auto pt-3 pb-3 p-4 border border-light bg-opacity-75 text-start bg-dark blogs-list">
-            <h1>This page is in development</h1>
-            <!-- <h1>Title</h1>   
-            <p>You asked for %s blog</p>
-            <p>Here are you information Email=%s Role=%s </p> -->
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
-            <p>.</p>
+            <h1>%s</h1>
+            %s
           </div>
       </div>
       </div>
   </div>
-</div>`, email, role, blogID)).Render(ctx, templ_7745c5c3_Buffer)
+</div>`, title, body)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
