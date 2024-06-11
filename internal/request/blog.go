@@ -13,7 +13,7 @@ type Blog struct {
 func (b Blog) Validate() error {
 	return validation.ValidateStruct(&b,
 		validation.Field(&b.Title, validation.Required, validation.Length(3, 100)),
-		validation.Field(&b.Body, validation.Required, validation.Length(100, 10000)),
+		validation.Field(&b.Body, validation.Required, validation.Length(100, 300000)),
 		validation.Field(&b.Caption, validation.Required, validation.Length(10, 350)),
 	)
 }
