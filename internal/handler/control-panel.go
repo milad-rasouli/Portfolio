@@ -108,7 +108,7 @@ func (cp *ControlPanel) PostDeleteBlog(c fiber.Ctx) error {
 			return Message(c, errors.New("unable to delete the Blog"))
 		}
 	}
-	return Message(c, errors.New("delete user "+data.Data))
+	return Message(c, errors.New("delete post "+data.Data))
 }
 
 func (cp *ControlPanel) PostCreateBlog(c fiber.Ctx) error {
@@ -124,7 +124,7 @@ func (cp *ControlPanel) PostCreateBlog(c fiber.Ctx) error {
 		}
 		err = blog.Validate()
 		if err != nil {
-			cp.Logger.Error("create post error", zap.Error(err))
+			cp.Logger.Error("create post validation error", zap.Error(err))
 			return Message(c, err)
 		}
 	}
@@ -234,6 +234,7 @@ func (cp *ControlPanel) PostModifyHome(c fiber.Ctx) error {
 		}
 		err = homeRequest.Validate()
 		if err != nil {
+			cp.Logger.Error("home parse validation error", zap.Error(err))
 			return Message(c, err)
 		}
 	}
@@ -272,7 +273,7 @@ func (cp *ControlPanel) PostModifyAboutMe(c fiber.Ctx) error {
 		aboutMe.Content = aboutMeRequest.Content
 		cp.DB.UpdateAboutMe(c.Context(), aboutMe)
 	}
-	return Message(c, errors.New("updated about-me!"))
+	return Message(c, errors.New("updated about-me"))
 }
 
 func (cp *ControlPanel) Register(g fiber.Router) {

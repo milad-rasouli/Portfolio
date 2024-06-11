@@ -2,10 +2,12 @@
 
 Portfolio aims for you to have your personal weblog. It contains the following parts:
 
-1. Home page where you can introduce yourself briefly.
-2. Blog page where you can write and show them to people.
-3. About Me page where you can write about yourself in detail.
-4. Contact page where others can write direct messages for you as an admin.
+1. **Home Page:** A space for you to introduce yourself briefly.
+2. **Blog Page:** A platform where you can write and showcase your thought to people.
+3. **About Me Page:** A detailed section where you can write more about yourself.
+4. **Contact Page:** A communication channel where others can write direct messages to you as an admin.
+
+[Here is where you can see how my plans for the project.](https://github.com/users/Milad75Rasouli/projects/5) If you have any suggestions to enhance this project, please feel free to open an issue.
 
 ## How To Run It
 
@@ -23,7 +25,7 @@ Portfolio aims for you to have your personal weblog. It contains the following p
     touch config.toml
    ```
 
-   - Copy the configs into _config.toml_
+   - Copy the configurations into _config.toml_
 
    ```config.toml
     debug = true
@@ -110,8 +112,8 @@ kubectl apply -f deployment.yml
 minikube service portfolio-service
 ```
 
-Then go to the shown address in your browser.
+Then, visit the displayed address in your browser.
 
 ## Contribution
 
-I'd be happy if you contribute to this project. Please feel free to open issues and send pull requests.
+Your contributions to this project are welcome. Please feel free to open issues and send pull requests.
