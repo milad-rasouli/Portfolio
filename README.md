@@ -7,7 +7,7 @@ Portfolio aims for you to have your personal weblog. It contains the following p
 3. **About Me Page:** A detailed section where you can write more about yourself.
 4. **Contact Page:** A communication channel where others can write direct messages to you as an admin.
 
-[Here is where you can see how my plans for the project.](https://github.com/users/Milad75Rasouli/projects/5) If you have any suggestions to enhance this project, please feel free to open an issue.
+[Here is where you can see my plans for the project.](https://github.com/users/Milad75Rasouli/projects/5) If you have any suggestions to enhance this project, please feel free to open an issue.
 
 ## How To Run It
 
@@ -63,8 +63,10 @@ Portfolio aims for you to have your personal weblog. It contains the following p
 ```bash
 git clone --recursive https://github.com/milad75rasouli/portfolio
 ```
+
 > [!NOTE]
-> if you clone the project without its submodules please run this you get them ```git submodule update --init --recursive ```
+> if you clone the project without its submodules please run this you get them `git submodule update --init --recursive `
+
 - Get the packages:
 
 ```bash
