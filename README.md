@@ -9,6 +9,20 @@ Portfolio aims for you to have your personal weblog. It contains the following p
 
 [Here is where you can see my plans for the project.](https://github.com/users/Milad75Rasouli/projects/5) If you have any suggestions to enhance this project, please feel free to open an issue.
 
+## Endpoints Table
+
+| No. | Route         | Description                                                     |
+| --- | ------------- | --------------------------------------------------------------- |
+| 1   | /             | Landing page                                                    |
+| 2   | /about-me     | About me section where you’ll find information about the author |
+| 3   | /blog         | Blog list: view a list of blogs                                 |
+| 4   | /blog/:ID     | Blog section: view the content of an individual blog            |
+| 5   | /contact      | Contact form: leave a message for the author                    |
+| 6   | /user/sign-in | Sign-in page for users                                          |
+| 7   | /user/sign-up | Sign-up page for users                                          |
+| 8   | /admin        | Control panel page for managing blogs, users, and contacts      |
+| 9   | /health       | Check if the pod is running or not                              |
+
 ## How To Run It
 
 1. **Docker**
