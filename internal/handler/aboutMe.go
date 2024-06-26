@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"errors"
 
 	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
@@ -21,7 +20,7 @@ func (am *AboutMe) GetAboutMe(c fiber.Ctx) error {
 		c.SendStatus(fiber.StatusInternalServerError)
 	}
 	base := pages.AboutMe(aboutMe.Content)
-	base.Render(context.Background(), c.Response().BodyWriter())
+	base.Render(c.Context(), c.Response().BodyWriter())
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	return c.SendStatus(fiber.StatusOK)
 	//return c.Render("about-me", fiber.Map{"content": template.HTML(aboutMe.Content)})

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"errors"
 
 	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
@@ -29,7 +28,7 @@ func (h *Home) home(c fiber.Ctx) error {
 		}
 	}
 	base := pages.Home(home)
-	base.Render(context.Background(), c.Response().BodyWriter())
+	base.Render(c.Context(), c.Response().BodyWriter())
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	return c.SendStatus(fiber.StatusOK)
 	// return c.Render("home", fiber.Map{
