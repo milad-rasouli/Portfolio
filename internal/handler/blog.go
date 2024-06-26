@@ -51,7 +51,7 @@ func (b *Blog) GetList(c fiber.Ctx) error {
 	}
 	base := pages.BlogList(sBlogList)
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
-	err = base.Render(context.Background(), c.Response().BodyWriter()) // Pass the blogs here
+	err = base.Render(c.Context(), c.Response().BodyWriter()) // Pass the blogs here
 	if err != nil {
 		b.Logger.Error("tempel render error", zap.Error(err))
 		return Message(c, err)

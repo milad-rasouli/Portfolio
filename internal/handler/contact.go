@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"time"
 
 	"github.com/Milad75Rasouli/portfolio/frontend/views/pages"
@@ -27,7 +26,7 @@ func (contact *Contact) GetContact(c fiber.Ctx) error {
 	status := c.Query("status")
 	// contact.Logger.Info("status is " + status)
 	base := pages.Contact(status)
-	base.Render(context.Background(), c.Response().BodyWriter())
+	base.Render(c.Context(), c.Response().BodyWriter())
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	return c.SendStatus(fiber.StatusOK)
 }

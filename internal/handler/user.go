@@ -33,7 +33,7 @@ type Auth struct {
 
 func (a *Auth) GetSignUp(c fiber.Ctx) error {
 	base := pages.SignUp()
-	base.Render(context.Background(), c.Response().BodyWriter())
+	base.Render(c.Context(), c.Response().BodyWriter())
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	return c.SendStatus(fiber.StatusOK)
 }
