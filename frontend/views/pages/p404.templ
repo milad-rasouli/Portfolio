@@ -1,0 +1,31 @@
+package pages
+
+import "github.com/Milad75Rasouli/portfolio/frontend/views/layouts"
+
+templ P404(){
+    @layouts.Base("404",40,`
+    <div class="b-content-divider b-content-divider-day b-content-vr col">
+        <div class="container h-100">
+        <div class="container h-100">
+        <div class="row h-100 align-hv-center">
+            <div class="error-template">
+                <h1>
+                    Oops!</h1>
+                <h2>
+                    404 Not Found</h2>
+                <div class="error-details">
+                    Sorry, an error has occurred, Requested page not found!
+                </div>
+                <div class="mt-2">
+                    <a href="/" class="btn btn-dark"> Take Me Home </a>
+                    <a href="/contact" class="btn btn-dark"> Contact </a>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>`)
+}
+
+
+

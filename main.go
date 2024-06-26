@@ -114,7 +114,6 @@ func main() {
 		contact := app.Group("/contact", m.Middleware)
 		auth := app.Group("/user", m.Middleware)
 		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
-		g404 := app.Group("/404")
 
 		app.Get("/health", handler.GetHealth)
 		h.Register(home)
@@ -123,7 +122,8 @@ func main() {
 		c.Register(contact)
 		a.Register(auth)
 		cp.Register(controlPanel)
-		p404.Register(g404)
+		app.Use(p404.Middleware)
+
 	}
 
 	app.Static("/static", "./frontend/static")
