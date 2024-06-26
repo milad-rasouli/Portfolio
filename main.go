@@ -99,11 +99,13 @@ func main() {
 			UserPassword: userPassword,
 			JWTToken:     jwtToken,
 		}
-		m := handler.NewMetricsMiddleware(logger.Named("metrics"))
-
 		cp := handler.ControlPanel{
 			Logger: logger.Named("control-panel"),
 			DB:     db,
+		}
+		m := handler.NewMetricsMiddleware(logger.Named("metrics"))
+		p404 := handler.P404{
+			Logger: logger.Named("p404"),
 		}
 
 		home := app.Group("/", m.Middleware)
@@ -112,14 +114,16 @@ func main() {
 		contact := app.Group("/contact", m.Middleware)
 		auth := app.Group("/user", m.Middleware)
 		controlPanel := app.Group("/admin", a.LimitToAdminMiddleWare, m.Middleware)
-		app.Get("/health", handler.GetHealth)
+		g404 := app.Group("/404")
 
+		app.Get("/health", handler.GetHealth)
 		h.Register(home)
 		am.Register(aboutMe)
 		b.Register(blog)
 		c.Register(contact)
 		a.Register(auth)
 		cp.Register(controlPanel)
+		p404.Register(g404)
 	}
 
 	app.Static("/static", "./frontend/static")
